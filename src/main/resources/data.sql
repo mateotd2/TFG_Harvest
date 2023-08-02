@@ -1,0 +1,1 @@
+insert into Empleado (name, dni, nss, phone, birthdate) values ('miguel','12345678A','123456789012','666666666','1990-06-15')
