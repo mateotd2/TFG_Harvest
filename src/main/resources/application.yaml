@@ -14,7 +14,7 @@ spring:
 
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization:  true
+    defer-datasource-initialization: true
 
 app:
   jwtcookie: harvest

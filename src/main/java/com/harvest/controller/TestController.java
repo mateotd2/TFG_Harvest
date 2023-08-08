@@ -19,14 +19,14 @@ public class TestController {
     }
 
     @GetMapping("/capataz")
-    @PreAuthorize("hasRole('CAPATAZ') or hasRole('CAPATAZ_TRACTORISTA') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('CAPATAZ') or hasRole('TRACTORISTA')")
 //    @Secured("capataz")
     public String capatazAccess() {
-        return "capataz Content.";
+        return "Capataz y Tractorista Content.";
     }
 
     @GetMapping("/tractor")
-    @PreAuthorize("hasRole('CAPATAZ_TRACTORISTA')")
+    @PreAuthorize("hasRole('TRACTORISTA')")
 //    @Secured("capataz_tractorista")
     public String tractorAccess() {
         return "Tractorista access.";

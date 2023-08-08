@@ -10,9 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //@Data
 @Getter
@@ -32,19 +32,17 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
 
 
-    private GrantedAuthority authoritiy;
+    private Collection<? extends GrantedAuthority> authorities;
 
 
-    public static UserDetailsImpl build(Empleado empleado){
-        GrantedAuthority authority =new SimpleGrantedAuthority( empleado.getRol().getName().toString());
-        return new UserDetailsImpl(empleado.getId(), empleado.getUsername(), empleado.getEmail(), empleado.getPassword(), authority);
+    public static UserDetailsImpl build(Empleado empleado) {
+        List<GrantedAuthority> authorities = empleado.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getName().name())).collect(Collectors.toList());
+        return new UserDetailsImpl(empleado.getId(), empleado.getUsername(), empleado.getEmail(), empleado.getPassword(), authorities);
     }
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-         List<GrantedAuthority> authorities = new ArrayList();
-         authorities.add(this.authoritiy);
         return authorities;
     }
 

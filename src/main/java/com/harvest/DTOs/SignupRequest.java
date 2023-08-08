@@ -2,9 +2,11 @@ package com.harvest.DTOs;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class SignupRequest {
@@ -15,7 +17,8 @@ public class SignupRequest {
     @Email
     private String email;
 
-    private String role;
+    @NotEmpty
+    private List<String> roles;
 
     @NotBlank
     private String password;
