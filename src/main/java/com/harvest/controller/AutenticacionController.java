@@ -1,32 +1,34 @@
 package com.harvest.controller;
 
 
-import com.harvest.DTOs.LoginRequest;
-import com.harvest.DTOs.MessageResponse;
-import com.harvest.DTOs.SignupRequest;
-import com.harvest.DTOs.UserInfoResponse;
-import com.harvest.empleado.Empleado;
-import com.harvest.empleado.Rol;
-import com.harvest.empleado.RolUser;
+import com.harvest.DTOs.*;
+import com.harvest.model.Empleado;
 import com.harvest.repository.EmpleadoRepository;
 import com.harvest.repository.RolRepository;
 import com.harvest.security.UserDetailsImpl;
 import com.harvest.security.jwt.JwtUtils;
+import com.harvest.services.EmpleadoServiceImpl;
+import com.harvest.services.exceptions.DuplicateInstanceException;
+import com.harvest.services.exceptions.IncorrectPasswordException;
+import com.harvest.services.exceptions.IncorrectSignInException;
+import com.harvest.services.exceptions.PermissionException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
+import javax.management.InstanceNotFoundException;
 import java.util.List;
-import java.util.Set;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -40,6 +42,9 @@ public class AutenticacionController {
     EmpleadoRepository empleadoRepository;
 
     @Autowired
+    EmpleadoServiceImpl empleadoServiceImpl;
+
+    @Autowired
     RolRepository rolRepository;
 
     @Autowired
@@ -49,7 +54,8 @@ public class AutenticacionController {
     JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws IncorrectSignInException {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -58,53 +64,60 @@ public class AutenticacionController {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).toList();
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles.get(0)));
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (empleadoRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-        }
-
-        if (empleadoRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        Empleado empleado = new Empleado(signUpRequest.getName(), signUpRequest.getLastname(), signUpRequest.getDni(), signUpRequest.getNss(), signUpRequest.getPhone(), signUpRequest.getEmail(), signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getBirthdate());
-
-        List<String> strRoles = signUpRequest.getRoles();
-        Set<Rol> rolesParaUser = new HashSet<>();
-
-        strRoles.forEach(rol -> {
-            switch (rol) {
-                case "admin" -> {
-                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_ADMIN).orElseThrow(() -> {
-                        return new RuntimeException("Error: Role is not found.");
-                    });
-                    rolesParaUser.add(nuevoRol);
-                }
-
-                case "tractorista" -> {
-                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_TRACTORISTA).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    rolesParaUser.add(nuevoRol);
-                }
-
-                default -> {
-                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_CAPATAZ).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    rolesParaUser.add(nuevoRol);
-                }
-            }
-        });
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws DuplicateInstanceException {
 
 
-        empleado.setRoles(rolesParaUser);
-        empleadoRepository.saveAndFlush(empleado);
+        // TODO: MEJORAR CON MAPSTRUCT
+        Empleado empleado = new Empleado();
+        empleado.setDni(signUpRequest.getDni());
+        empleado.setBirthdate(signUpRequest.getBirthdate());
+        empleado.setLastname(signUpRequest.getLastname());
+        empleado.setPhone(signUpRequest.getPhone());
+        empleado.setPassword(signUpRequest.getPassword());
+        empleado.setNss(signUpRequest.getNss());
+        empleado.setUsername(signUpRequest.getUsername());
+        empleado.setName(signUpRequest.getName());
+        empleado.setEmail(signUpRequest.getEmail());
+
+
+        empleadoServiceImpl.signUp(empleado, signUpRequest.getRoles());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+
+    /**
+     * Change password.
+     *
+     * @param userId the user id
+     * @param id     the id
+     * @param params the params
+     * @throws PermissionException        the permission exception
+     * @throws InstanceNotFoundException  the instance not found exception
+     * @throws IncorrectPasswordException the incorrect password exception
+     */
+    @PostMapping("/{id}/changePassword")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('CAPATAZ') or hasRole('TRACTORISTA') ")
+    public void changePassword(@RequestAttribute Long userId, @PathVariable Long id,
+                               @Validated @RequestBody ChangePasswordParamsDto params)
+            throws PermissionException, InstanceNotFoundException, IncorrectPasswordException {
+
+//        Authentication authentication = authenticationManager.authenticate()
+
+        // TODO: Buscar el username del token con JwUtils buscarlo en base de datos y modificar la contraseña
+        if (!id.equals(userId)) {
+            throw new PermissionException();
+        }
+
+        empleadoServiceImpl.changePassword(id, params.getOldPassword(), params.getNewPassword());
+
     }
 
     @PostMapping("/signout")
@@ -112,4 +125,5 @@ public class AutenticacionController {
         ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("You've been signed out!"));
     }
+
 }

@@ -1,6 +1,6 @@
 package com.harvest.repository;
 
-import com.harvest.empleado.Empleado;
+import com.harvest.model.Empleado;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.harvest.empleado;
+package com.harvest.model;
 
 
 public enum RolUser {

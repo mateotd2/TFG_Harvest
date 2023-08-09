@@ -1,7 +1,7 @@
 package com.harvest.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.harvest.empleado.Empleado;
+import com.harvest.model.Empleado;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

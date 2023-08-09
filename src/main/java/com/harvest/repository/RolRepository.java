@@ -1,7 +1,7 @@
 package com.harvest.repository;
 
-import com.harvest.empleado.Rol;
-import com.harvest.empleado.RolUser;
+import com.harvest.model.Rol;
+import com.harvest.model.RolUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

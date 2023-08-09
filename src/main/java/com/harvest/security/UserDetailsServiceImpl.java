@@ -1,6 +1,6 @@
 package com.harvest.security;
 
-import com.harvest.empleado.Empleado;
+import com.harvest.model.Empleado;
 import com.harvest.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
