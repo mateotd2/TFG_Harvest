@@ -17,6 +17,7 @@ spring:
     defer-datasource-initialization: true
 
 app:
-  jwtcookie: harvest
-  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
+  jwtcookie: Bu:GW8bgPlEw
+  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
   jwtExpirationMs: 86400
+  jwtRefreshExpirationMs: 86400000

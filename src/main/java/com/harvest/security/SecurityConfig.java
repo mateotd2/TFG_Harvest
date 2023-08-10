@@ -22,10 +22,15 @@ import static org.springframework.security.web.util.matcher.AntPathRequestMatche
 
 @Configuration
 @EnableMethodSecurity
-public class WebSecurityConfig {
+//@EnableGlobalMethodSecurity(
+//        // securedEnabled = true,
+//        // jsr250Enabled = true,
+//        prePostEnabled = true)
+public class SecurityConfig {
 
     @Value("${spring.h2.console.path}")
     private String h2ConsolePath;
+
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -48,11 +53,6 @@ public class WebSecurityConfig {
         return authProvider;
     }
 
-    // Codificador de contraseñas BCrypt
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,12 +61,19 @@ public class WebSecurityConfig {
 
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
 
 
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .addFilter(jwtTokenFilter).authorizeRequests()
+//                .and()
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(antMatcher("/api/auth/**")).permitAll() // antMatcher para https://github.com/jzheaux/cve-2023-34035-mitigations
                                 .requestMatchers(antMatcher("/api/test/**")).permitAll()
@@ -75,7 +82,6 @@ public class WebSecurityConfig {
 
                 )
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 // H2 console
                 .headers(headers -> headers.frameOptions(frameOption -> frameOption.sameOrigin())).

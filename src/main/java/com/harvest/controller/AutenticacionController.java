@@ -3,20 +3,17 @@ package com.harvest.controller;
 
 import com.harvest.DTOs.*;
 import com.harvest.model.Empleado;
+import com.harvest.model.RefreshToken;
 import com.harvest.repository.EmpleadoRepository;
 import com.harvest.repository.RolRepository;
 import com.harvest.security.UserDetailsImpl;
-import com.harvest.security.jwt.JwtUtils;
+import com.harvest.security.jwt.JwtGeneratorInfo;
+import com.harvest.security.jwt.RefreshTokenService;
 import com.harvest.services.EmpleadoServiceImpl;
-import com.harvest.services.exceptions.DuplicateInstanceException;
-import com.harvest.services.exceptions.IncorrectPasswordException;
-import com.harvest.services.exceptions.IncorrectSignInException;
-import com.harvest.services.exceptions.PermissionException;
+import com.harvest.services.exceptions.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.management.InstanceNotFoundException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -51,7 +49,10 @@ public class AutenticacionController {
     PasswordEncoder encoder;
 
     @Autowired
-    JwtUtils jwtUtils;
+    RefreshTokenService refreshTokenService;
+
+    @Autowired
+    JwtGeneratorInfo jwtUtils;
 
     @PostMapping("/signin")
 
@@ -63,10 +64,15 @@ public class AutenticacionController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).toList();
+        String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles));
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(),
+                userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
     @PostMapping("/signup")
@@ -120,10 +126,27 @@ public class AutenticacionController {
 
     }
 
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getEmpleado)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
+
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(new MessageResponse("You've been signed out!"));
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userDetails.getId();
+        refreshTokenService.deleteByUserId(userId);
+        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
 
 }
