@@ -76,6 +76,9 @@ public class SecurityConfig {
 //                .and()
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(antMatcher("/api/auth/**")).permitAll() // antMatcher para https://github.com/jzheaux/cve-2023-34035-mitigations
+                                .requestMatchers(antMatcher("/api-docs**")).permitAll()
+                                .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
+                                .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                                 .requestMatchers(antMatcher("/api/test/**")).permitAll()
                                 .requestMatchers(antMatcher(h2ConsolePath + "/**")).permitAll()
                                 .anyRequest().authenticated()
@@ -89,6 +92,7 @@ public class SecurityConfig {
 //            http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }
