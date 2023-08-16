@@ -1,0 +1,226 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.udc.fic</groupId>
+        <artifactId>harvest-proyect</artifactId>
+        <version>1.0-SNAPSHOT</version>
+<!--        <relativePath>../pom.xml</relativePath> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+    </parent>
+
+<!--    <groupId>com.udc.fic</groupId>-->
+    <artifactId>harvest-open-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>harvest-open-api</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>7.0.1.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>0.2.0</version>
+        </dependency>
+
+        <dependency>
+
+            <groupId>org.springdoc</groupId>
+
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+
+            <version>2.0.3</version>
+
+        </dependency>
+
+        <dependency>
+
+            <groupId>org.springdoc</groupId>
+
+            <artifactId>springdoc-openapi-ui</artifactId>
+
+            <version>1.7.0</version>
+
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>2.2.15</version>
+        </dependency>
+
+
+
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <!-- RELEASE_VERSION -->
+                <version>6.3.0</version>
+                <!-- /RELEASE_VERSION -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/HarvestAPI.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+
+
+
+
+                            <configOptions>
+                                <title>TestAPI</title>
+                                <useSpringBoot3>true</useSpringBoot3>
+
+                                <interfaceOnly>true</interfaceOnly>∂
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+
+                                <apiPackage>com.udc.fic.harvest.controller</apiPackage>
+
+                                <modelPackage>com.udc.fic.harvest.DTOs</modelPackage>
+                                <useTags>true</useTags>
+                                <delegatePattern>true</delegatePattern>
+                                <sourceFolder>/src/main/java</sourceFolder>
+                                <implFolder>/src/main/java</implFolder>
+                                <serializableModel>true</serializableModel>
+<!--                                <packageName></packageName>-->
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+<!--            <plugin> &lt;!&ndash;https://openapi-generator.tech/docs/plugins/&ndash;&gt;-->
+<!--                <groupId>org.openapitools</groupId>-->
+<!--                <artifactId>openapi-generator-maven-plugin</artifactId>-->
+<!--                <version>6.6.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <id>buildApi</id>-->
+<!--                        <configuration>-->
+<!--                            <inputSpec>${basedir}/src/main/resources/harvestAPI.yml</inputSpec>-->
+<!--                            &lt;!&ndash;https://openapi-generator.tech/docs/generators/spring &ndash;&gt;-->
+<!--                            <generatorName>spring</generatorName>-->
+<!--                            <library>spring-boot</library>-->
+
+<!--&lt;!&ndash;                            <modelNameSuffix></modelNameSuffix>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <useSpringBoot3>true</useSpringBoot3>&ndash;&gt;-->
+
+<!--                            <generateApis>true</generateApis>-->
+<!--                            <generateApiTests>false</generateApiTests>-->
+<!--                            <generateApiDocumentation>false</generateApiDocumentation>-->
+<!--                            <generateModels>true</generateModels>-->
+<!--                            <generateModelTests>false</generateModelTests>-->
+<!--                            <generateModelDocumentation>false</generateModelDocumentation>-->
+<!--                            <generateSupportingFiles>false</generateSupportingFiles>-->
+
+<!--                            <environmentVariables>-->
+<!--                                <supportingFiles>-->
+<!--                                    ApiUtil.java-->
+<!--                                </supportingFiles>-->
+<!--                            </environmentVariables>-->
+
+<!--                            &lt;!&ndash; pass any necessary config options &ndash;&gt;-->
+<!--                            <configOptions>-->
+<!--                                <useJakartaEe>true</useJakartaEe>-->
+
+<!--                                <interfaceOnly>true</interfaceOnly>∂-->
+<!--                                <useBeanValidation>true</useBeanValidation>-->
+<!--                                <performBeanValidation>true</performBeanValidation>-->
+
+<!--                                <apiPackage>com.udc.fic.harvest.controller</apiPackage>-->
+
+<!--                                <modelPackage>com.udc.fic.harvest.DTOs</modelPackage>-->
+
+<!--                                <sourceFolder>/src/main/java</sourceFolder>-->
+<!--                                <implFolder>/src/main/java</implFolder>-->
+<!--                                <serializableModel>true</serializableModel>-->
+<!--                            </configOptions>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <!-- used to read swagger.properties-->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${basedir}/src/main/resources/swagger.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <addMavenDescriptor>false</addMavenDescriptor>
+                        <manifest>
+                            <addClasspath>false</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+<!--                            <Build-Number>${buildNumber}</Build-Number>-->
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+</project>
