@@ -3,10 +3,10 @@ server:
 #  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
+    url: @dataSource.url@
     driverClassName: org.h2.Driver
-    username: sa
-    password:
+    username: @dataSource.user@
+    password: @dataSource.password@
   h2:
     console:
       path: /h2-console
@@ -25,7 +25,7 @@ app:
 springdoc:
   api-docs:
     path: /api-docs
-#  use-management-port: true
+  #  use-management-port: true
   # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
 #  management:
 #    server:

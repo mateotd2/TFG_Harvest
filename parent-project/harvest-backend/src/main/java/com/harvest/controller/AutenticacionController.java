@@ -75,7 +75,7 @@ public class AutenticacionController {
                 userDetails.getUsername(), userDetails.getEmail(), roles));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("Use")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws DuplicateInstanceException {
 
@@ -115,7 +115,9 @@ public class AutenticacionController {
                                @Validated @RequestBody ChangePasswordParamsDto params)
             throws PermissionException, InstanceNotFoundException, IncorrectPasswordException {
 
-//        Authentication authentication = authenticationManager.authenticate()
+//        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//
+//        Long userId = userDetails.getId();
 
         // TODO: Buscar el username del token con JwUtils buscarlo en base de datos y modificar la contraseña
         if (!id.equals(userId)) {
@@ -134,7 +136,7 @@ public class AutenticacionController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getEmpleado)
                 .map(user -> {
-                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    String token = jwtUtils.generateTokenFromUsername(user.getId(), user.getUsername());
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,

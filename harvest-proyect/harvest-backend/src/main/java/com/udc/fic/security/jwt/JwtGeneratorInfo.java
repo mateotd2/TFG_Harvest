@@ -1,12 +1,14 @@
-package com.harvest.security.jwt;
+package com.udc.fic.security.jwt;
 
-import com.harvest.security.UserDetailsImpl;
+import com.udc.fic.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.List;
 
@@ -22,27 +24,27 @@ public class JwtGeneratorInfo {
 
 
     public String generateJwtToken(UserDetailsImpl userPrincipal) {
-        return generateTokenFromUsername(userPrincipal.getId() ,userPrincipal.getUsername());
+        return generateTokenFromUsername(userPrincipal.getId(), userPrincipal.getUsername());
     }
 
-    public String generateTokenFromUsername(Long id,String username) {
+    public String generateTokenFromUsername(Long id, String username) {
 
         Claims claims = Jwts.claims();
 
-        claims.setSubject(username).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis()+ jwtExpirationMs * 60 * 24 * 1000));
+        claims.setSubject(username).setIssuedAt(new Date()).setExpiration(new Date(System.currentTimeMillis() + (long) jwtExpirationMs * 60 * 24 * 365));
 
         claims.put("userId", id);
-//        claims.put("role", )
 
 
-       return Jwts.builder().setClaims(claims).signWith(SignatureAlgorithm.HS512,jwtSecret.getBytes()).compact();
-//        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
-//                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)).signWith(SignatureAlgorithm.HS512, jwtSecret)
-//                .compact();
+        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        return Jwts.builder().setClaims(claims).signWith(key, SignatureAlgorithm.HS512).compact();
+
+
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(token).getBody().getSubject();
+
+        return Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(token).getBody().getSubject();
     }
 
     public JwtInfo getInfo(String token) {
@@ -52,9 +54,10 @@ public class JwtGeneratorInfo {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(authToken);
+//            Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(authToken);
+            Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(authToken);
             return true;
-        } catch (SignatureException e) {
+        } catch (SecurityException e) {
             logger.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());

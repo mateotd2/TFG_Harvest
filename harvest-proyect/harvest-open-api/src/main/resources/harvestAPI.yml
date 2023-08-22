@@ -2,31 +2,37 @@ openapi: 3.0.3
 
 info:
   title: Harvest APIs
-  description: |-
-    API para la gestion de recursos de una empresa viticultora
+  description: Api para la gestion de recursos de una empresa viticultora
   version: 1.0-SNAPSHOT
 
 
-#servers:
-#  - url:
+servers:
+  - url: https://localhost:8080
 
 tags:
-  - name: user
-    description: Una interfaz
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
-  - name: user2
-    description: Otra interfaz
-    externalDocs:
-      description: Find out more about our store
-      url: http://swagger.io
+  - name: Autenticado
+    description: Funcionalidades relacionadas el autenticado y modificación de datos de usuario
+
+  - name: Usuario
+    description: Funcionalidades para todos los usuarios
+
+  - name: Administrador
+    description: Funcionalidades de Administrador
+
+  - name: Capataz
+    description: Funcionalidades de Capataz
+
+  - name: Tractorista
+    description: Funcionalidades de Tractorista
+
 
 paths:
+
+  # Ejemplos
   /api/test/all:
     get:
       tags:
-        - user
+        - Usuario
       summary: Visible para todos
       operationId: nada
       responses:
@@ -36,10 +42,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AllDetailsDTO'
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/test2/capataz:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
-        - user
+        - Capataz
       summary: Visible para capataz
       operationId: capataz
       responses:
@@ -55,10 +81,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/test2/tractor:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
-        - user2
+        - Tractorista
       summary: Visible para tractorista
       operationId: tractorista
       responses:
@@ -74,10 +119,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        403:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        404:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        406:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/test2/admin:
     get:
+      security:
+        - bearerAuth: [ ]
       tags:
-        - user2
+        - Administrador
       summary: Visible para admin
       operationId: admin
       responses:
@@ -93,44 +180,609 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/test2/admin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Funcionalidades
+  ###########################################################################################################
+  /api/auth/signin:
+    post:
+      
+      tags:
+        - Autenticado
+      summary: Autenticacion con usuario y contraseña
+      operationId: signin
+      requestBody:
+        description: Credenciales para acceder a funcionalidades del sistema
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequestDTO'
+            example:
+              username: validUsername
+              password: ejemploPassword
+      responses:
+        200:
+          description: Usuario y JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponseDTO'
+              example:
+                id: 1
+                username: validUsername
+                tokenType: Bearer
+                accessToken: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaWd1ZWxBZG1pbiIsImlhdCI6MTY5MjIzNDg3NiwiZXhwIjoxNjkyMjM0OTYyfQ.gfFLE9pE-HYLfG6_fgTj92CwsmkrTmUsQLz6D0s6IeB8KmqO0ue17ExUx3o7a-oebUr1BNnshtu-odZnANUu-A
+                roles: [ "ROLE_ADMIN" ]
+        400:
+          description: Datos para login erroneos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Autenticacion no valida
+                status: 400
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/auth/{id}/changePassword:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Cambio de contraseña
+      operationId: changePassword
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de usuario al que se realiza cambio de contraseña
+      requestBody:
+        description: Antigua contraseña y nueva contraseña
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDTO'
+            example:
+              oldPassword: 12345678
+              newPassword: 87654321
+      responses:
+        200:
+          description: Mensaje de cambio de contraseña exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Contraseña cambiada'
+        400:
+          description: Mensaje de cambio de contraseña erroneo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Nueva contraseña no valida'
+                status: 400
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/{id}/changePassword
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/auth/signout:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Cerrar la sesion de usuario
+      operationId: signOut
+      responses:
+        200:
+          description: Mensaje de signout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Log out successful!'
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signout
+                error: Unauthorized
+                message: To many requests
+                status: 429
+
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/updateUser:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar datos de usuario
+      operationId: updateUser
+      requestBody:
+        description: Datos de usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDTO'
+            example:
+              email: juan@filo.com
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+
+      responses:
+        200:
+          description: Exito en la actualizacion de datos de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'User updated successfully!'
+        400:
+          description: Payload de usuario no valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Datos no validos'
+                status: 400
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        403:
+          description: Error 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/updateUser
+                error: Forbidden
+                message: Forbidden
+                status: 429
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/updateUser
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/auth/signup:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar un usuario ( Solo puede el administrador)
+      operationId: signUp
+      x-custom-role: "hasRole('ADMIN')"
+
+      requestBody:
+        description: Datos de usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserDTO'
+            example:
+              username: Juan
+              password: 12345678
+              roles: [ "capataz",
+                       "tractorista" ]
+              email: juan@filo.com
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+
+      responses:
+        200:
+          description: Exito en el registro de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'User registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Usuario no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+security:
+  - bearerAuth: [ ]
+
+
+
+
+
+
+
+
+    ########################################################################################################
+
 components:
   schemas:
+    UpdateUserDTO:
+      type: object
+      required:
+        - email
+        - name
+        - lastname
+        - dni
+        - nss
+        - phone
+        - birthdate
+
+      properties:
+
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        name:
+          type: string
+          maxLength: 255
+        lastname:
+          type: string
+          maxLength: 255
+        dni:
+          type: string
+          maxLength: 255
+        nss:
+          type: string
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 255
+        birthdate:
+          type: string
+          format: date
+      #          maxLength: 20
+      additionalProperties: false
+
+
+
+    NewUserDTO:
+      type: object
+      required:
+        - username
+        - password
+        - roles
+        - email
+        - name
+        - lastname
+        - dni
+        - nss
+        - phone
+        - birthdate
+
+      properties:
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+        roles:
+          type: array
+          maxItems: 5
+          items:
+            type: string
+            maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        name:
+          type: string
+          maxLength: 255
+        lastname:
+          type: string
+          maxLength: 255
+        dni:
+          type: string
+          maxLength: 255
+        nss:
+          type: string
+          maxLength: 255
+        phone:
+          type: string
+          maxLength: 255
+        birthdate:
+          type: string
+          format: date
+      #          maxLength: 20
+      additionalProperties: false
+
+
+    MessageResponseDTO:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          maxLength: 4000
+      additionalProperties: false
+
+    ChangePasswordDTO:
+      type: object
+      required:
+        - newPassword
+        - oldPassword
+      properties:
+        oldPassword:
+          type: string
+          maxLength: 255
+        newPassword:
+          type: string
+          maxLength: 255
+          minLength: 12
+      additionalProperties: false
+
+    SignInRequestDTO:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+          maxLength: 255
+      additionalProperties: false
+
+    SignInResponseDTO:
+      type: object
+      required:
+        - id
+        - username
+        - tokenType
+        - accessToken
+        - roles
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+        username:
+          type: string
+          maxLength: 255
+        tokenType:
+          type: string
+          maxLength: 255
+        accessToken:
+          type: string
+          maxLength: 1000
+        roles:
+          type: array
+          maxItems: 5
+          items:
+            type: string
+            maxLength: 255
+      additionalProperties: false
+
+
+
     Error:
       type: object
       properties:
         path:
           description: Path al error
           type: string
+          maxLength: 500
           nullable: false
           example: "/error"
         error:
-          description: Codigo de error
+          description: tipo de error
           type: string
+          maxLength: 500
           nullable: false
           example: "Unauthorized"
         message:
           description: Mensaje de error explicativo
           type: string
+          maxLength: 500
           nullable: false
           example: "Full authentication is required to access this resource"
         status:
-          description: No autorizado
+          description: Codigo de error
           type: integer
+          format: int32
           nullable: false
           example: 401
+      additionalProperties: false
     AllDetailsDTO:
       type: string
       example: "ALL"
+      maxLength: 255
     CapatazDetailsDTO:
       type: string
       example: "Capataz"
+      maxLength: 255
     TractoristaDetailsDTO:
       type: string
       example: "Tractorista"
+      maxLength: 255
     AdminDetailsDTO:
       type: string
       example: "Admin"
+      maxLength: 255
 
-
-
-
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes

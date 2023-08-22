@@ -1,4 +1,4 @@
-package com.harvest.security.jwt;
+package com.udc.fic.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,14 +1,17 @@
-package com.harvest.services;
+package com.udc.fic.services;
 
-import com.harvest.model.Empleado;
-import com.harvest.model.Rol;
-import com.harvest.model.RolUser;
-import com.harvest.repository.EmpleadoRepository;
-import com.harvest.repository.RolRepository;
-import com.harvest.services.exceptions.DuplicateInstanceException;
-import com.harvest.services.exceptions.IncorrectPasswordException;
+import com.udc.fic.model.Empleado;
+import com.udc.fic.model.Rol;
+import com.udc.fic.model.RolUser;
+import com.udc.fic.repository.EmpleadoRepository;
+import com.udc.fic.repository.RolRepository;
+import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.IncorrectPasswordException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +24,7 @@ import java.util.Set;
 @Service
 @Transactional
 public class EmpleadoServiceImpl implements EmpleadoService {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
     @Autowired
     EmpleadoRepository empleadoRepository;
 
@@ -29,41 +32,53 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     RolRepository rolRepository;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private PermissionChecker permissionChecker;
 
+
     @Override
-    public void signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException {
+    @PreAuthorize("hasRole('ADMIN')")
+    public Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException {
+
+        LOGGER.info("Registro de usuario " + empleado.getUsername());
         if (empleadoRepository.existsByUsername(empleado.getUsername())) {
+            LOGGER.error("Registro de usuario fallido Username no disponible");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
         if (empleadoRepository.existsByEmail(empleado.getEmail())) {
+            LOGGER.error("Registro de usuario fallido Email duplicado");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
-//        Empleado empleado = new Empleado(signUpRequest.getName(), signUpRequest.getLastname(), signUpRequest.getDni(), signUpRequest.getNss(), signUpRequest.getPhone(), signUpRequest.getEmail(), signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()), signUpRequest.getBirthdate());
-        empleado.setPassword(passwordEncoder.encode(empleado.getPassword()));
-//        List<String> strRoles = empleado.getRoles();
+        empleado.setPassword(bCryptPasswordEncoder.encode(empleado.getPassword()));
         Set<Rol> rolesParaUser = new HashSet<>();
 
         roles.forEach(rol -> {
             switch (rol) {
                 case "admin" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_ADMIN).orElseThrow(() -> {
+                        LOGGER.error("Registro de usuario fallido, ROL invalido");
                         return new RuntimeException("Error: Role is not found.");
                     });
                     rolesParaUser.add(nuevoRol);
                 }
 
                 case "tractorista" -> {
-                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_TRACTORISTA).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_TRACTORISTA).orElseThrow(() -> {
+                        LOGGER.error("Registro de usuario fallido, ROL invalido");
+                        return new RuntimeException("Error: Role is not found.");
+                    });
                     rolesParaUser.add(nuevoRol);
                 }
                 case "capataz" -> {
-                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_CAPATAZ).orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_CAPATAZ).orElseThrow(() -> {
+                        LOGGER.error("Registro de usuario fallido, ROL invalido");
+                        return new RuntimeException("Error: Role is not found.");
+
+                    });
                     rolesParaUser.add(nuevoRol);
                 }
 
@@ -71,16 +86,19 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         });
 
 
-
         empleado.setRoles(rolesParaUser);
-//        empleadoRepository.saveAndFlush(empleado);
         empleadoRepository.save(empleado);
+        LOGGER.info("Empleado registrado correctamente");
+
+        return empleado;
     }
 
 
     @Override
     public Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String dni, String nss, LocalDate birthdate) throws InstanceNotFoundException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
+
+        LOGGER.info("Actualizacion de informacion de usuario " + id);
 
         empleado.setName(name);
         empleado.setEmail(email);
@@ -90,18 +108,20 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         empleado.setPhone(phone);
         empleado.setBirthdate(birthdate);
 
-
-        return null;
+        empleadoRepository.save(empleado);
+        return empleado;
     }
 
     @Override
     public void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
+        LOGGER.info("Intento de cambio de usuario: " + id);
 
-        if (!passwordEncoder.matches(oldPassword, empleado.getPassword())) {
+        if (!bCryptPasswordEncoder.matches(oldPassword, empleado.getPassword())) {
+            LOGGER.error("Contraseña incorrecta");
             throw new IncorrectPasswordException();
         } else {
-            empleado.setPassword(passwordEncoder.encode(newPassword));
+            empleado.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }
 
     }

@@ -23,8 +23,5 @@
     </dependency>
   </dependencies>
 
-  <modules>
-      <module>harvest-backend</module>
-      <module>open-api</module>
-  </modules>
+
 </project>

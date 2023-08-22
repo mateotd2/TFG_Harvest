@@ -19,8 +19,8 @@ spring:
 app:
   jwtcookie: Bu:GW8bgPlEw
   jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
-  jwtExpirationMs: 86400
-  jwtRefreshExpirationMs: 86400000
+  jwtExpirationMs: 31536000
+  jwtRefreshExpirationMs: 31536000
 
 springdoc:
   api-docs:

@@ -1,6 +1,6 @@
-package com.harvest.security.jwt;
+package com.udc.fic.security.jwt;
 
-import com.harvest.security.UserDetailsServiceImpl;
+import com.udc.fic.security.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 request.setAttribute("serviceToken", jwt);
-                request.setAttribute("userId",userId);
+                request.setAttribute("userId", userId);
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

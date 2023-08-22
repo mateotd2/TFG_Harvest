@@ -1,8 +1,6 @@
 //package com.udc.fic;
 //
-//import junit.framework.Test;
-//import junit.framework.TestCase;
-//import junit.framework.TestSuite;
+//import
 //
 ///**
 // * Unit test for simple App.
