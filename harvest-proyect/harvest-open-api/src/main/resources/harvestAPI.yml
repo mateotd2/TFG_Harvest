@@ -486,7 +486,11 @@ paths:
         - bearerAuth: [ ]
       summary: Registrar un usuario ( Solo puede el administrador)
       operationId: signUp
-      x-custom-role: "hasRole('ADMIN')"
+#      x-custom-role: "hasRole('ADMIN')"
+      x-custom-role:
+        - 'ADMIN'
+        - 'CAPATAZ'
+        - 'TRACTORISTA'
 
       requestBody:
         description: Datos de usuario

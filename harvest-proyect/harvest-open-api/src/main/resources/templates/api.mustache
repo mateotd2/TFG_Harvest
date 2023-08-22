@@ -237,9 +237,13 @@ import {{javaxPackage}}.annotation.Generated;
             consumes = { {{#consumes}}
                 "{{{mediaType}}}"{{^-last}}, {{/-last}}{{/consumes}} }{{/hasConsumes}}{{/singleContentTypes}}
             )
-        {{#vendorExtensions.x-custom-role}}
-                @PreAuthorize("{{{.}}}")
-        {{/vendorExtensions.x-custom-role}}
+
+
+        {{#vendorExtensions.x-custom-role.size}}
+                @PreAuthorize("hasAnyRole({{#vendorExtensions.x-custom-role}}{{^-first}}, {{/-first}} '{{{.}}}'{{/vendorExtensions.x-custom-role}})")
+        {{/vendorExtensions.x-custom-role.size}}
+
+
         {{#jdk8-default-interface}}default {{/jdk8-default-interface}}{{#responseWrapper}}{{.}}
                 <{{/responseWrapper}}ResponseEntity<{{>returnTypes}}>{{#responseWrapper}}
                 >{{/responseWrapper}} {{#delegate-method}}_{{/delegate-method}}{{operationId}}(
