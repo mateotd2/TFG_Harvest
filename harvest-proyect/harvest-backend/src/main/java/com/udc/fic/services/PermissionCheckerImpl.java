@@ -24,8 +24,8 @@ public class PermissionCheckerImpl implements PermissionChecker {
 
     @Override
     public void checkEmailExists(String email) throws DuplicateInstanceException {
-        if (empleadoRepository.existsByEmail(email)){
-            throw new DuplicateInstanceException("email already exists",email);
+        if (empleadoRepository.existsByEmail(email)) {
+            throw new DuplicateInstanceException("email already exists", email);
         }
     }
 

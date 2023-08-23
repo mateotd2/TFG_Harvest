@@ -17,11 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -180,7 +177,7 @@ public class AuthenticationController implements AutenticadoApi {
             throw new PermissionException();
         }
 
-        empleadoService.updateProfile(id,updateUserDTO.getName(), updateUserDTO.getLastname(), updateUserDTO.getPhone(),updateUserDTO.getEmail(), updateUserDTO.getNss(), updateUserDTO.getDni(),updateUserDTO.getBirthdate());
+        empleadoService.updateProfile(id, updateUserDTO.getName(), updateUserDTO.getLastname(), updateUserDTO.getPhone(), updateUserDTO.getEmail(), updateUserDTO.getNss(), updateUserDTO.getDni(), updateUserDTO.getBirthdate());
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Usuario con username: " + updateUserDTO.getName() + " creado");
         return ResponseEntity.ok(message);
