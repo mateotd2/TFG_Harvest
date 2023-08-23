@@ -95,10 +95,13 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
 
     @Override
-    public Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String dni, String nss, LocalDate birthdate) throws InstanceNotFoundException {
+    public Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String dni, String nss, LocalDate birthdate) throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
 
         LOGGER.info("Actualizacion de informacion de usuario " + id);
+
+        permissionChecker.checkEmailExists(email);
+
 
         empleado.setName(name);
         empleado.setEmail(email);
@@ -114,8 +117,9 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
     @Override
     public void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException {
+
         Empleado empleado = permissionChecker.checkEmpleado(id);
-        LOGGER.info("Intento de cambio de usuario: " + id);
+        LOGGER.info("Intento de cambio de contraseña de usuario: " + id);
 
         if (!bCryptPasswordEncoder.matches(oldPassword, empleado.getPassword())) {
             LOGGER.error("Contraseña incorrecta");

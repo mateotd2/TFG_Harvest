@@ -2,6 +2,7 @@ package com.udc.fic.services;
 
 import com.udc.fic.model.Empleado;
 import com.udc.fic.repository.EmpleadoRepository;
+import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,10 @@ public class PermissionCheckerImpl implements PermissionChecker {
     }
 
     @Override
-    public boolean checkEmailExists(String email) {
-        return empleadoRepository.existsByEmail(email);
+    public void checkEmailExists(String email) throws DuplicateInstanceException {
+        if (empleadoRepository.existsByEmail(email)){
+            throw new DuplicateInstanceException("email already exists",email);
+        }
     }
 
     @Override

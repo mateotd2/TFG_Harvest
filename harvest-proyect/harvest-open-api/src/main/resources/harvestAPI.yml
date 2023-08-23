@@ -277,6 +277,10 @@ paths:
         - bearerAuth: [ ]
       summary: Cambio de contraseña
       operationId: changePassword
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
       parameters:
         - in: path
           name: id
@@ -395,7 +399,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /api/auth/updateUser:
+  /api/auth/{id}/updateUser:
     post:
       tags:
         - Autenticado
@@ -403,6 +407,20 @@ paths:
         - bearerAuth: [ ]
       summary: Actualizar datos de usuario
       operationId: updateUser
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de usuario al que se realiza la actualizacion
       requestBody:
         description: Datos de usuario
         required: true
@@ -486,11 +504,8 @@ paths:
         - bearerAuth: [ ]
       summary: Registrar un usuario ( Solo puede el administrador)
       operationId: signUp
-#      x-custom-role: "hasRole('ADMIN')"
       x-custom-role:
-        - 'ADMIN'
-        - 'CAPATAZ'
-        - 'TRACTORISTA'
+        - ADMIN
 
       requestBody:
         description: Datos de usuario

@@ -14,7 +14,7 @@ public interface EmpleadoService {
     Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException;
 
 
-    Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String nss, String dni, LocalDate birthdate) throws InstanceNotFoundException;
+    Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String nss, String dni, LocalDate birthdate) throws InstanceNotFoundException, DuplicateInstanceException;
 
     void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException;
 }

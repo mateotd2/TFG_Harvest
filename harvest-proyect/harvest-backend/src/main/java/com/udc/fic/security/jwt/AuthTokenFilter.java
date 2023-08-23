@@ -46,6 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 request.setAttribute("serviceToken", jwt);
                 request.setAttribute("userId", userId);
 
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
