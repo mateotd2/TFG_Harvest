@@ -65,6 +65,12 @@
             <version>6.0.11</version>
         </dependency>
 
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <optional>true</optional>
+            </dependency>
+
 
         <dependency>
 
@@ -118,6 +124,12 @@
 
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.springdoc</groupId>-->
+<!--            <artifactId>springdoc-openapi-ui</artifactId>-->
+<!--            <version>1.5.13</version>-->
+<!--        </dependency>-->
+
         <dependency>
 
             <groupId>io.jsonwebtoken</groupId>
@@ -165,7 +177,6 @@
         </dependency>
 
 
-
         <dependency>
 
             <groupId>org.springframework.security</groupId>
@@ -199,7 +210,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-<!--            <scope>provided</scope>-->
+            <!--            <scope>provided</scope>-->
             <version>${org.mapstruct.version}</version>
         </dependency>
 
@@ -208,17 +219,17 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${org.projectlombok.version}</version>
-<!--            <scope>provided</scope>-->
+            <scope>provided</scope>
 
-<!--            <optional>true</optional>-->
+            <!--            <optional>true</optional>-->
 
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.projectlombok</groupId>-->
-<!--            <artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--            <version>0.2.0</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.projectlombok</groupId>-->
+        <!--            <artifactId>lombok-mapstruct-binding</artifactId>-->
+        <!--            <version>0.2.0</version>-->
+        <!--        </dependency>-->
 
     </dependencies>
 
@@ -256,13 +267,12 @@
                         </path>
 
 
-<!--                        <path>-->
-<!--                            <groupId>org.projectlombok</groupId>-->
-<!--                            <artifactId>lombok-mapstruct-binding</artifactId>-->
-<!--                            <version>0.2.0</version>-->
-<!--                        </path>-->
-                        <!-- other annotation processors -->
                     </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>
+                            -Amapstruct.defaultComponentModel=spring
+                        </compilerArg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 

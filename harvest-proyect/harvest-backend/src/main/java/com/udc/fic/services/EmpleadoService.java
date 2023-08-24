@@ -5,7 +5,6 @@ import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import com.udc.fic.services.exceptions.IncorrectPasswordException;
 
 import javax.management.InstanceNotFoundException;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface EmpleadoService {
@@ -14,7 +13,8 @@ public interface EmpleadoService {
     Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException;
 
 
-    Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String nss, String dni, LocalDate birthdate) throws InstanceNotFoundException, DuplicateInstanceException;
+    //    Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String nss, String dni, LocalDate birthdate) throws InstanceNotFoundException, DuplicateInstanceException;
+    Empleado updateProfile(Long id, Empleado empleado) throws InstanceNotFoundException, DuplicateInstanceException;
 
     void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException;
 }

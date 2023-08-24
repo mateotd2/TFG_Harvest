@@ -27,177 +27,6 @@ tags:
 
 
 paths:
-
-  # Ejemplos
-  /api/test/all:
-    get:
-      tags:
-        - Usuario
-      summary: Visible para todos
-      operationId: nada
-      responses:
-        200:
-          description: Info de visibilidad
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AllDetailsDTO'
-
-        429:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: To many requests
-                status: 429
-        default:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/test2/capataz:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Capataz
-      summary: Visible para capataz
-      operationId: capataz
-      responses:
-        200:
-          description: Info de visibilidad de capataz
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CapatazDetailsDTO'
-        401:
-          description: Acceso no autorizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        429:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: To many requests
-                status: 429
-        default:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/test2/tractor:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Tractorista
-      summary: Visible para tractorista
-      operationId: tractorista
-      responses:
-        200:
-          description: Info de visibilidad de tractorista
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TractoristaDetailsDTO'
-        401:
-          description: Acceso no autorizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        403:
-          description: Error 401
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: Bad credentials
-                status: 401
-        404:
-          description: Error 401
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: Bad credentials
-                status: 401
-        406:
-          description: Error 401
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: Bad credentials
-                status: 401
-
-        default:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-  /api/test2/admin:
-    get:
-      security:
-        - bearerAuth: [ ]
-      tags:
-        - Administrador
-      summary: Visible para admin
-      operationId: admin
-      responses:
-        200:
-          description: Info de visibilidad de admin
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AdminDetailsDTO'
-        401:
-          description: Acceso no autorizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        429:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/test2/admin
-                error: Unauthorized
-                message: To many requests
-                status: 429
-        default:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
   # Funcionalidades
   ###########################################################################################################
   /api/auth/signin:
@@ -230,26 +59,26 @@ paths:
                 tokenType: Bearer
                 accessToken: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaWd1ZWxBZG1pbiIsImlhdCI6MTY5MjIzNDg3NiwiZXhwIjoxNjkyMjM0OTYyfQ.gfFLE9pE-HYLfG6_fgTj92CwsmkrTmUsQLz6D0s6IeB8KmqO0ue17ExUx3o7a-oebUr1BNnshtu-odZnANUu-A
                 roles: [ "ROLE_ADMIN" ]
+
         400:
+          description: Payload de signIn no valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Datos no validos'
+                status: 400
+        401:
           description: Datos para login erroneos
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                message: Autenticacion no valida
-                status: 400
-        401:
-          description: Error 401
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
                 message: Bad credentials
                 status: 401
+
         429:
           description: Error 429
           content:
@@ -261,8 +90,9 @@ paths:
                 error: Unauthorized
                 message: To many requests
                 status: 429
+
         default:
-          description: Error 429
+          description: Error
           content:
             application/json:
               schema:
@@ -310,15 +140,17 @@ paths:
                 $ref: '#/components/schemas/MessageResponseDTO'
               example:
                 message: 'Contraseña cambiada'
+
         400:
-          description: Mensaje de cambio de contraseña erroneo
+          description: Payload de usuario no valido
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
               example:
-                message: 'Nueva contraseña no valida'
+                message: 'Datos no validos'
                 status: 400
+
         401:
           description: Error 401
           content:
@@ -342,56 +174,6 @@ paths:
                 error: Unauthorized
                 message: To many requests
                 status: 429
-        default:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-
-  /api/auth/signout:
-    post:
-      tags:
-        - Autenticado
-      security:
-        - bearerAuth: [ ]
-      summary: Cerrar la sesion de usuario
-      operationId: signOut
-      responses:
-        200:
-          description: Mensaje de signout
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageResponseDTO'
-              example:
-                message: 'Log out successful!'
-        401:
-          description: Error 401
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signin
-                error: Unauthorized
-                message: Bad credentials
-                status: 401
-        
-
-        429:
-          description: Error 429
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-              example:
-                path: /api/auth/signout
-                error: Unauthorized
-                message: To many requests
-                status: 429
-
         default:
           description: Error 429
           content:
@@ -466,7 +248,7 @@ paths:
                 error: Unauthorized
                 message: Bad credentials
                 status: 401
-        403:
+        409:
           description: Error 403
           content:
             application/json:
@@ -474,9 +256,9 @@ paths:
                 $ref: '#/components/schemas/Error'
               example:
                 path: /api/auth/updateUser
-                error: Forbidden
-                message: Forbidden
-                status: 429
+                error: Conflict
+                message: Conflict
+                status: 409
         429:
           description: Error 429
           content:
@@ -528,7 +310,7 @@ paths:
               birthdate: 1990-08-19
 
       responses:
-        200:
+        201:
           description: Exito en el registro de usuario
           content:
             application/json:
@@ -579,14 +361,7 @@ paths:
 security:
   - bearerAuth: [ ]
 
-
-
-
-
-
-
-
-    ########################################################################################################
+    ################################################# COMPONENTS #######################################################
 
 components:
   schemas:
@@ -783,22 +558,6 @@ components:
           nullable: false
           example: 401
       additionalProperties: false
-    AllDetailsDTO:
-      type: string
-      example: "ALL"
-      maxLength: 255
-    CapatazDetailsDTO:
-      type: string
-      example: "Capataz"
-      maxLength: 255
-    TractoristaDetailsDTO:
-      type: string
-      example: "Tractorista"
-      maxLength: 255
-    AdminDetailsDTO:
-      type: string
-      example: "Admin"
-      maxLength: 255
 
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme

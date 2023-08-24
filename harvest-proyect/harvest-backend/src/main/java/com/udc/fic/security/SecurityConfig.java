@@ -80,6 +80,7 @@ public class SecurityConfig {
                                 .requestMatchers(antMatcher("/swagger-resources/**")).permitAll()
                                 .requestMatchers(antMatcher("/actuator/**")).permitAll()
                                 .requestMatchers(antMatcher("/api/test/**")).permitAll()
+                                .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                                 .requestMatchers(antMatcher(h2ConsolePath + "/**")).permitAll()
                                 .anyRequest().authenticated()
 

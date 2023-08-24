@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -95,21 +94,21 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
 
     @Override
-    public Empleado updateProfile(Long id, String name, String lastname, String phone, String email, String dni, String nss, LocalDate birthdate) throws InstanceNotFoundException, DuplicateInstanceException {
+    public Empleado updateProfile(Long id, Empleado datosEmpleado) throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
 
         LOGGER.info("Actualizacion de informacion de usuario " + id);
 
-        permissionChecker.checkEmailExists(email);
+        permissionChecker.checkEmailExists(datosEmpleado.getEmail());
 
 
-        empleado.setName(name);
-        empleado.setEmail(email);
-        empleado.setLastname(lastname);
-        empleado.setDni(dni);
-        empleado.setNss(nss);
-        empleado.setPhone(phone);
-        empleado.setBirthdate(birthdate);
+        empleado.setName(datosEmpleado.getName());
+        empleado.setEmail(datosEmpleado.getEmail());
+        empleado.setLastname(datosEmpleado.getLastname());
+        empleado.setDni(datosEmpleado.getDni());
+        empleado.setNss(datosEmpleado.getNss());
+        empleado.setPhone(datosEmpleado.getPhone());
+        empleado.setBirthdate(datosEmpleado.getBirthdate());
 
         empleadoRepository.save(empleado);
         return empleado;

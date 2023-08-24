@@ -2,6 +2,7 @@ package com.udc.fic.controller;
 
 import com.udc.fic.harvest.DTOs.*;
 import com.udc.fic.harvest.controller.AutenticadoApi;
+import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Empleado;
 import com.udc.fic.security.UserDetailsImpl;
 import com.udc.fic.security.jwt.JwtGeneratorInfo;
@@ -12,10 +13,12 @@ import com.udc.fic.services.exceptions.PermissionException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,8 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.management.InstanceNotFoundException;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,21 +38,14 @@ import java.util.stream.Collectors;
 @RestController
 public class AuthenticationController implements AutenticadoApi {
 
-    /**
-     * The Constant INCORRECT_LOGIN_EXCEPTION_CODE.
-     */
-    private static final String INCORRECT_LOGIN_EXCEPTION_CODE = "project.exceptions.IncorrectLoginException";
-
-    /**
-     * The Constant INCORRECT_PASSWORD_EXCEPTION_CODE.
-     */
-    private static final String INCORRECT_PASS_EXCEPTION_CODE = "project.exceptions.IncorrectPasswordException";
-
     @Autowired
     EmpleadoService empleadoService;
 
     @Autowired
     AuthenticationManager authenticationManager;
+
+    @Autowired
+    SourceTargetMapper mapper;
 
 
     @Autowired
@@ -56,130 +55,100 @@ public class AuthenticationController implements AutenticadoApi {
     @Autowired
     private MessageSource messageSource;
 
-//    @ExceptionHandler(IncorrectSignInException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ResponseBody
-//    public Error handleIncorrectSignInException(IncorrectSignInException exception, Locale locale) {
-//
-//        String errorMessage = messageSource.getMessage(INCORRECT_LOGIN_EXCEPTION_CODE, null,
-//                INCORRECT_LOGIN_EXCEPTION_CODE, locale);
-//        Error error = new Error();
-//        error.message(errorMessage);
-//        return error;
-//
-//    }
-//
-//
-//    @ExceptionHandler(IncorrectPasswordException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ResponseBody
-//    public Error handleIncorrectPasswordException(IncorrectPasswordException exception, Locale locale) {
-//
-//        String errorMessage = messageSource.getMessage(INCORRECT_PASS_EXCEPTION_CODE, null,
-//                INCORRECT_PASS_EXCEPTION_CODE, locale);
-//
-//        Error error = new Error();
-//        error.message(errorMessage);
-//        return error;
-//
-//    }
 
-    //    @ExceptionHandler({IncorrectPasswordException.class, InstanceNotFoundException.class})
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @Override
-    public ResponseEntity<MessageResponseDTO> _changePassword(Long id, ChangePasswordDTO changePasswordDTO) throws IncorrectPasswordException, InstanceNotFoundException, PermissionException {
-
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        UserDetails userDetails = (UserDetails) auth.getDetails();
-//        userDetails.getUsername();
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-        Long userId = (Long) request.getAttribute("userId");
-
-
-        if (!id.equals(userId)) {
-            throw new PermissionException();
-        }
-
-
-        empleadoService.changePassword(userId, changePasswordDTO.getOldPassword(), changePasswordDTO.getNewPassword());
-
-        MessageResponseDTO message = new MessageResponseDTO();
-        message.message("Contraseña actualizada");
-
-        return ResponseEntity.ok(message);
-    }
-
-    @Override
-    public ResponseEntity<MessageResponseDTO> _signOut() {
-        return null;
-    }
-
-    //    @ExceptionHandler({DuplicateInstanceException.class})
-//    @ResponseStatus(HttpStatus.CONFLICT)
     @Override
     public ResponseEntity<SignInResponseDTO> _signin(SignInRequestDTO signInRequestDTO) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getUsername(), signInRequestDTO.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getUsername(), signInRequestDTO.getPassword()));
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtUtils.generateJwtToken(userDetails);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+            String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        SignInResponseDTO response = new SignInResponseDTO();
-        response.setId(userDetails.getId());
-        response.setAccessToken(jwt);
-        response.setRoles(roles);
-        response.setTokenType("Bearer");
-        response.setUsername(userDetails.getUsername());
+            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
 
-        return ResponseEntity.ok(response);
+            SignInResponseDTO response = new SignInResponseDTO();
+            response.setId(userDetails.getId());
+            response.setAccessToken(jwt);
+            response.setRoles(roles);
+            response.setTokenType("Bearer");
+            response.setUsername(userDetails.getUsername());
+
+            return ResponseEntity.ok(response);
+//        } catch (AuthenticationException e) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales no validos", e);
+//        }
+
 
     }
 
-
     @Override
-//    @PostMapping("Use")
-//    @PreAuthorize("hasRole('ADMIN')")
-//    @PreAuthorize("hasAnyRole('ROLE_CUSTOMER','ROLE_OFFICEADMIN','ROLE_EMPLOYEE')")
-    public ResponseEntity<MessageResponseDTO> _signUp(NewUserDTO newUserDTO) throws DuplicateInstanceException {
-        // TODO: MEJORAR CON MAPSTRUCT
-        Empleado empleado = new Empleado();
-        empleado.setDni(newUserDTO.getDni());
-        empleado.setBirthdate(newUserDTO.getBirthdate());
-        empleado.setLastname(newUserDTO.getLastname());
-        empleado.setPhone(newUserDTO.getPhone());
-        empleado.setPassword(newUserDTO.getPassword());
-        empleado.setNss(newUserDTO.getNss());
-        empleado.setUsername(newUserDTO.getUsername());
-        empleado.setName(newUserDTO.getName());
-        empleado.setEmail(newUserDTO.getEmail());
+    public ResponseEntity<MessageResponseDTO> _changePassword(Long id, ChangePasswordDTO changePasswordDTO) throws InstanceNotFoundException {
+        try {
+
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            Long userId = (Long) request.getAttribute("userId");
 
 
-        empleadoService.signUp(empleado, newUserDTO.getRoles());
+            if (!id.equals(userId)) {
+                throw new PermissionException();
+            }
 
-        MessageResponseDTO message = new MessageResponseDTO();
-        message.message("Usuario con username: " + empleado.getUsername() + " creado");
-        return ResponseEntity.ok(message);
-    }
 
-    @Override
-    public ResponseEntity<MessageResponseDTO> _updateUser(Long id, UpdateUserDTO updateUserDTO) throws PermissionException, InstanceNotFoundException, DuplicateInstanceException {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-        Long userId = (Long) request.getAttribute("userId");
+            empleadoService.changePassword(userId, changePasswordDTO.getOldPassword(), changePasswordDTO.getNewPassword());
 
-        if (!id.equals(userId)) {
-            throw new PermissionException();
+            MessageResponseDTO message = new MessageResponseDTO();
+            message.message("Contraseña actualizada");
+
+            return ResponseEntity.ok(message);
+        } catch (PermissionException | IncorrectPasswordException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales no validos", e);
         }
+    }
 
-        empleadoService.updateProfile(id, updateUserDTO.getName(), updateUserDTO.getLastname(), updateUserDTO.getPhone(), updateUserDTO.getEmail(), updateUserDTO.getNss(), updateUserDTO.getDni(), updateUserDTO.getBirthdate());
-        MessageResponseDTO message = new MessageResponseDTO();
-        message.message("Usuario con username: " + updateUserDTO.getName() + " creado");
-        return ResponseEntity.ok(message);
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _updateUser(Long id, UpdateUserDTO updateUserDTO) {
+        try {
+            RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            Long userId = (Long) request.getAttribute("userId");
+
+            if (!id.equals(userId)) {
+                throw new PermissionException();
+            }
+
+            empleadoService.updateProfile(id, mapper.toEmpleado(updateUserDTO));
+            MessageResponseDTO message = new MessageResponseDTO();
+            message.message("Usuario con username: " + updateUserDTO.getName() + " modificado");
+            return ResponseEntity.ok(message);
+
+        } catch (PermissionException | InstanceNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales no validos", e);
+        } catch (DuplicateInstanceException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email no valido", e);
+        }
+    }
+
+    @Override
+
+    public ResponseEntity<MessageResponseDTO> _signUp(NewUserDTO newUserDTO) {
+        try {
+
+            Empleado empleado = mapper.toEmpleado(newUserDTO);
+
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(empleadoService.signUp(empleado, newUserDTO.getRoles()).getId())
+                    .toUri();
+
+            MessageResponseDTO message = new MessageResponseDTO();
+            message.message("Usuario con username: " + empleado.getUsername() + " creado");
+            return ResponseEntity.created(location).body(message);
+        } catch (DuplicateInstanceException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email o username duplicado", e);
+        }
     }
 }
