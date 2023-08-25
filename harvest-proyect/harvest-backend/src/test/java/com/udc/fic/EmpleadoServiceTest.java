@@ -9,6 +9,7 @@ import com.udc.fic.services.EmpleadoServiceImpl;
 import com.udc.fic.services.PermissionChecker;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -18,12 +19,14 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -90,6 +93,27 @@ public class EmpleadoServiceTest {
         Empleado empleadoObtained = empleadoService.signUp(empleado, rolesString);
         assertEquals(empleado, empleadoObtained);
 
+    }
+
+    @Test
+    public void updateProfileTest() throws InstanceNotFoundException, DuplicateInstanceException {
+        Empleado empleado = new Empleado();
+        empleado.setName("Mateo");
+        empleado.setLastname("tilves");
+        LocalDate birthdate = LocalDate.now();
+        empleado.setBirthdate(birthdate);
+        empleado.setNss("123456789012");
+        empleado.setDni("12345678Q");
+        empleado.setUsername("mateo");
+        empleado.setPassword("password");
+        empleado.setEmail("mateo@mateo.com");
+
+        when(permissionChecker.checkEmpleado(1l)).thenReturn(empleado);
+        doNothing().when(permissionChecker).checkEmailExists("mateo@mateo.com");
+
+        when(empleadoRepository.save(empleado)).thenReturn(empleado);
+
+        assertEquals(empleado,empleadoService.updateProfile(1l,empleado));
     }
 
 
