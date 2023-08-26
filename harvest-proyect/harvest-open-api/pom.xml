@@ -29,11 +29,11 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.springfox</groupId>-->
+<!--            <artifactId>springfox-boot-starter</artifactId>-->
+<!--            <version>3.0.0</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -41,11 +41,11 @@
             <version>6.1.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>7.0.1.Final</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.hibernate</groupId>-->
+<!--            <artifactId>hibernate-validator</artifactId>-->
+<!--            <version>7.0.1.Final</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -60,13 +60,15 @@
 
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 
-            <version>2.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>snakeyaml</artifactId>
-                    <groupId>org.yaml</groupId>
-                </exclusion>
-            </exclusions>
+            <version>2.2.0</version>
+
+
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>snakeyaml</artifactId>-->
+<!--                    <groupId>org.yaml</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
 
         </dependency>
 
@@ -77,12 +79,12 @@
             <artifactId>springdoc-openapi-ui</artifactId>
 
             <version>1.7.0</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>snakeyaml</artifactId>
-                    <groupId>org.yaml</groupId>
-                </exclusion>
-            </exclusions>
+<!--            <exclusions>-->
+<!--                <exclusion>-->
+<!--                    <artifactId>snakeyaml</artifactId>-->
+<!--                    <groupId>org.yaml</groupId>-->
+<!--                </exclusion>-->
+<!--            </exclusions>-->
 
         </dependency>
 
@@ -105,6 +107,8 @@
 
     <build>
         <plugins>
+
+
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>

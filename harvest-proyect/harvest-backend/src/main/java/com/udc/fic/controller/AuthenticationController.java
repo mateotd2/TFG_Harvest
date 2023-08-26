@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -59,25 +58,25 @@ public class AuthenticationController implements AutenticadoApi {
     @Override
     public ResponseEntity<SignInResponseDTO> _signin(SignInRequestDTO signInRequestDTO) {
 
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getUsername(), signInRequestDTO.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signInRequestDTO.getUsername(), signInRequestDTO.getPassword()));
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-            String jwt = jwtUtils.generateJwtToken(userDetails);
+        String jwt = jwtUtils.generateJwtToken(userDetails);
 
-            List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-            SignInResponseDTO response = new SignInResponseDTO();
-            response.setId(userDetails.getId());
-            response.setAccessToken(jwt);
-            response.setRoles(roles);
-            response.setTokenType("Bearer");
-            response.setUsername(userDetails.getUsername());
+        SignInResponseDTO response = new SignInResponseDTO();
+        response.setId(userDetails.getId());
+        response.setAccessToken(jwt);
+        response.setRoles(roles);
+        response.setTokenType("Bearer");
+        response.setUsername(userDetails.getUsername());
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
 //        } catch (AuthenticationException e) {
 //            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales no validos", e);
 //        }

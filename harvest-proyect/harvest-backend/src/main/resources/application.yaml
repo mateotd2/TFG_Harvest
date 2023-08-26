@@ -25,17 +25,38 @@ app:
 
 
 
-#springdoc:
-#  swagger-ui:
-#    path: /swagger-ui.html
-#  management:
-#    server:
-#      port: 9090
-#  api-docs:
-#    path: /api-docs
+  #springdoc:
+  #  swagger-ui:
+  #    path: /swagger-ui.html
+  #  management:
+  #    server:
+  #      port: 9090
+  #  api-docs:
+  #    path: /api-docs
   #  use-management-port: true
   # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
-#  management:
+springdoc:
+  swagger-ui:
+#    configUrl: http://localhost:8080/v3/api-docs
+#    urls:
+#      primaryName: /v3/api-docs
+#    url: /v3/api-docs
+#  show-actuator: true
+#  use-management-port: true
+#  # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
+#
+#management:
+#  endpoints.web.exposure.include: openapi, swagger-ui
+#  server:
+#    port: 9090
+
+#  api-docs:
+#    path: /v3/api-docs
+#  swagger-ui:
+#    validation-url: localhost
+
+
+
 #    server:
 #      port: 9090
 #    endpoints.web.exposure.include: openapi, swagger-ui

@@ -12,3 +12,13 @@
     mvn install
     mvn spring-boot:run
 ```
+
+### Check SWAGGER-UI
+
+http://localhost:8080/swagger-ui/index.html
+
+Explore /v3/api-docs
+
+### Check OpenApi Definition
+
+http://localhost:8080/v3/api-docs

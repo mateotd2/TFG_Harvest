@@ -113,7 +113,7 @@ public class EmpleadoServiceTest {
 
         when(empleadoRepository.save(empleado)).thenReturn(empleado);
 
-        assertEquals(empleado,empleadoService.updateProfile(1l,empleado));
+        assertEquals(empleado, empleadoService.updateProfile(1l, empleado));
     }
 
 
