@@ -22,7 +22,21 @@ app:
   jwtExpirationMs: 86400
   jwtRefreshExpirationMs: 86400000
 
+springdoc:
+  show-login-endpoint: true
+  api-docs:
+    version: openapi_3_0
 
+  swagger-ui:
+    docExpansion: list
+    persistAuthorization: true
+    use-root-path: true
+    disable-swagger-default-url: true
+    tryItOutEnabled: false
+
+    oAuthFlow:
+      authorizationUrl: https://localhost:8080
+      tokenUrl: https://localhost:8080/api/auth/signin
 
 
   #springdoc:
@@ -35,8 +49,8 @@ app:
   #    path: /api-docs
   #  use-management-port: true
   # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
-springdoc:
-  swagger-ui:
+#springdoc:
+#  swagger-ui:
 #    configUrl: http://localhost:8080/v3/api-docs
 #    urls:
 #      primaryName: /v3/api-docs
