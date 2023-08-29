@@ -5,10 +5,8 @@
         <groupId>com.udc.fic</groupId>
         <artifactId>harvest-proyect</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <!--        <relativePath>../pom.xml</relativePath> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
 
-    <!--    <groupId>com.udc.fic</groupId>-->
     <artifactId>harvest-open-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -29,23 +27,12 @@
         </dependency>
 
 
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>3.0.0</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>
             <version>6.1.2</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-validator</artifactId>-->
-<!--            <version>7.0.1.Final</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.openapitools</groupId>
@@ -62,13 +49,12 @@
 
             <version>2.2.0</version>
 
-
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>snakeyaml</artifactId>-->
-<!--                    <groupId>org.yaml</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
+                <exclusions>
+                    <exclusion>
+                        <artifactId>snakeyaml</artifactId>
+                        <groupId>org.yaml</groupId>
+                    </exclusion>
+                </exclusions>
 
         </dependency>
 
@@ -79,12 +65,12 @@
             <artifactId>springdoc-openapi-ui</artifactId>
 
             <version>1.7.0</version>
-<!--            <exclusions>-->
-<!--                <exclusion>-->
-<!--                    <artifactId>snakeyaml</artifactId>-->
-<!--                    <groupId>org.yaml</groupId>-->
-<!--                </exclusion>-->
-<!--            </exclusions>-->
+                <exclusions>
+                    <exclusion>
+                        <artifactId>snakeyaml</artifactId>
+                        <groupId>org.yaml</groupId>
+                    </exclusion>
+                </exclusions>
 
         </dependency>
 
@@ -174,24 +160,24 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jar-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <archive>-->
-<!--                        <addMavenDescriptor>false</addMavenDescriptor>-->
-<!--                        <manifest>-->
-<!--                            <addClasspath>false</addClasspath>-->
-<!--                            <classpathPrefix>lib/</classpathPrefix>-->
-<!--                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
-<!--                        </manifest>-->
-<!--                        <manifestEntries>-->
-<!--                            &lt;!&ndash;                            <Build-Number>${buildNumber}</Build-Number>&ndash;&gt;-->
-<!--                            <Build-Time>${maven.build.timestamp}</Build-Time>-->
-<!--                        </manifestEntries>-->
-<!--                    </archive>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-jar-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <archive>-->
+            <!--                        <addMavenDescriptor>false</addMavenDescriptor>-->
+            <!--                        <manifest>-->
+            <!--                            <addClasspath>false</addClasspath>-->
+            <!--                            <classpathPrefix>lib/</classpathPrefix>-->
+            <!--                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>-->
+            <!--                        </manifest>-->
+            <!--                        <manifestEntries>-->
+            <!--                            &lt;!&ndash;                            <Build-Number>${buildNumber}</Build-Number>&ndash;&gt;-->
+            <!--                            <Build-Time>${maven.build.timestamp}</Build-Time>-->
+            <!--                        </manifestEntries>-->
+            <!--                    </archive>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
         </plugins>
 
     </build>

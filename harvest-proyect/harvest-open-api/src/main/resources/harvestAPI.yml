@@ -438,7 +438,7 @@ components:
         roles:
           type: array
           maxItems: 5
-          example: [admin]
+          example: [ admin ]
           items:
             type: string
             maxLength: 255
@@ -549,7 +549,7 @@ components:
         roles:
           type: array
           maxItems: 5
-          example: [capataz, tractorista]
+          example: [ capataz, tractorista ]
           items:
             type: string
             maxLength: 255

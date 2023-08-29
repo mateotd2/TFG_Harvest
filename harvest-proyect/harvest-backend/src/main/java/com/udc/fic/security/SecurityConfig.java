@@ -76,6 +76,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(antMatcher("/api/auth/**")).permitAll() // antMatcher para https://github.com/jzheaux/cve-2023-34035-mitigations
                                 .requestMatchers(antMatcher("/v3/api-docs**")).permitAll()
+                                .requestMatchers(antMatcher("/v3/api-docs/swagger-config")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui/index.html")).permitAll()

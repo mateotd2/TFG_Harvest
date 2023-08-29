@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -55,7 +56,6 @@ public class EmpleadoServiceTest {
     }
 
 
-    //    @Test
     @ParameterizedTest
     @ValueSource(strings = {"admin", "tractorista", "capataz"})
     public void signUpTest(String rolParametrico) throws DuplicateInstanceException {
@@ -96,6 +96,71 @@ public class EmpleadoServiceTest {
     }
 
     @Test
+    public void signUpUsernameDuplicationException() {
+        Empleado empleado = new Empleado();
+        empleado.setName("Mateo");
+        empleado.setLastname("tilves");
+        LocalDate birthdate = LocalDate.now();
+        empleado.setBirthdate(birthdate);
+        empleado.setNss("123456789012");
+        empleado.setDni("12345678Q");
+        empleado.setUsername("mateo");
+        empleado.setPassword("password");
+        empleado.setEmail("mateo@mateo.com");
+
+        Rol rolMock = new Rol();
+        rolMock.setId(1L);
+        rolMock.setName(RolUser.ROLE_ADMIN);
+
+
+        when(empleadoRepository.existsByUsername(anyString())).thenReturn(true);
+        Set<Rol> roles = new HashSet<>();
+        Rol rol = new Rol();
+        rol.setId(1L);
+        rol.setName(RolUser.ROLE_ADMIN);
+        roles.add(rol);
+        empleado.setRoles(roles);
+
+        List<String> rolesString = new ArrayList<>();
+        assertThrows(DuplicateInstanceException.class, () -> empleadoService.signUp(empleado, rolesString));
+
+    }
+
+    @Test
+    public void signUpEmailDuplicationException()  {
+        Empleado empleado = new Empleado();
+        empleado.setName("Mateo");
+        empleado.setLastname("tilves");
+        LocalDate birthdate = LocalDate.now();
+        empleado.setBirthdate(birthdate);
+        empleado.setNss("123456789012");
+        empleado.setDni("12345678Q");
+        empleado.setUsername("mateo");
+        empleado.setPassword("password");
+        empleado.setEmail("mateo@mateo.com");
+
+        Rol rolMock = new Rol();
+        rolMock.setId(1L);
+        rolMock.setName(RolUser.ROLE_ADMIN);
+
+
+        when(empleadoRepository.existsByUsername(anyString())).thenReturn(false);
+        when(empleadoRepository.existsByEmail("mateo@mateo.com")).thenReturn(true);
+
+        Set<Rol> roles = new HashSet<>();
+        Rol rol = new Rol();
+        rol.setId(1L);
+        rol.setName(RolUser.ROLE_ADMIN);
+        roles.add(rol);
+        empleado.setRoles(roles);
+
+        List<String> rolesString = new ArrayList<>();
+
+        assertThrows(DuplicateInstanceException.class, () -> empleadoService.signUp(empleado, rolesString));
+
+    }
+
+    @Test
     public void updateProfileTest() throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
@@ -108,12 +173,12 @@ public class EmpleadoServiceTest {
         empleado.setPassword("password");
         empleado.setEmail("mateo@mateo.com");
 
-        when(permissionChecker.checkEmpleado(1l)).thenReturn(empleado);
+        when(permissionChecker.checkEmpleado(1L)).thenReturn(empleado);
         doNothing().when(permissionChecker).checkEmailExists("mateo@mateo.com");
 
         when(empleadoRepository.save(empleado)).thenReturn(empleado);
 
-        assertEquals(empleado, empleadoService.updateProfile(1l, empleado));
+        assertEquals(empleado, empleadoService.updateProfile(1L, empleado));
     }
 
 
