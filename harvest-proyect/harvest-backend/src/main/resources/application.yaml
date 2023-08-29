@@ -28,6 +28,7 @@ springdoc:
     version: openapi_3_0
 
   swagger-ui:
+    urlsPrimaryName: /v3/api-docs
     docExpansion: list
     persistAuthorization: true
     use-root-path: true
@@ -37,40 +38,3 @@ springdoc:
     oAuthFlow:
       authorizationUrl: https://localhost:8080
       tokenUrl: https://localhost:8080/api/auth/signin
-
-
-  #springdoc:
-  #  swagger-ui:
-  #    path: /swagger-ui.html
-  #  management:
-  #    server:
-  #      port: 9090
-  #  api-docs:
-  #    path: /api-docs
-  #  use-management-port: true
-  # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
-#springdoc:
-#  swagger-ui:
-#    configUrl: http://localhost:8080/v3/api-docs
-#    urls:
-#      primaryName: /v3/api-docs
-#    url: /v3/api-docs
-#  show-actuator: true
-#  use-management-port: true
-#  # This property enables the openapi and swagger-ui endpoints to be exposed beneath the actuator base path.
-#
-#management:
-#  endpoints.web.exposure.include: openapi, swagger-ui
-#  server:
-#    port: 9090
-
-#  api-docs:
-#    path: /v3/api-docs
-#  swagger-ui:
-#    validation-url: localhost
-
-
-
-#    server:
-#      port: 9090
-#    endpoints.web.exposure.include: openapi, swagger-ui

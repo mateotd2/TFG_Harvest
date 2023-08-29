@@ -382,24 +382,31 @@ components:
           type: string
           format: email
           maxLength: 254
+          example: juan@santiago.com
         name:
           type: string
           maxLength: 255
+          example: juan
         lastname:
           type: string
           maxLength: 255
+          example: santiago
         dni:
           type: string
           maxLength: 255
+          example: 12345678Q
         nss:
           type: string
           maxLength: 255
+          example: 123456789012
         phone:
           type: string
           maxLength: 255
+          example: 123456789
         birthdate:
           type: string
           format: date
+          example: 1990-08-19
       #          maxLength: 20
       additionalProperties: false
 
@@ -423,12 +430,15 @@ components:
         username:
           type: string
           maxLength: 255
+          example: username
         password:
           type: string
           maxLength: 255
+          example: passwordmorethan10digits
         roles:
           type: array
           maxItems: 5
+          example: [admin]
           items:
             type: string
             maxLength: 255
@@ -436,24 +446,31 @@ components:
           type: string
           format: email
           maxLength: 254
+          example: mateo@mateo.com
         name:
           type: string
           maxLength: 255
+          example: mateo
         lastname:
           type: string
           maxLength: 255
+          example: tilves
         dni:
           type: string
           maxLength: 255
+          example: 12345678Q
         nss:
           type: string
           maxLength: 255
+          example: 123456789012
         phone:
           type: string
           maxLength: 255
+          example: 123456789
         birthdate:
           type: string
           format: date
+          example: 1990-08-19
       #          maxLength: 20
       additionalProperties: false
 
@@ -466,6 +483,7 @@ components:
         message:
           type: string
           maxLength: 4000
+          example: "Usuario registrado correctamente"
       additionalProperties: false
 
     ChangePasswordDTO:
@@ -477,10 +495,12 @@ components:
         oldPassword:
           type: string
           maxLength: 255
+          example: oldpassword
         newPassword:
           type: string
           maxLength: 255
           minLength: 12
+          example: newPasswordLong
       additionalProperties: false
 
     SignInRequestDTO:
@@ -492,9 +512,11 @@ components:
         username:
           type: string
           maxLength: 255
+          example: userexample
         password:
           type: string
           maxLength: 255
+          example: passwordexample
       additionalProperties: false
 
     SignInResponseDTO:
@@ -511,18 +533,23 @@ components:
           format: int64
           maximum: 9223372036854775807
           minimum: 0
+          example: 1
         username:
           type: string
           maxLength: 255
+          example: username
         tokenType:
           type: string
           maxLength: 255
+          example: Bearer
         accessToken:
           type: string
           maxLength: 1000
+          example: BearerToken
         roles:
           type: array
           maxItems: 5
+          example: [capataz, tractorista]
           items:
             type: string
             maxLength: 255
