@@ -54,7 +54,6 @@ public class JwtGeneratorInfo {
 
     public boolean validateJwtToken(String authToken) {
         try {
-//            Jwts.parser().setSigningKey(jwtSecret.getBytes()).parseClaimsJws(authToken);
             Jwts.parserBuilder().setSigningKey(jwtSecret.getBytes()).build().parseClaimsJws(authToken);
             return true;
         } catch (SecurityException e) {

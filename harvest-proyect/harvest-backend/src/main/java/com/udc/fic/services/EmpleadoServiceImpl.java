@@ -24,6 +24,8 @@ import java.util.Set;
 @Transactional
 public class EmpleadoServiceImpl implements EmpleadoService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
+    public static final String ROL_INVALIDO = "Registro de usuario fallido, ROL invalido";
+    public static final String ROLE_IS_NOT_FOUND = "Error: Role is not found.";
     @Autowired
     EmpleadoRepository empleadoRepository;
 
@@ -59,23 +61,23 @@ public class EmpleadoServiceImpl implements EmpleadoService {
             switch (rol) {
                 case "admin" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_ADMIN).orElseThrow(() -> {
-                        LOGGER.error("Registro de usuario fallido, ROL invalido");
-                        return new RuntimeException("Error: Role is not found.");
+                        LOGGER.error(ROL_INVALIDO);
+                        return new RuntimeException(ROLE_IS_NOT_FOUND);
                     });
                     rolesParaUser.add(nuevoRol);
                 }
 
                 case "tractorista" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_TRACTORISTA).orElseThrow(() -> {
-                        LOGGER.error("Registro de usuario fallido, ROL invalido");
-                        return new RuntimeException("Error: Role is not found.");
+                        LOGGER.error(ROL_INVALIDO);
+                        return new RuntimeException(ROLE_IS_NOT_FOUND);
                     });
                     rolesParaUser.add(nuevoRol);
                 }
                 case "capataz" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_CAPATAZ).orElseThrow(() -> {
-                        LOGGER.error("Registro de usuario fallido, ROL invalido");
-                        return new RuntimeException("Error: Role is not found.");
+                        LOGGER.error(ROL_INVALIDO);
+                        return new RuntimeException(ROLE_IS_NOT_FOUND);
 
                     });
                     rolesParaUser.add(nuevoRol);
@@ -97,7 +99,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public Empleado updateProfile(Long id, Empleado datosEmpleado) throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
 
-        LOGGER.info("Actualizacion de informacion de usuario " + id);
+        LOGGER.info("Actualizacion de informacion de usuario {0}", id);
 
         permissionChecker.checkEmailExists(datosEmpleado.getEmail());
 
@@ -118,7 +120,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException {
 
         Empleado empleado = permissionChecker.checkEmpleado(id);
-        LOGGER.info("Intento de cambio de contraseña de usuario: " + id);
+        LOGGER.info("Intento de cambio de contraseña de usuario: {0}" ,id);
 
         if (!bCryptPasswordEncoder.matches(oldPassword, empleado.getPassword())) {
             LOGGER.error("Contraseña incorrecta");

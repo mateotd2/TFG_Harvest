@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>harvest-backend</artifactId>
-    <!--    <packaging>jar</packaging>-->
 
     <name>harvest-backend</name>
     <url>http://maven.apache.org</url>
@@ -124,11 +123,7 @@
 
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.springdoc</groupId>-->
-        <!--            <artifactId>springdoc-openapi-ui</artifactId>-->
-        <!--            <version>1.5.13</version>-->
-        <!--        </dependency>-->
+
 
         <dependency>
 
@@ -210,7 +205,6 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <!--            <scope>provided</scope>-->
             <version>${org.mapstruct.version}</version>
         </dependency>
 
@@ -221,15 +215,10 @@
             <version>${org.projectlombok.version}</version>
             <scope>provided</scope>
 
-            <!--            <optional>true</optional>-->
 
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.projectlombok</groupId>-->
-        <!--            <artifactId>lombok-mapstruct-binding</artifactId>-->
-        <!--            <version>0.2.0</version>-->
-        <!--        </dependency>-->
+
 
 
     </dependencies>

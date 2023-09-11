@@ -44,15 +44,4 @@ public class Empleado {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Rol> roles = new HashSet<>();
 
-    public Empleado(String name, String lastname, String dni, String nss, String phone, String email, String username, String password, LocalDate birthdate) {
-        this.name = name;
-        this.lastname = lastname;
-        this.dni = dni;
-        this.nss = nss;
-        this.phone = phone;
-        this.email = email;
-        this.username = username;
-        this.password = password;
-        this.birthdate = birthdate;
-    }
 }

@@ -33,7 +33,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
 @RestController
 public class AuthenticationController implements AutenticadoApi {
 
@@ -77,9 +77,7 @@ public class AuthenticationController implements AutenticadoApi {
         response.setUsername(userDetails.getUsername());
 
         return ResponseEntity.ok(response);
-//        } catch (AuthenticationException e) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales no validos", e);
-//        }
+
 
 
     }
@@ -134,7 +132,6 @@ public class AuthenticationController implements AutenticadoApi {
     }
 
     @Override
-
     public ResponseEntity<MessageResponseDTO> _signUp(NewUserDTO newUserDTO) {
         try {
 

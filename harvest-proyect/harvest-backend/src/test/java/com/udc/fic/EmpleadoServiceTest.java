@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
-public class EmpleadoServiceTest {
+class EmpleadoServiceTest {
 
     @InjectMocks
     EmpleadoServiceImpl empleadoService;
@@ -58,7 +58,7 @@ public class EmpleadoServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "tractorista", "capataz"})
-    public void signUpTest(String rolParametrico) throws DuplicateInstanceException {
+    void signUpTest(String rolParametrico) throws DuplicateInstanceException {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
         empleado.setLastname("tilves");
@@ -96,7 +96,7 @@ public class EmpleadoServiceTest {
     }
 
     @Test
-    public void signUpUsernameDuplicationException() {
+    void signUpUsernameDuplicationException() {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
         empleado.setLastname("tilves");
@@ -127,7 +127,7 @@ public class EmpleadoServiceTest {
     }
 
     @Test
-    public void signUpEmailDuplicationException()  {
+    void signUpEmailDuplicationException()  {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
         empleado.setLastname("tilves");
@@ -161,7 +161,7 @@ public class EmpleadoServiceTest {
     }
 
     @Test
-    public void updateProfileTest() throws InstanceNotFoundException, DuplicateInstanceException {
+    void updateProfileTest() throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
         empleado.setLastname("tilves");

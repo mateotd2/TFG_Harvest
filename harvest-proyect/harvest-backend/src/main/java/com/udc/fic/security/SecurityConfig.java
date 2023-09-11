@@ -89,7 +89,7 @@ public class SecurityConfig {
                 // H2 console
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)).
                 csrf(AbstractHttpConfigurer::disable);
-//            http.authenticationProvider(authenticationProvider());
+            http.authenticationProvider(authenticationProvider());
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
