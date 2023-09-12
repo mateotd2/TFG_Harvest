@@ -109,12 +109,10 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>src/main/resources/harvestapi.yml</inputSpec>
-<!--                            <inputSpec>${project.basedir}/src/main/resources/HarvestAPI.yml</inputSpec>-->
+                            <inputSpec>${project.basedir}/src/main/resources/HarvestAPI.yml</inputSpec>
                             <generatorName>spring</generatorName>
 
-                            <templateDirectory>src/main/resources/templates</templateDirectory>
-<!--                            <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>-->
+                            <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>
 
 
                             <configOptions>
