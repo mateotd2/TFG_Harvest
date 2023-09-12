@@ -43,13 +43,13 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     @PreAuthorize("hasRole('ADMIN')")
     public Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException {
 
-        LOGGER.info("Registro de usuario " + empleado.getUsername());
-        if (empleadoRepository.existsByUsername(empleado.getUsername())) {
+        LOGGER.info("Registro de usuario {} ", empleado.getUsername());
+        if (empleadoRepository.existsByUsername(empleado.getUsername())==Boolean.TRUE) {
             LOGGER.error("Registro de usuario fallido Username no disponible");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
-        if (empleadoRepository.existsByEmail(empleado.getEmail())) {
+        if (empleadoRepository.existsByEmail(empleado.getEmail())==Boolean.TRUE) {
             LOGGER.error("Registro de usuario fallido Email duplicado");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
@@ -99,7 +99,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public Empleado updateProfile(Long id, Empleado datosEmpleado) throws InstanceNotFoundException, DuplicateInstanceException {
         Empleado empleado = permissionChecker.checkEmpleado(id);
 
-        LOGGER.info("Actualizacion de informacion de usuario {0}", id);
+        LOGGER.info("Actualizacion de informacion de usuario {}", id);
 
         permissionChecker.checkEmailExists(datosEmpleado.getEmail());
 
@@ -120,7 +120,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException {
 
         Empleado empleado = permissionChecker.checkEmpleado(id);
-        LOGGER.info("Intento de cambio de contraseña de usuario: {0}" ,id);
+        LOGGER.info("Intento de cambio de contraseña de usuario: {}" ,id);
 
         if (!bCryptPasswordEncoder.matches(oldPassword, empleado.getPassword())) {
             LOGGER.error("Contraseña incorrecta");

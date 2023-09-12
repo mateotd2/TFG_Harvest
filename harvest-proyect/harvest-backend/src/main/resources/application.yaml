@@ -1,6 +1,12 @@
 server:
   port: 8080
 #  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+management:
+  endpoints:
+    web:
+      cors:
+        allow-origins: "http://localhost:8080"
 spring:
   datasource:
     url: @dataSource.url@
