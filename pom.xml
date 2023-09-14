@@ -43,7 +43,7 @@
                 <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
             </properties>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
