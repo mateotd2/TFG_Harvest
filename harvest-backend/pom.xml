@@ -22,9 +22,9 @@
 
         <!--        SONAR PROPIERTIES           -->
 <!--        <sonar.coverage.exclusions>**/com/udc/fic/security/**/*, **/com/udc/fic/mapper/**/*</sonar.coverage.exclusions>-->
-<!--        <sonar.coverage.jacoco.xmlReportPaths>-->
-<!--            ${project.basedir}/target/site/jacoco/jacoco.xml-->
-<!--        </sonar.coverage.jacoco.xmlReportPaths>-->
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/target/site/jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <!-- ********************************************** -->
