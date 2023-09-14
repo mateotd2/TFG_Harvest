@@ -22,6 +22,7 @@
 
         <!--        SONAR PROPIERTIES           -->
         <sonar.exclusions>**/com/udc/fic/security/**/*, **/com/udc/fic/mapper/**/*</sonar.exclusions>
+        <sonar.inclusions>**/com/udc/fic/security/SecurityConfig.java</sonar.inclusions>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
