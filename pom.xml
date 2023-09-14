@@ -27,12 +27,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+
+        <!--        SONAR PROPIERTIES           -->
         <sonar.organization>mateotd2</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.version>3.9.1.2184</sonar.version>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/harvest-backend/target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.exclusions>**/com/udc/fic/security/**/*, **/com/udc/fic/mapper/**/*</sonar.coverage.exclusions>
     </properties>
 
 
@@ -48,23 +51,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.sonarsource.scanner.maven</groupId>-->
-<!--                        <artifactId>sonar-maven-plugin</artifactId>-->
-<!--                        <version>${sonar.version}</version>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <phase>verify</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>sonar</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
         </profile>
     </profiles>
 
