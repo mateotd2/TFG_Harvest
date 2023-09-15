@@ -31,7 +31,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.management.InstanceNotFoundException;
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
 @RestController
@@ -66,8 +65,7 @@ public class AuthenticationController implements AutenticadoApi {
 
         String jwt = jwtUtils.generateJwtToken(userDetails);
 
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
         SignInResponseDTO response = new SignInResponseDTO();
         response.setId(userDetails.getId());
@@ -79,7 +77,6 @@ public class AuthenticationController implements AutenticadoApi {
         return ResponseEntity.ok(response);
 
 
-
     }
 
     @Override
@@ -87,6 +84,7 @@ public class AuthenticationController implements AutenticadoApi {
         try {
 
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            if (requestAttributes==null){throw new PermissionException();}
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             Long userId = (Long) request.getAttribute("userId");
 
@@ -112,6 +110,7 @@ public class AuthenticationController implements AutenticadoApi {
     public ResponseEntity<MessageResponseDTO> _updateUser(Long id, UpdateUserDTO updateUserDTO) {
         try {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+            if (requestAttributes==null){throw new PermissionException();}
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             Long userId = (Long) request.getAttribute("userId");
 

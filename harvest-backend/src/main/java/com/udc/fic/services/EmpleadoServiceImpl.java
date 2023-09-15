@@ -10,7 +10,6 @@ import com.udc.fic.services.exceptions.IncorrectPasswordException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +22,9 @@ import java.util.Set;
 @Service
 @Transactional
 public class EmpleadoServiceImpl implements EmpleadoService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
     public static final String ROL_INVALIDO = "Registro de usuario fallido, ROL invalido";
     public static final String ROLE_IS_NOT_FOUND = "Error: Role is not found.";
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
     @Autowired
     EmpleadoRepository empleadoRepository;
 
@@ -40,16 +39,16 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
 
     @Override
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException {
 
         LOGGER.info("Registro de usuario {} ", empleado.getUsername());
-        if (empleadoRepository.existsByUsername(empleado.getUsername())==Boolean.TRUE) {
+        if (empleadoRepository.existsByUsername(empleado.getUsername()) == Boolean.TRUE) {
             LOGGER.error("Registro de usuario fallido Username no disponible");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
-        if (empleadoRepository.existsByEmail(empleado.getEmail())==Boolean.TRUE) {
+        if (empleadoRepository.existsByEmail(empleado.getEmail()) == Boolean.TRUE) {
             LOGGER.error("Registro de usuario fallido Email duplicado");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
@@ -100,8 +99,9 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Empleado empleado = permissionChecker.checkEmpleado(id);
 
         LOGGER.info("Actualizacion de informacion de usuario {}", id);
-
-        permissionChecker.checkEmailExists(datosEmpleado.getEmail());
+        if (!empleado.getEmail().equals(datosEmpleado.getEmail())) {
+            permissionChecker.checkEmailExists(datosEmpleado.getEmail());
+        }
 
 
         empleado.setName(datosEmpleado.getName());
@@ -120,7 +120,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void changePassword(Long id, String oldPassword, String newPassword) throws InstanceNotFoundException, IncorrectPasswordException {
 
         Empleado empleado = permissionChecker.checkEmpleado(id);
-        LOGGER.info("Intento de cambio de contraseña de usuario: {}" ,id);
+        LOGGER.info("Intento de cambio de contraseña de usuario: {}", id);
 
         if (!bCryptPasswordEncoder.matches(oldPassword, empleado.getPassword())) {
             LOGGER.error("Contraseña incorrecta");

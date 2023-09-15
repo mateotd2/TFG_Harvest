@@ -30,12 +30,12 @@ app:
 
 springdoc:
   show-login-endpoint: true
-#  api-docs:
-#    version: openapi_3_0
+  #  api-docs:
+  #    version: openapi_3_0
 
   swagger-ui:
     urlsPrimaryName: /v3/api-docs
-#    docExpansion: list
+    #    docExpansion: list
     persistAuthorization: true
     use-root-path: true
     disable-swagger-default-url: true
