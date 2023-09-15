@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: @testDataSource.url@
+    driverClassName: org.h2.Driver
+    username: @dataSource.user@
+    password: @dataSource.password@

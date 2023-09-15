@@ -1,0 +1,46 @@
+server:
+  port: 8080
+#  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+management:
+  endpoints:
+    web:
+      cors:
+        allow-origins: "http://localhost:8080"
+spring:
+  datasource:
+    url: @dataSource.url@
+    driverClassName: org.h2.Driver
+    username: @dataSource.user@
+    password: @dataSource.password@
+  h2:
+    console:
+      path: /h2-console
+      enabled: true
+
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+app:
+  jwtcookie: Bu:GW8bgPlEw
+  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
+  jwtExpirationMs: 86400
+  jwtRefreshExpirationMs: 86400000
+
+springdoc:
+  show-login-endpoint: true
+  #  api-docs:
+  #    version: openapi_3_0
+
+  swagger-ui:
+    urlsPrimaryName: /v3/api-docs
+    #    docExpansion: list
+    persistAuthorization: true
+    use-root-path: true
+    disable-swagger-default-url: true
+    tryItOutEnabled: false
+
+    oAuthFlow:
+      authorizationUrl: https://localhost:8080
+      tokenUrl: https://localhost:8080/api/auth/signin
