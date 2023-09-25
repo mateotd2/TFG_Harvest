@@ -1,35 +1,35 @@
-name: Pruebas y Linter de flutter
-
-on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-
-jobs:
-  build:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout de codigo
-        uses: actions/checkout@v3
-
-      - name: Flutter #https://github.com/subosito/flutter-action
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.13.1'
-          channel: 'stable'
-
-      - name: Dependencies
-        working-directory: ./harvest-frontend
-        run: flutter pub get
-
-      - name: Linter
-        working-directory: ./harvest-frontend
-        run: flutter analyze
-
-      - name: Tests
-        working-directory: ./harvest-frontend
-        run: flutter test
+#name: Pruebas y Linter de flutter
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#      - develop
+#  pull_request:
+#    types: [ opened, synchronize, reopened ]
+#
+#jobs:
+#  build:
+#    name: Test
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout de codigo
+#        uses: actions/checkout@v3
+#
+#      - name: Flutter #https://github.com/subosito/flutter-action
+#        uses: subosito/flutter-action@v2
+#        with:
+#          flutter-version: '3.13.1'
+#          channel: 'stable'
+#
+#      - name: Dependencies
+#        working-directory: ./harvest-frontend
+#        run: flutter pub get
+#
+#      - name: Linter
+#        working-directory: ./harvest-frontend
+#        run: flutter analyze
+#
+#      - name: Tests
+#        working-directory: ./harvest-frontend
+#        run: flutter test

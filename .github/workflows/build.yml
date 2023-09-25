@@ -37,3 +37,22 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify -Pcoverage org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mateotd2_TFG_Harvest_backend
+      # FLUTTER
+      - name: Flutter #https://github.com/subosito/flutter-action
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.13.1'
+          channel: 'stable'
+
+      - name: Dependencies
+        working-directory: ./harvest-frontend
+        run: flutter pub get
+
+      - name: Linter
+        working-directory: ./harvest-frontend
+        run: flutter analyze
+
+      - name: Tests
+        working-directory: ./harvest-frontend
+        run: flutter test
+
