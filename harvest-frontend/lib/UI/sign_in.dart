@@ -21,6 +21,7 @@ class SignInState extends State<SignIn> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passController = TextEditingController();
   var logger = Logger();
+
   @override
   Widget build(BuildContext context) {
     var responseState = Provider.of<SignInResponseModel>(context);
