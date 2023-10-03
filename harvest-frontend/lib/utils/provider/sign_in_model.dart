@@ -6,10 +6,10 @@ import 'package:harvest_api/api.dart';
 
 // Clase que notificara si el Jwt es invalido y sea necesario volver a autenticarse
 class SignInResponseModel extends ChangeNotifier {
-  SignInResponseDTO? _signInResponseDTO;
-
   // final SecureStorageJWT _secureStorageJWT = SecureStorageJWT();
   final storage = const FlutterSecureStorage();
+
+  SignInResponseDTO? _signInResponseDTO;
 
   SignInResponseDTO? get lastResponse => _signInResponseDTO;
 

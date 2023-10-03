@@ -5,8 +5,8 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-
 import 'package:flutter_test/flutter_test.dart';
+
 // import 'package:harvest_api/api.dart';// import 'package:harvest_frontend/main.dart';
 // import 'package:harvest_frontend/utils/provider/sign_in_model.dart';
 
@@ -42,8 +42,7 @@ void main() {
   //   expect(i, 1);
   // });
 
-
-  test('Test para GITHUB ACTIONS', (){
+  test('Test para GITHUB ACTIONS', () {
     expect(1, 1);
   });
 }
