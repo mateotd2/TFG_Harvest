@@ -8,7 +8,7 @@ AutenticadoApi autenticadoApiPlataform([OAuth? oAuth]) {
     autenticadoApi = AutenticadoApi(
         ApiClient(basePath: 'http://10.0.2.2:8080', authentication: oAuth));
   } else {
-    autenticadoApi = AutenticadoApi();
+    autenticadoApi = AutenticadoApi(ApiClient(authentication:oAuth ));
   }
 
   return autenticadoApi;

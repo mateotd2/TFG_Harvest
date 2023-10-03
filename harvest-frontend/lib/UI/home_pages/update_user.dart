@@ -18,20 +18,21 @@ class _UpdateUserState extends State<UpdateUser> {
   final _form = GlobalKey<FormState>();
   DateTime _fehaNac = DateTime.now();
 
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _lastnameController = TextEditingController();
+  final TextEditingController _dniController = TextEditingController();
+  final TextEditingController _nssController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+
+  // TextEditingController _birthDateController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     // Estado y API con token
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final apiInstance = autenticadoApiPlataform(auth);
-
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _nameController = TextEditingController();
-    TextEditingController _lastnameController = TextEditingController();
-    TextEditingController _dniController = TextEditingController();
-    TextEditingController _nssController = TextEditingController();
-    TextEditingController _phoneController = TextEditingController();
-    // TextEditingController _birthDateController = TextEditingController();
 
     final emailValidator =
         ValidationBuilder(localeName: 'es').email().maxLength(254).build();
@@ -129,7 +130,7 @@ class _UpdateUserState extends State<UpdateUser> {
                           onPressed: () async {
                             final DateTime? seleccion = await showDatePicker(
                                 context: context,
-                                initialDate: _fehaNac ,
+                                initialDate: _fehaNac,
                                 firstDate: DateTime(1940),
                                 lastDate: DateTime(2050));
                             if (seleccion != null) {
@@ -163,22 +164,24 @@ class _UpdateUserState extends State<UpdateUser> {
                         logger.d(user);
                         try {
                           MessageResponseDTO? response = await apiInstance
-                              .updateUser(estado.lastResponse!.id, user);
+                              .updateUser(estado.lastResponse!.id, user)
+                              .timeout(Duration(seconds: 10));
 
                           logger.d('Respuesta:');
                           logger.d(response);
                           logger.d('Cambio de datos de usuario Finalizado');
+
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               content: Text(
                                   'Cambio de datos de usuario finalizado.')));
+                          Navigator.pop(context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.red,
-                              content:
-                                  Text('Error en el cambio de contraseña.')));
+                              content: Text(
+                                  'Error en el cambio de informacion de usuario.')));
+                          Navigator.pop(context);
                         }
-
-                        Navigator.pop(context);
                       }
                     },
                     child: const Text('Actualizar'))
