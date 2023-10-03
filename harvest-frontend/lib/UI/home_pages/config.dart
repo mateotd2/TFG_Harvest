@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/update_user.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +32,11 @@ class _ConfigState extends State<Config> {
         InfoCuenta(),
         SizedBox(height: 20),
         ElevatedButton(
-            onPressed: () {}, child: Text('Cambiar informacion de cuenta')),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UpdateUser()));
+            },
+            child: Text('Cambiar informacion de cuenta')),
         SizedBox(height: 80),
         Divider(color: Colors.green, thickness: 1),
         Text('Gestion de contraseña:', style: TextStyle(fontSize: 25)),
@@ -77,6 +82,7 @@ class _ConfigState extends State<Config> {
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
+                                          backgroundColor: Colors.red,
                                           content: Text(
                                               'Error en el cambio de contraseña.')));
                                 }

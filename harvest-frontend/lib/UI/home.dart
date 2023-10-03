@@ -31,14 +31,26 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
 
-    List<Widget> elementosDrawer = [];
+    final List<Widget> elementosDrawer = [
+      Container(
+        height: 50,
+        child: DrawerHeader(
+          child: Text('Harvest App'),
+          decoration: BoxDecoration(color: Colors.green),
+        ),
+      )
+    ];
+    var pagina = 0;
 
-    elementosDrawer.add(Container(
-      height: 50,
-      child: DrawerHeader(
-        child: Text('Harvest App'),
-        decoration: BoxDecoration(color: Colors.green),
-      ),
+    elementosDrawer.add(ListTile(
+      leading: Icon(Icons.settings),
+      title: Text('Configuracion'),
+      onTap: () {
+        logger.d('Configuracion pulsada');
+        pagina++;
+        _controladorPaginas.jumpToPage(pagina);
+        Navigator.pop(context);
+      },
     ));
 
     if (esAdmin(estado.lastResponse)) {
@@ -46,7 +58,8 @@ class _HomeState extends State<Home> {
         title: Text('Funcion para Administradores'),
         onTap: () {
           logger.d('Funcion para admins pulsada');
-          _controladorPaginas.jumpToPage(2);
+          pagina++;
+          _controladorPaginas.jumpToPage(pagina);
           Navigator.pop(context);
         },
         leading: Icon(Icons.admin_panel_settings),
@@ -57,7 +70,8 @@ class _HomeState extends State<Home> {
         title: Text('Funcion para Capataces'),
         onTap: () {
           logger.d('Funcion para capataces pulsada');
-          _controladorPaginas.jumpToPage(3);
+          pagina++;
+          _controladorPaginas.jumpToPage(pagina);
           Navigator.pop(context);
         },
         leading: Icon(Icons.group),
@@ -65,25 +79,16 @@ class _HomeState extends State<Home> {
     }
     if (esTractorista(estado.lastResponse)) {
       elementosDrawer.add(ListTile(
-        title: Text('Funcion para Tractorista'),
+        title: Text('Funcion para Tractoristas'),
         onTap: () {
           logger.d('Funcion para tractorista pulsada');
-          _controladorPaginas.jumpToPage(4);
+          pagina++;
+          _controladorPaginas.jumpToPage(pagina);
           Navigator.pop(context);
         },
         leading: Icon(Icons.local_shipping_outlined),
       ));
     }
-
-    elementosDrawer.add(ListTile(
-      leading: Icon(Icons.settings),
-      title: Text('Configuracion'),
-      onTap: () {
-        logger.d('Configuracion pulsada');
-        _controladorPaginas.jumpToPage(1);
-        Navigator.pop(context);
-      },
-    ));
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.exit_to_app),
@@ -98,11 +103,6 @@ class _HomeState extends State<Home> {
       body: PageView(
         children: paginas,
         controller: _controladorPaginas,
-        onPageChanged: (val) {
-          // setState(() {
-          //   _indice = val;
-          // });
-        },
       ),
       drawer: Drawer(
         child: ListView(
