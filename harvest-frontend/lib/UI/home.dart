@@ -19,12 +19,16 @@ class _HomeState extends State<Home> {
   final PageController _controladorPaginas = PageController();
 
   // Paginas de cada uno de los roles
-  final List<Widget> paginas = [
-    Text('PAGINA PRINCIPAL'),
-    Config(),
-    Text('PAGINA ADMINISTRACION'),
-    Text('PAGINA CAPATACES'),
-    Text('PAGINA TRACTORISTAS'),
+  // final List<Widget> paginas = [
+  //   Text('PAGINA PRINCIPAL'),
+  //   Text('PAGINA ADMINISTRACION'),
+  //   Text('PAGINA CAPATACES'),
+  //   Text('PAGINA TRACTORISTAS'),
+  //   Config(),
+  // ];
+
+  List<Widget> paginas = [
+
   ];
 
   @override
@@ -42,53 +46,95 @@ class _HomeState extends State<Home> {
     ];
     var pagina = 0;
 
+
+    // Primera pagina( pagina principa,)
+    paginas.add(Text('PAGINA PRINCIPAL'));
+
     elementosDrawer.add(ListTile(
-      leading: Icon(Icons.settings),
-      title: Text('Configuracion'),
-      onTap: () {
-        logger.d('Configuracion pulsada');
-        pagina++;
-        _controladorPaginas.jumpToPage(pagina);
+      leading: Icon(Icons.home),
+      title: Text('Pagina Principal'),
+      onTap: (){
+        logger.d('Menu principal pulsado');
+        _controladorPaginas.jumpToPage(0);
         Navigator.pop(context);
       },
     ));
 
+    // Pagina de Administradores
+
+
+
     if (esAdmin(estado.lastResponse)) {
+      paginas.add(Text('PAGINA ADMINISTRACION'));
+      pagina++;
+      final paginaAdmin = pagina;
       elementosDrawer.add(ListTile(
         title: Text('Funcion para Administradores'),
         onTap: () {
           logger.d('Funcion para admins pulsada');
-          pagina++;
-          _controladorPaginas.jumpToPage(pagina);
+          _controladorPaginas.jumpToPage(paginaAdmin);
           Navigator.pop(context);
         },
         leading: Icon(Icons.admin_panel_settings),
       ));
     }
-    if (esCapataz(estado.lastResponse)) {
+
+      // Pagina Capataces
+
+
+
+      if (esCapataz(estado.lastResponse)) {
+        paginas.add(Text('PAGINA CAPATACES'));
+        pagina++;
+        final paginaCapataces = pagina;
+        elementosDrawer.add(ListTile(
+          title: Text('Funcion para Capataces'),
+          onTap: () {
+            logger.d('Funcion para capataces pulsada');
+            _controladorPaginas.jumpToPage(paginaCapataces);
+            Navigator.pop(context);
+          },
+          leading: Icon(Icons.group),
+        ));
+      }
+      // Pagina Tractoristas
+
+
+
+      if (esTractorista(estado.lastResponse)) {
+
+        paginas.add(Text('PAGINA TRACTORISTAS'));
+        pagina++;
+        final paginaTractoristas = pagina;
+        elementosDrawer.add(ListTile(
+          title: Text('Funcion para Tractoristas'),
+          onTap: () {
+            logger.d('Funcion para tractorista pulsada');
+            _controladorPaginas.jumpToPage(paginaTractoristas);
+            Navigator.pop(context);
+          },
+          leading: Icon(Icons.local_shipping_outlined),
+        ));
+      }
+      pagina++;
+      // Pagina Configuracion
+      paginas.add(Config());
+
       elementosDrawer.add(ListTile(
-        title: Text('Funcion para Capataces'),
+        leading: Icon(Icons.settings),
+        title: Text('Configuracion'),
         onTap: () {
-          logger.d('Funcion para capataces pulsada');
-          pagina++;
+          logger.d('Configuración pulsada');
           _controladorPaginas.jumpToPage(pagina);
           Navigator.pop(context);
         },
-        leading: Icon(Icons.group),
       ));
-    }
-    if (esTractorista(estado.lastResponse)) {
-      elementosDrawer.add(ListTile(
-        title: Text('Funcion para Tractoristas'),
-        onTap: () {
-          logger.d('Funcion para tractorista pulsada');
-          pagina++;
-          _controladorPaginas.jumpToPage(pagina);
-          Navigator.pop(context);
-        },
-        leading: Icon(Icons.local_shipping_outlined),
-      ));
-    }
+
+
+
+
+
+
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.exit_to_app),
@@ -101,6 +147,7 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       body: PageView(
+        allowImplicitScrolling: false,
         children: paginas,
         controller: _controladorPaginas,
       ),
