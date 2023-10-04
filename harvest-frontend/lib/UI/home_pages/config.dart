@@ -42,6 +42,7 @@ class _ConfigState extends State<Config> {
         Text('Gestion de contraseña:', style: TextStyle(fontSize: 25)),
         SizedBox(height: 20),
         ElevatedButton(
+            key: Key('passwordKey'),
             onPressed: () {
               showDialog(
                   context: context,
@@ -51,7 +52,7 @@ class _ConfigState extends State<Config> {
                         ElevatedButton(
                             onPressed: () {
                               Navigator.of(context).pop();
-                              logger.d('Cambio de contrasña cancelado');
+                              logger.d('Cambio de contraseña cancelado');
                             },
                             child: Text('Cancelar')),
                         ElevatedButton(
@@ -69,16 +70,19 @@ class _ConfigState extends State<Config> {
                                 // TODO: Segun el error, mostrar un SnackBar distinto
                                 try {
                                   MessageResponseDTO? response =
-                                      await apiInstance.changePassword(
-                                          estado.lastResponse!.id, changePass);
+                                      await apiInstance
+                                          .changePassword(
+                                              estado.lastResponse!.id,
+                                              changePass)
+                                          .timeout(Duration(seconds: 10));
                                   logger.d('Respuesta:');
                                   logger.d(response);
-                                  logger.d('Cambio de contraseña finalizado');
 
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                           content: Text(
                                               'Cambio de contraseña finalizado.')));
+                                  logger.d('Cambio de contraseña finalizado');
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
@@ -100,20 +104,25 @@ class _ConfigState extends State<Config> {
                               child: Column(
                                 children: [
                                   TextFormField(
+                                      key: Key('oldPasswordKey'),
                                       decoration: InputDecoration(
                                           label: Text('Antigua contraseña:')),
                                       onSaved: (pass) =>
                                           _oldPassword = pass ?? '',
                                       obscureText: true),
                                   TextFormField(
+                                      key: Key('newPasswordKey'),
                                       decoration: InputDecoration(
                                           label: Text('Nueva contraseña:')),
                                       validator: (pass) {
                                         if (pass!.isEmpty) {
                                           return 'Añada una nueva contraseña';
                                         }
-                                        if (pass.length < 12) {
+                                        if (pass.length <= 12) {
                                           return 'Necesita superar los 12 caracteres';
+                                        }
+                                        if (pass.length >= 254) {
+                                          return 'Contraseña invalida';
                                         }
                                         return null;
                                       },

@@ -50,11 +50,13 @@ class _UpdateUserState extends State<UpdateUser> {
             child: Column(
               children: [
                 TextFormField(
+                  key: Key('emailKey'),
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                   validator: emailValidator,
                 ),
                 TextFormField(
+                  key: Key('nameKey'),
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Nombre'),
                   validator: (valor) {
@@ -70,6 +72,7 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  key: Key('lasnameKey'),
                   controller: _lastnameController,
                   decoration: InputDecoration(labelText: 'Apellidos'),
                   validator: (valor) {
@@ -85,6 +88,7 @@ class _UpdateUserState extends State<UpdateUser> {
                 ),
 
                 TextFormField(
+                  key: Key('dniKey'),
                   controller: _dniController,
                   decoration: InputDecoration(labelText: 'DNI'),
                   validator: (valor) {
@@ -100,6 +104,7 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  key: Key('nssKey'),
                   controller: _nssController,
                   decoration: InputDecoration(labelText: 'NSS'),
                   validator: (valor) {
@@ -114,6 +119,7 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  key: Key('phoneKey'),
                   controller: _phoneController,
                   decoration: InputDecoration(labelText: 'Telefono'),
                   validator: phoneValidator,
@@ -122,6 +128,7 @@ class _UpdateUserState extends State<UpdateUser> {
                 // Esto mantiene el estado del formulario al seleccionar una nueva fecha
                 StatefulBuilder(builder: (context, setState) {
                   return TextFormField(
+                    key: Key('dateKey'),
                     readOnly: true,
                     decoration: InputDecoration(
                         labelText: 'Fecha',
@@ -148,10 +155,11 @@ class _UpdateUserState extends State<UpdateUser> {
                 }),
 
                 ElevatedButton(
+                    key: Key('buttonKey'),
                     onPressed: () async {
                       if (_form.currentState!.validate()) {
                         _form.currentState!.save();
-                        logger.d('Cambio de informacion ed usuario:');
+                        logger.d('Cambio de informacion de usuario:');
 
                         UpdateUserDTO user = UpdateUserDTO(
                             email: _emailController.text,
@@ -177,6 +185,7 @@ class _UpdateUserState extends State<UpdateUser> {
                           Navigator.pop(context);
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              key: Key('snackKey'),
                               backgroundColor: Colors.red,
                               content: Text(
                                   'Error en el cambio de informacion de usuario.')));
