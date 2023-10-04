@@ -27,9 +27,7 @@ class _HomeState extends State<Home> {
   //   Config(),
   // ];
 
-  List<Widget> paginas = [
-
-  ];
+  List<Widget> paginas = [];
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +44,13 @@ class _HomeState extends State<Home> {
     ];
     var pagina = 0;
 
-
     // Primera pagina( pagina principa,)
     paginas.add(Text('PAGINA PRINCIPAL'));
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.home),
       title: Text('Pagina Principal'),
-      onTap: (){
+      onTap: () {
         logger.d('Menu principal pulsado');
         _controladorPaginas.jumpToPage(0);
         Navigator.pop(context);
@@ -61,8 +58,6 @@ class _HomeState extends State<Home> {
     ));
 
     // Pagina de Administradores
-
-
 
     if (esAdmin(estado.lastResponse)) {
       paginas.add(Text('PAGINA ADMINISTRACION'));
@@ -79,62 +74,51 @@ class _HomeState extends State<Home> {
       ));
     }
 
-      // Pagina Capataces
+    // Pagina Capataces
 
-
-
-      if (esCapataz(estado.lastResponse)) {
-        paginas.add(Text('PAGINA CAPATACES'));
-        pagina++;
-        final paginaCapataces = pagina;
-        elementosDrawer.add(ListTile(
-          title: Text('Funcion para Capataces'),
-          onTap: () {
-            logger.d('Funcion para capataces pulsada');
-            _controladorPaginas.jumpToPage(paginaCapataces);
-            Navigator.pop(context);
-          },
-          leading: Icon(Icons.group),
-        ));
-      }
-      // Pagina Tractoristas
-
-
-
-      if (esTractorista(estado.lastResponse)) {
-
-        paginas.add(Text('PAGINA TRACTORISTAS'));
-        pagina++;
-        final paginaTractoristas = pagina;
-        elementosDrawer.add(ListTile(
-          title: Text('Funcion para Tractoristas'),
-          onTap: () {
-            logger.d('Funcion para tractorista pulsada');
-            _controladorPaginas.jumpToPage(paginaTractoristas);
-            Navigator.pop(context);
-          },
-          leading: Icon(Icons.local_shipping_outlined),
-        ));
-      }
+    if (esCapataz(estado.lastResponse)) {
+      paginas.add(Text('PAGINA CAPATACES'));
       pagina++;
-      // Pagina Configuracion
-      paginas.add(Config());
-
+      final paginaCapataces = pagina;
       elementosDrawer.add(ListTile(
-        leading: Icon(Icons.settings),
-        title: Text('Configuracion'),
+        title: Text('Funcion para Capataces'),
         onTap: () {
-          logger.d('Configuración pulsada');
-          _controladorPaginas.jumpToPage(pagina);
+          logger.d('Funcion para capataces pulsada');
+          _controladorPaginas.jumpToPage(paginaCapataces);
           Navigator.pop(context);
         },
+        leading: Icon(Icons.group),
       ));
+    }
+    // Pagina Tractoristas
 
+    if (esTractorista(estado.lastResponse)) {
+      paginas.add(Text('PAGINA TRACTORISTAS'));
+      pagina++;
+      final paginaTractoristas = pagina;
+      elementosDrawer.add(ListTile(
+        title: Text('Funcion para Tractoristas'),
+        onTap: () {
+          logger.d('Funcion para tractorista pulsada');
+          _controladorPaginas.jumpToPage(paginaTractoristas);
+          Navigator.pop(context);
+        },
+        leading: Icon(Icons.local_shipping_outlined),
+      ));
+    }
+    pagina++;
+    // Pagina Configuracion
+    paginas.add(Config());
 
-
-
-
-
+    elementosDrawer.add(ListTile(
+      leading: Icon(Icons.settings),
+      title: Text('Configuracion'),
+      onTap: () {
+        logger.d('Configuración pulsada');
+        _controladorPaginas.jumpToPage(pagina);
+        Navigator.pop(context);
+      },
+    ));
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.exit_to_app),
