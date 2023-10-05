@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:harvest_frontend/UI/home_pages/admin.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class _HomeState extends State<Home> {
     // Pagina de Administradores
 
     if (esAdmin(estado.lastResponse)) {
-      paginas.add(Text('PAGINA ADMINISTRACION'));
+      paginas.add(Admin());
       pagina++;
       final paginaAdmin = pagina;
       elementosDrawer.add(ListTile(
