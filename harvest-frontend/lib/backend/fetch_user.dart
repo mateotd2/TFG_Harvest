@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:logger/logger.dart';
@@ -18,8 +20,14 @@ Future<void> fetchUser(SignInResponseModel responseState, context,
   }
 
   try {
-    final result = await apiInstance.signin(signInRequest);
+    final result = await apiInstance.signin(signInRequest).timeout(Duration(seconds: 10));
     processResponse(result);
+  }on TimeoutException {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Comunicacion con el servidor fallida')));
+    logger.d(
+        'Comunicacion con el servidor fallida');
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,

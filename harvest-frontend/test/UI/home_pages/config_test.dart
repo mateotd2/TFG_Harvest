@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/config.dart';
+import 'package:harvest_frontend/UI/home_pages/config_pages/config.dart';
 import 'package:harvest_frontend/utils/provider/sign_in_model.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';

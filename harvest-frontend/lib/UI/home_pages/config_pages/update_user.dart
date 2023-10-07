@@ -1,12 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../utils/plataform_apis/auth_api.dart';
-import '../../utils/provider/sign_in_model.dart';
-import '../../utils/validators.dart';
+import '../../../utils/plataform_apis/auth_api.dart';
+import '../../../utils/provider/sign_in_model.dart';
+import '../../../utils/validators.dart';
 
 class UpdateUser extends StatefulWidget {
   @override
@@ -183,7 +185,14 @@ class _UpdateUserState extends State<UpdateUser> {
                               content: Text(
                                   'Cambio de datos de usuario finalizado.')));
                           Navigator.pop(context);
-                        } catch (e) {
+                        } on TimeoutException {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              key: Key('snackKey'),
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                  'Comunicacion con el servidor fallida')));
+                          Navigator.pop(context);
+                        } catch(e){
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               key: Key('snackKey'),
                               backgroundColor: Colors.red,

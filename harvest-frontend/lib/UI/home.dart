@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:harvest_frontend/UI/home_pages/admin.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/provider/sign_in_model.dart';
-import 'home_pages/config.dart';
+import 'home_pages/config_pages/config.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

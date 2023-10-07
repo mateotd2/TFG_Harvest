@@ -1,5 +1,7 @@
 
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
@@ -227,6 +229,14 @@ class _SignupEmpState  extends State<SignupEmp>{
                             content: Text(
                                 'Empleado agregado.')));
                         Navigator.pop(context);
+
+                      }on TimeoutException {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            key: Key('snackKey'),
+                            backgroundColor: Colors.red,
+                            content: Text(
+                                'Comunicacion con el servidor fallida')));
+                        Navigator.pop(context);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
@@ -235,6 +245,7 @@ class _SignupEmpState  extends State<SignupEmp>{
                                 'Error al dar de alta al usuario.')));
                         Navigator.pop(context);
                       }
+
                     }
                   },
                   child: const Text('Confirmar'))

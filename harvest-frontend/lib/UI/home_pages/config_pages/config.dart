@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/update_user.dart';
+import 'package:harvest_frontend/UI/home_pages/config_pages/update_user.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../utils/plataform_apis/auth_api.dart';
-import '../../utils/provider/sign_in_model.dart';
+import '../../../utils/plataform_apis/auth_api.dart';
+import '../../../utils/provider/sign_in_model.dart';
 
 class Config extends StatefulWidget {
   @override
@@ -83,6 +85,13 @@ class _ConfigState extends State<Config> {
                                           content: Text(
                                               'Cambio de contraseña finalizado.')));
                                   logger.d('Cambio de contraseña finalizado');
+                                } on TimeoutException {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                              'Comunicacion con el servidor fallida')));
+
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
