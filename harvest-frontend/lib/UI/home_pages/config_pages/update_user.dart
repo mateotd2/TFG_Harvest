@@ -27,7 +27,6 @@ class _UpdateUserState extends State<UpdateUser> {
   final TextEditingController _nssController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-  // TextEditingController _birthDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

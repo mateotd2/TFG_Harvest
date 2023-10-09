@@ -15,12 +15,19 @@
     mvn spring-boot:run
 ```
 
-### Check SWAGGER-UI
+#### Check SWAGGER-UI
 
 http://localhost:8080/swagger-ui/index.html
 
 Explore /v3/api-docs
 
-### Check OpenApi Definition
+#### Check OpenApi Definition
 
 http://localhost:8080/v3/api-docs
+
+
+### 3- Start frontend:
+
+```
+    flutter run -d chrome 
+```
