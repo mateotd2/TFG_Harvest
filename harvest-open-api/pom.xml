@@ -94,7 +94,7 @@
     <build>
         <plugins>
 
-
+<!--        GENERACION DE CONTROLADORES JAVA SPRING-->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -112,7 +112,7 @@
 
                             <templateDirectory>${project.basedir}/src/main/resources/templates</templateDirectory>
 
-
+                            <generateAliasAsModel>true</generateAliasAsModel>
                             <configOptions>
                                 <title>TestAPI</title>
                                 <library>spring-boot</library>
@@ -140,35 +140,36 @@
             </plugin>
 
 
-                        <plugin>
-                            <groupId>org.openapitools</groupId>
-                            <artifactId>openapi-generator-maven-plugin</artifactId>
-                            <!-- RELEASE_VERSION -->
-                            <version>6.3.0</version>
-                            <!-- /RELEASE_VERSION -->
+<!--        GENERACION DE API CLIENT PARA DART-->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <!-- RELEASE_VERSION -->
+                <version>6.3.0</version>
+                <!-- /RELEASE_VERSION -->
 
 
-                            <executions>
-                                <execution>
-                                    <id>api</id>
-                                    <goals>
-                                        <goal>generate</goal>
-                                    </goals>
-                                    <configuration>
-                                        <inputSpec>${project.basedir}/src/main/resources/HarvestAPI.yml</inputSpec>
-                                        <generatorName>dart</generatorName>
-                                        <output>${project.basedir}/target/dart</output>
-                                        <configOptions>
-                                            <pubAuthor>Mateo</pubAuthor>
-                                            <pubAuthorEmail>mateo.tilves@udc.es</pubAuthorEmail>
-                                            <pubName>harvest_api</pubName>
+                <executions>
+                    <execution>
+                        <id>api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/HarvestAPI.yml</inputSpec>
+                            <generatorName>dart</generatorName>
+                            <output>${project.basedir}/target/dart</output>
+                            <configOptions>
+                                <pubAuthor>Mateo</pubAuthor>
+                                <pubAuthorEmail>mateo.tilves@udc.es</pubAuthorEmail>
+                                <pubName>harvest_api</pubName>
 
-                                        </configOptions>
+                            </configOptions>
 
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
 
             <plugin>

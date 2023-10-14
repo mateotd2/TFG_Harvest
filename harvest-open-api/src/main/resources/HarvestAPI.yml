@@ -19,6 +19,9 @@ tags:
   - name: Administrador
     description: Funcionalidades de Administrador
 
+  - name: Trabajadores
+    description: Funcionalidades para la gestion de Trabajadores
+
   - name: Capataz
     description: Funcionalidades de Capataz
 
@@ -42,7 +45,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInRequestDTO'
+              $ref: './schemas.yml#/components/schemas/SignInRequestDTO'
             example:
               username: validUsername
               password: ejemploPassword
@@ -52,7 +55,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignInResponseDTO'
+                $ref: './schemas.yml#/components/schemas/SignInResponseDTO'
               example:
                 id: 1
                 username: validUsername
@@ -65,7 +68,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 message: 'Datos no validos'
                 status: 400
@@ -74,7 +77,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 message: Bad credentials
                 status: 401
@@ -84,7 +87,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/signin
                 error: Unauthorized
@@ -96,7 +99,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
 
 
   /api/auth/{id}/changePassword:
@@ -127,7 +130,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ChangePasswordDTO'
+              $ref: './schemas.yml#/components/schemas/ChangePasswordDTO'
             example:
               oldPassword: 12345678
               newPassword: 87654321
@@ -137,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResponseDTO'
+                $ref: './schemas.yml#/components/schemas/MessageResponseDTO'
               example:
                 message: 'Contraseña cambiada'
 
@@ -146,7 +149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 message: 'Datos no validos'
                 status: 400
@@ -156,7 +159,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/signin
                 error: Unauthorized
@@ -168,7 +171,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/{id}/changePassword
                 error: Unauthorized
@@ -179,7 +182,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
 
   /api/auth/{id}/updateUser:
     post:
@@ -209,7 +212,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateUserDTO'
+              $ref: './schemas.yml#/components/schemas/UpdateUserDTO'
             example:
               email: juan@filo.com
               name: juan
@@ -225,7 +228,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResponseDTO'
+                $ref: './schemas.yml#/components/schemas/MessageResponseDTO'
               example:
                 message: 'User updated successfully!'
         400:
@@ -233,7 +236,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 message: 'Datos no validos'
                 status: 400
@@ -242,7 +245,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/signin
                 error: Unauthorized
@@ -253,7 +256,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/updateUser
                 error: Conflict
@@ -264,7 +267,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/updateUser
                 error: Unauthorized
@@ -275,7 +278,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
 
 
   /api/auth/signup:
@@ -295,7 +298,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/NewUserDTO'
+              $ref: './schemas.yml#/components/schemas/NewUserDTO'
             example:
               username: Juan
               password: 12345678
@@ -315,7 +318,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MessageResponseDTO'
+                $ref: './schemas.yml#/components/schemas/MessageResponseDTO'
               example:
                 message: 'User registered successfully!'
         400:
@@ -323,7 +326,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 message: 'Usuario no valido'
                 status: 400
@@ -333,7 +336,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/signin
                 error: Unauthorized
@@ -345,7 +348,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
               example:
                 path: /api/auth/signin
                 error: Unauthorized
@@ -356,238 +359,134 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: './schemas.yml#/components/schemas/Error'
+
+  /api/workers:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener resumen de trabajadores
+      operationId: getWorkers
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de trabajadores
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/WorkerListDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+
+
+    post:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar un trabajador ( Solo puede el administrador)
+      operationId: signUpWorker
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de trabajador
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas.yml#/components/schemas/NewWorkerDTO'
+            example:
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+              address: Ronda de Outeiro, nº 26 5ºA
+
+      responses:
+        201:
+          description: Exito en el registro de Trabajador
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Worker registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+              example:
+                message: 'Trabajador no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: './schemas.yml#/components/schemas/Error'
 
 security:
   - bearerAuth: [ ]
 
-    ################################################# COMPONENTS #######################################################
-
-components:
-  schemas:
-    UpdateUserDTO:
-      type: object
-      required:
-        - email
-        - name
-        - lastname
-        - dni
-        - nss
-        - phone
-        - birthdate
-
-      properties:
-
-        email:
-          type: string
-          format: email
-          maxLength: 254
-          example: juan@santiago.com
-        name:
-          type: string
-          maxLength: 255
-          example: juan
-        lastname:
-          type: string
-          maxLength: 255
-          example: santiago
-        dni:
-          type: string
-          maxLength: 255
-          example: 12345678Q
-        nss:
-          type: string
-          maxLength: 255
-          example: 123456789012
-        phone:
-          type: string
-          maxLength: 255
-          example: 123456789
-        birthdate:
-          type: string
-          format: date
-          example: 1990-08-19
-      #          maxLength: 20
-      additionalProperties: false
-
-
-
-    NewUserDTO:
-      type: object
-      required:
-        - username
-        - password
-        - roles
-        - email
-        - name
-        - lastname
-        - dni
-        - nss
-        - phone
-        - birthdate
-
-      properties:
-        username:
-          type: string
-          maxLength: 255
-          example: username
-        password:
-          type: string
-          maxLength: 255
-          example: passwordmorethan10digits
-        roles:
-          type: array
-          maxItems: 5
-          example: [ admin ]
-          items:
-            type: string
-            maxLength: 255
-        email:
-          type: string
-          format: email
-          maxLength: 254
-          example: mateo@mateo.com
-        name:
-          type: string
-          maxLength: 255
-          example: mateo
-        lastname:
-          type: string
-          maxLength: 255
-          example: tilves
-        dni:
-          type: string
-          maxLength: 255
-          example: 12345678Q
-        nss:
-          type: string
-          maxLength: 255
-          example: 123456789012
-        phone:
-          type: string
-          maxLength: 255
-          example: 123456789
-        birthdate:
-          type: string
-          format: date
-          example: 1990-08-19
-      #          maxLength: 20
-      additionalProperties: false
-
-
-    MessageResponseDTO:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
-          maxLength: 4000
-          example: "Usuario registrado correctamente"
-      additionalProperties: false
-
-    ChangePasswordDTO:
-      type: object
-      required:
-        - newPassword
-        - oldPassword
-      properties:
-        oldPassword:
-          type: string
-          maxLength: 255
-          example: oldpassword
-        newPassword:
-          type: string
-          maxLength: 255
-          minLength: 12
-          example: newPasswordLong
-      additionalProperties: false
-
-    SignInRequestDTO:
-      type: object
-      required:
-        - username
-        - password
-      properties:
-        username:
-          type: string
-          maxLength: 255
-          example: userexample
-        password:
-          type: string
-          maxLength: 255
-          example: passwordexample
-      additionalProperties: false
-
-    SignInResponseDTO:
-      type: object
-      required:
-        - id
-        - username
-        - tokenType
-        - accessToken
-        - roles
-      properties:
-        id:
-          type: integer
-          format: int64
-          maximum: 9223372036854775807
-          minimum: 0
-          example: 1
-        username:
-          type: string
-          maxLength: 255
-          example: username
-        tokenType:
-          type: string
-          maxLength: 255
-          example: Bearer
-        accessToken:
-          type: string
-          maxLength: 1000
-          example: BearerToken
-        roles:
-          type: array
-          maxItems: 5
-          example: [ capataz, tractorista ]
-          items:
-            type: string
-            maxLength: 255
-      additionalProperties: false
-
-
-
-    Error:
-      type: object
-      properties:
-        path:
-          description: Path al error
-          type: string
-          maxLength: 500
-          nullable: false
-          example: "/error"
-        error:
-          description: tipo de error
-          type: string
-          maxLength: 500
-          nullable: false
-          example: "Unauthorized"
-        message:
-          description: Mensaje de error explicativo
-          type: string
-          maxLength: 500
-          nullable: false
-          example: "Full authentication is required to access this resource"
-        status:
-          description: Codigo de error
-          type: integer
-          format: int32
-          nullable: false
-          example: 401
-      additionalProperties: false
-
-  securitySchemes:
-    bearerAuth: # arbitrary name for the security scheme
-      type: http
-      scheme: bearer
-      bearerFormat: JWT    # optional, arbitrary value for documentation purposes

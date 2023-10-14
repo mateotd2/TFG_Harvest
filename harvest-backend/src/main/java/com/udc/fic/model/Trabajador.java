@@ -1,7 +1,6 @@
 package com.udc.fic.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,14 +9,12 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email"), @UniqueConstraint(columnNames = "username"),})
-public class Empleado {
-
-
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "dni"), @UniqueConstraint(columnNames = "nss")})
+public class Trabajador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,17 +29,9 @@ public class Empleado {
     @Column(nullable = false)
     private String phone;
     @Column(nullable = false)
-    @Email
-    private String email;
-    @Column(nullable = false)
-    private String username;
-    @Column(nullable = false)
-    private String password;
-    @Column(nullable = false)
     private LocalDate birthdate;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Rol> roles = new HashSet<>();
-    @Column
+    @Column(nullable = false)
     private String direccion;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "trabajador")
+    private Set<Disponibilidad> calendario = new HashSet<>();
 }

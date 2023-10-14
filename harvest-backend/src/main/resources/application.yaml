@@ -41,6 +41,6 @@ springdoc:
     disable-swagger-default-url: true
     tryItOutEnabled: false
 
-    oAuthFlow:
-      authorizationUrl: https://localhost:8080
-      tokenUrl: https://localhost:8080/api/auth/signin
+#    oAuthFlow:
+#      authorizationUrl: https://localhost:8080
+#      tokenUrl: https://localhost:8080/api/auth/signin

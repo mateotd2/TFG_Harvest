@@ -13,6 +13,7 @@ import com.udc.fic.security.UserDetailsImpl;
 import com.udc.fic.security.jwt.JwtGeneratorInfo;
 import com.udc.fic.services.EmpleadoService;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.NoRoleException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -55,10 +56,10 @@ class AuthenticationControllerTest {
     private MessageSource messageSource;
 
 
-    private Empleado crearAdmin() throws DuplicateInstanceException {
+    private Empleado crearAdmin() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "admin", "admin", "123456789Q", "123456789012",
-                "123456789", "admin@prueba.com", "admin", "admin", LocalDate.now(), null);
+                "123456789", "admin@prueba.com", "admin", "admin", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("admin");
@@ -66,10 +67,10 @@ class AuthenticationControllerTest {
         return empleadoService.signUp(empleado, roles);
     }
 
-    private Empleado crearCapataz() throws DuplicateInstanceException {
+    private Empleado crearCapataz() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "capataz", "capataz", "123456789Q", "123456789012",
-                "123456789", "capataz@prueba.com", "capataz", "capataz", LocalDate.now(), null);
+                "123456789", "capataz@prueba.com", "capataz", "capataz", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("capataz");
@@ -77,10 +78,10 @@ class AuthenticationControllerTest {
         return empleadoService.signUp(empleado, roles);
     }
 
-    private Empleado crearTractorista() throws DuplicateInstanceException {
+    private Empleado crearTractorista() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "tractorista", "tractorista", "123456789Q", "123456789012",
-                "123456789", "tractorista@prueba.com", "tractorista", "tractorista", LocalDate.now(), null);
+                "123456789", "tractorista@prueba.com", "tractorista", "tractorista", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("tractorista");
@@ -104,7 +105,7 @@ class AuthenticationControllerTest {
 
     @Test
     void postSignin_BadCredentials() throws Exception {
-        Empleado admin = crearAdmin();
+//        Empleado admin = crearAdmin();
         SignInRequestDTO signInRequestDTO = new SignInRequestDTO();
         signInRequestDTO.setPassword("bad");
         signInRequestDTO.setUsername("bad");

@@ -9,6 +9,7 @@ import com.udc.fic.security.jwt.JwtGeneratorInfo;
 import com.udc.fic.services.EmpleadoService;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import com.udc.fic.services.exceptions.IncorrectPasswordException;
+import com.udc.fic.services.exceptions.NoRoleException;
 import com.udc.fic.services.exceptions.PermissionException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,9 @@ public class AuthenticationController implements AutenticadoApi {
         try {
 
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-            if (requestAttributes==null){throw new PermissionException();}
+            if (requestAttributes == null) {
+                throw new PermissionException();
+            }
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             Long userId = (Long) request.getAttribute("userId");
 
@@ -110,7 +113,9 @@ public class AuthenticationController implements AutenticadoApi {
     public ResponseEntity<MessageResponseDTO> _updateUser(Long id, UpdateUserDTO updateUserDTO) {
         try {
             RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-            if (requestAttributes==null){throw new PermissionException();}
+            if (requestAttributes == null) {
+                throw new PermissionException();
+            }
             HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
             Long userId = (Long) request.getAttribute("userId");
 
@@ -144,6 +149,8 @@ public class AuthenticationController implements AutenticadoApi {
             return ResponseEntity.created(location).body(message);
         } catch (DuplicateInstanceException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email o username duplicado", e);
+        } catch (NoRoleException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Empleado sin roles", e);
         }
     }
 }
