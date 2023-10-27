@@ -39,7 +39,7 @@ springdoc:
     persistAuthorization: true
     use-root-path: true
     disable-swagger-default-url: true
-    tryItOutEnabled: false
+    tryItOutEnabled: true
 
 #    oAuthFlow:
 #      authorizationUrl: https://localhost:8080

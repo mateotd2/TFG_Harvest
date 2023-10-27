@@ -94,7 +94,7 @@
     <build>
         <plugins>
 
-<!--        GENERACION DE CONTROLADORES JAVA SPRING-->
+            <!--        GENERACION DE CONTROLADORES JAVA SPRING-->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
@@ -140,7 +140,7 @@
             </plugin>
 
 
-<!--        GENERACION DE API CLIENT PARA DART-->
+            <!--        GENERACION DE API CLIENT PARA DART-->
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>

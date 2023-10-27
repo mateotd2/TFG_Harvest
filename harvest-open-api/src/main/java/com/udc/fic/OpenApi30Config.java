@@ -27,18 +27,8 @@ import org.springframework.context.annotation.Configuration;
                 title = "Harvest-BackEnd Api", version = "v0.1", contact = @Contact(name = "Mateo Tilves Freijeiro",
                 email = "mateo.tilves@udc.es"),
                 summary = "SWAGGER UI para la documentacion del API REST")
-//        tags = {@Tag(name ="Autenticado",description = ""),@Tag(name ="Trabajadores",description = "")},
+
 )
 public class OpenApi30Config {
 
-//    @Bean
-//    public GroupedOpenApi openApi(){
-//        return GroupedOpenApi.builder().group("custom").packagesToScan("com.udc.fic.harvest.controller").build();
-//    }
-//
-//    @Bean
-//    @Primary
-//    public SwaggerUiConfigParameters swaggerUiConfigParameters() {
-//        return new SwaggerUiConfigParameters();
-//    }
 }

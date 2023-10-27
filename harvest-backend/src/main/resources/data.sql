@@ -10,9 +10,9 @@ insert into USER_ROLES (role_id,user_id) values (1,1)
 insert into USER_ROLES (role_id,user_id) values (2,1)
 insert into USER_ROLES (role_id,user_id) values (3,1)
 
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,direccion) values ('trabajador1','garcia1','12345678A','123456789012','111111111','1990-06-15','Direccion')
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,direccion) values ('trabajador2','garcia2','98765432A','210987654321','222222222','1990-06-15','Direccion')
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,direccion) values ('trabajador3','garcia3','19283847A','211029384756','333333333','1990-06-15','Direccion')
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address) values ('trabajador1','garcia1','12345678A','123456789012','111111111','1990-06-15','Direccion')
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address) values ('trabajador2','garcia2','98765432A','210987654321','222222222','1990-06-15','Direccion')
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address) values ('trabajador3','garcia3','19283847A','211029384756','333333333','1990-06-15','Direccion')
 
 insert into Disponibilidad (dia, hora_Entrada, hora_Salida,trabajador_id) values ('2023-10-25','08:30:00','14:30:00',1)
 insert into Disponibilidad (dia, hora_Entrada, hora_Salida,trabajador_id) values ('2023-10-25','08:30:00','14:30:00',1)

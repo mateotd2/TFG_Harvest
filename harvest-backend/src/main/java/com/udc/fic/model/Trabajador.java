@@ -31,7 +31,7 @@ public class Trabajador {
     @Column(nullable = false)
     private LocalDate birthdate;
     @Column(nullable = false)
-    private String direccion;
+    private String address;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "trabajador")
     private Set<Disponibilidad> calendario = new HashSet<>();
 }
