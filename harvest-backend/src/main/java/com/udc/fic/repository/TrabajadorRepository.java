@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface TrabajadorRepository extends JpaRepository<Trabajador, Long> {
 
 
-    Boolean existsByDni(String dni);
+    Boolean existsByDniOrNss(String dni, String nss);
 
     Optional<Trabajador> findByName(String name);
 

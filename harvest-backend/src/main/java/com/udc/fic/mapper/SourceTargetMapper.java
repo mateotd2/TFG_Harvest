@@ -20,6 +20,7 @@ public interface SourceTargetMapper {
     WorkerDTO toWorker(Trabajador trabajador);
 
     @Mapping(target = "calendario", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Trabajador toTrabajador(WorkerDTO workerDTO);
 
 }

@@ -114,6 +114,7 @@
 
                             <generateAliasAsModel>true</generateAliasAsModel>
                             <configOptions>
+
                                 <title>TestAPI</title>
                                 <library>spring-boot</library>
                                 <useSpringBoot3>true</useSpringBoot3>

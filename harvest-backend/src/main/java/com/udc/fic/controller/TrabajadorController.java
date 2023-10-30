@@ -7,11 +7,9 @@ import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.services.TrabajadorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.management.InstanceNotFoundException;
@@ -30,9 +28,10 @@ public class TrabajadorController implements TrabajadoresApi {
     @Autowired
     SourceTargetMapper mapper;
 
+
     @Override
     public ResponseEntity<WorkerDTO> _getWorker(Long id) throws Exception {
-        return ResponseEntity.ok(  mapper.toWorker(trabajadorService.obtenerTrabajador(id)));
+        return ResponseEntity.ok(mapper.toWorker(trabajadorService.obtenerTrabajador(id)));
     }
 
     @Override
@@ -44,24 +43,20 @@ public class TrabajadorController implements TrabajadoresApi {
 
     @Override
     public ResponseEntity<MessageResponseDTO> _signUpWorker(WorkerDTO workerDTO) throws Exception {
-
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(trabajadorService
-                        .registrarTrabajador(mapper.toTrabajador(workerDTO))).toUri();
+                .registrarTrabajador(mapper.toTrabajador(workerDTO)).getId()).toUri();
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Trabajador  registrado");
         return ResponseEntity.created(location).body(message);
+
     }
 
     @Override
-    public ResponseEntity<Void> _updateWorker(Long id, WorkerDTO workerDTO) {
+    public ResponseEntity<Void> _updateWorker(Long id, WorkerDTO workerDTO) throws InstanceNotFoundException {
         Trabajador trabajador = mapper.toTrabajador(workerDTO);
         trabajador.setId(id);
 
-        try {
-            trabajadorService.actualizarTrabajador(trabajador);
-            return ResponseEntity.ok(null);
-        }catch (InstanceNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"No existe instancia",e);
-        }
+        trabajadorService.actualizarTrabajador(trabajador);
+        return ResponseEntity.ok(null);
     }
 }

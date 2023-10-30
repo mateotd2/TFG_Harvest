@@ -34,8 +34,6 @@ paths:
   ###########################################################################################################
   /api/auth/signin:
     post:
-      #      security:
-      #        - bearerAuth: [ ]
       tags:
         - Autenticado
       summary: Autenticacion con usuario y contraseña
@@ -253,7 +251,7 @@ paths:
                 message: Bad credentials
                 status: 401
         409:
-          description: Error 403
+          description: Error 409
           content:
             application/json:
               schema:
@@ -471,6 +469,17 @@ paths:
                 error: Unauthorized
                 message: Bad credentials
                 status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/workers
+                error: Conflict
+                message: Conflict
+                status: 409
 
         429:
           description: Error 429
@@ -578,12 +587,12 @@ paths:
       responses:
         201:
           description: Exito en la actualizacion del Trabajador
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MessageResponseDTO'
-              example:
-                message: 'Worker registered successfully!'
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/MessageResponseDTO'
+#              example:
+#                message: 'Worker registered successfully!'
         400:
           description: Payload de actualizacion invalido
           content:
@@ -769,11 +778,11 @@ components:
         dni:
           type: string
           maxLength: 255
-          example: 12345678Q
+          example: 87654321Q
         nss:
           type: string
           maxLength: 255
-          example: 123456789012
+          example: 102938475610
         phone:
           type: string
           maxLength: 255
@@ -900,6 +909,8 @@ components:
 
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme
+      name: bearerAuth
+      in: header
       type: http
-      scheme: bearer
       bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+      scheme: bearer

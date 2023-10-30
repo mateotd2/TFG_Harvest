@@ -36,7 +36,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public Trabajador obtenerTrabajador(Long id) throws InstanceNotFoundException {
         Optional<Trabajador> res = trabajadorRepository.findById(id);
-        if (!res.isPresent()) {
+        if (res.isEmpty()) {
             throw new InstanceNotFoundException();
         }
         LOGGER.info("Obteniendo trabajador con id: {}", id);
@@ -46,8 +46,8 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public Trabajador registrarTrabajador(Trabajador trabajador) throws DuplicateInstanceException {
 
-        if (trabajadorRepository.existsByDni(trabajador.getDni())) {
-            throw new DuplicateInstanceException("DNI already exists", trabajador.getDni());
+        if (trabajadorRepository.existsByDniOrNss(trabajador.getDni(), trabajador.getNss())) {
+            throw new DuplicateInstanceException("DNI or NSS already exists", trabajador.getDni());
         }
         LOGGER.info("Añadiendo trabajador con dni: {}", trabajador.getDni());
         trabajadorRepository.save(trabajador);
