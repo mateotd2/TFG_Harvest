@@ -272,7 +272,7 @@ class AuthenticationControllerTest {
 
         // ID que no es del admin con id 2
         this.mockMvc.perform(post("/api/auth/{0}/changePassword", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsBytes(changePasswordDTO))).andExpect(status().isUnauthorized());
+                .content(mapper.writeValueAsBytes(changePasswordDTO))).andExpect(status().isBadRequest());
     }
 
     @Test
