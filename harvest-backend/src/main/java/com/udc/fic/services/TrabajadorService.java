@@ -10,8 +10,7 @@ import java.util.List;
 public interface TrabajadorService {
 
 
-    //TODO: Hacerlo paginado
-    List<Trabajador> obtenerTrabajadores();
+    List<Trabajador> obtenerTrabajadores(int page, int amount);
 
     Trabajador obtenerTrabajador(Long id) throws InstanceNotFoundException;
 

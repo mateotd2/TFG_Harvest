@@ -8,6 +8,8 @@ import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +31,9 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 
     @Override
-    public List<Trabajador> obtenerTrabajadores() {
-        return trabajadorRepository.findAll();
+    public List<Trabajador> obtenerTrabajadores(int page, int amount) {
+        Pageable pagina = PageRequest.of(page, amount);
+        return trabajadorRepository.findAll(pagina).getContent();
     }
 
     @Override
@@ -58,14 +61,20 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public Trabajador actualizarTrabajador(Trabajador trabajador) throws InstanceNotFoundException {
 
-        if (!trabajadorRepository.existsById(trabajador.getId())) {
+        Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajador.getId());
+        if (trabajadorOptional.isPresent()) {
+            LOGGER.info("Actualizando trabajador con id: {}", trabajador.getId());
+            Trabajador trabajadorObtenido = trabajadorOptional.get();
+
+            trabajador.setCalendario(trabajadorObtenido.getCalendario());
+            trabajadorRepository.save(trabajador);
+
+            return trabajador;
+        } else {
             throw new InstanceNotFoundException();
         }
-        LOGGER.info("Actualizando trabajador con id: {}", trabajador.getId());
 
-        trabajadorRepository.save(trabajador);
 
-        return trabajador;
     }
 
     @Override

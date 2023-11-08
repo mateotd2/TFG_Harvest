@@ -137,20 +137,8 @@
                             </configOptions>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
 
-
-            <!--        GENERACION DE API CLIENT PARA DART-->
-            <plugin>
-                <groupId>org.openapitools</groupId>
-                <artifactId>openapi-generator-maven-plugin</artifactId>
-                <!-- RELEASE_VERSION -->
-                <version>6.3.0</version>
-                <!-- /RELEASE_VERSION -->
-
-
-                <executions>
+                    <!--        GENERACION DE API CLIENT PARA DART-->
                     <execution>
                         <id>api</id>
                         <goals>
@@ -171,6 +159,10 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+
+
 
 
             <plugin>

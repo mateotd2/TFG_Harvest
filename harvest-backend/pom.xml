@@ -38,8 +38,8 @@
             </activation>
             <properties>
                 <!--  Data source properties -->
-                <dataSource.url>jdbc:h2:mem:mydb</dataSource.url>
-                <testDataSource.url>jdbc:h2:mem:mydbTest</testDataSource.url>
+                <dataSource.url>jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE</dataSource.url>
+                <testDataSource.url>jdbc:h2:mem:mydbTest;DB_CLOSE_ON_EXIT=FALSE</testDataSource.url>
                 <dataSource.user>sa</dataSource.user>
                 <dataSource.password></dataSource.password>
             </properties>
@@ -320,4 +320,31 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+
+
+            <!-- see pom.xml for rest of reporting section -->
+
+            <!-- generate the coverage report using Jacoco -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/com/udc/fic/security/**/*</exclude>
+                        <exclude>**/com/udc/fic/mapper/**/*</exclude>
+                    </excludes>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

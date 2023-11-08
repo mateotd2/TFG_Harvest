@@ -36,7 +36,7 @@ public class TrabajadorController implements TrabajadoresApi {
 
     @Override
     public ResponseEntity<List<WorkerDTO>> _getWorkers() {
-        return ResponseEntity.ok(trabajadorService.obtenerTrabajadores().stream()
+        return ResponseEntity.ok(trabajadorService.obtenerTrabajadores(0, 100).stream()
                 .map(trabajador -> mapper.toWorker(trabajador)).toList());
     }
 

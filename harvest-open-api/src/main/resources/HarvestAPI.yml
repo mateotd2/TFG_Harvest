@@ -509,6 +509,8 @@ paths:
       operationId: getWorker
       x-custom-role:
         - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
       parameters:
         - in: path
           name: id
@@ -752,7 +754,6 @@ components:
     WorkerDTO:
       type: object
       required:
-        - id
         - name
         - lastname
         - dni

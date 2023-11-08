@@ -4,3 +4,4 @@ spring:
     driverClassName: org.h2.Driver
     username: @dataSource.user@
     password: @dataSource.password@
+
