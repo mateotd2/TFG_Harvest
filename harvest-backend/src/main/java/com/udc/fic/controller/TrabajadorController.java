@@ -30,13 +30,23 @@ public class TrabajadorController implements TrabajadoresApi {
 
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _deleteWorker(Long id) throws Exception {
+
+        trabajadorService.bajaTrabajador(id);
+
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Trabajador  dado de baja");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<WorkerDTO> _getWorker(Long id) throws Exception {
         return ResponseEntity.ok(mapper.toWorker(trabajadorService.obtenerTrabajador(id)));
     }
 
     @Override
     public ResponseEntity<List<WorkerDTO>> _getWorkers() {
-        return ResponseEntity.ok(trabajadorService.obtenerTrabajadores(0, 100).stream()
+        return ResponseEntity.ok(trabajadorService.obtenerTrabajadoresDisponibles(0, 100).stream()
                 .map(trabajador -> mapper.toWorker(trabajador)).toList());
     }
 

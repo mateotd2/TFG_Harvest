@@ -38,8 +38,8 @@
             </activation>
             <properties>
                 <!--  Data source properties -->
-                <dataSource.url>jdbc:h2:mem:mydb;DB_CLOSE_ON_EXIT=FALSE</dataSource.url>
-                <testDataSource.url>jdbc:h2:mem:mydbTest;DB_CLOSE_ON_EXIT=FALSE</testDataSource.url>
+                <dataSource.url>jdbc:h2:mem:mydb</dataSource.url>
+                <testDataSource.url>jdbc:h2:mem:mydbTest</testDataSource.url>
                 <dataSource.user>sa</dataSource.user>
                 <dataSource.password></dataSource.password>
             </properties>
@@ -330,6 +330,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
                 <configuration>
                     <excludes>
                         <exclude>**/com/udc/fic/security/**/*</exclude>

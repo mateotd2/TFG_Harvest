@@ -205,4 +205,19 @@ class TrabajadoresControllerTest {
     }
 
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void bajaTrabajadorAnonymous() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+        this.mockMvc.perform(delete("/api/workers/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        this.mockMvc.perform(delete("/api/workers/1").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+
+
+
 }

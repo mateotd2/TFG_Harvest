@@ -302,6 +302,33 @@ class AuthenticationControllerTest {
         this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isOk());
     }
+    @Test
+    void updateUserSameEmail_Ok() throws Exception {
+        Empleado admin = crearAdmin();
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("admin", "admin"));
+
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setBirthdate(admin.getBirthdate());
+        updateUserDTO.setDni("12345879Q");
+        updateUserDTO.setEmail("admin@prueba.com");
+        updateUserDTO.setLastname("lastname");
+        updateUserDTO.setName(admin.getName());
+        updateUserDTO.setNss(admin.getNss());
+        updateUserDTO.setPhone("987654321");
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isOk());
+    }
 
     @Test
     void updateUser_Unauthorized() throws Exception {

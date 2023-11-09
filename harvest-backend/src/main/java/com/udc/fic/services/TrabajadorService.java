@@ -5,12 +5,13 @@ import com.udc.fic.model.Trabajador;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 
 import javax.management.InstanceNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TrabajadorService {
 
 
-    List<Trabajador> obtenerTrabajadores(int page, int amount);
+    List<Trabajador> obtenerTrabajadoresDisponibles(int page, int amount);
 
     Trabajador obtenerTrabajador(Long id) throws InstanceNotFoundException;
 
@@ -18,8 +19,11 @@ public interface TrabajadorService {
 
     Trabajador actualizarTrabajador(Trabajador trabajador) throws InstanceNotFoundException;
 
-    void eliminarTrabajador(Long id);
+
+    void bajaTrabajador(Long id) throws InstanceNotFoundException;
 
     void registrarDisponibilidad(Disponibilidad disponibilidad, Trabajador trabajador) throws InstanceNotFoundException;
+
+    List<Trabajador> trabajadoresDisponiblesPorFecha(LocalDate date);
 
 }

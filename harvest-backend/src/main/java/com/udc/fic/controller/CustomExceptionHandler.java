@@ -40,7 +40,7 @@ public class CustomExceptionHandler {
     public Error handleInstanceNotFound(InstanceNotFoundException exception, HttpServletRequest request) {
         String uri = request.getRequestURI();
         Error error = new Error();
-        error.setError("Duplicate");
+        error.setError("Not Found");
         error.setMessage("Instancia no encontrada");
         error.setPath(uri);
         error.setStatus(404);

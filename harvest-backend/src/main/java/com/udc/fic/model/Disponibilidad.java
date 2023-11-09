@@ -19,13 +19,14 @@ public class Disponibilidad {
     private Long id;
 
     @Column(nullable = false)
-    private LocalDate dia;
+    private LocalDate daywork;
+
 
     @Column(nullable = false, columnDefinition = "TIME")
-    private LocalTime horaEntrada;
+    private LocalTime checkin;
 
     @Column(nullable = false, columnDefinition = "TIME")
-    private LocalTime horaSalida;
+    private LocalTime checkout;
 
     @ManyToOne
     @JoinColumn(name = "trabajador_id", nullable = false)

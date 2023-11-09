@@ -589,12 +589,6 @@ paths:
       responses:
         201:
           description: Exito en la actualizacion del Trabajador
-#          content:
-#            application/json:
-#              schema:
-#                $ref: '#/components/schemas/MessageResponseDTO'
-#              example:
-#                message: 'Worker registered successfully!'
         400:
           description: Payload de actualizacion invalido
           content:
@@ -635,10 +629,77 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-#security:
-#  - bearerAuth: [ ]
+
 
 ################################################# COMPONENTS #######################################################
+    delete:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Dar de baja un trabajador ( Solo puede el administrador)
+      operationId: deleteWorker
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+
+      responses:
+        200:
+          description: Trabajador dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Trabajador dado de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Trabajador no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
@@ -750,6 +811,26 @@ components:
           example: 1990-08-19
       #          maxLength: 20
       additionalProperties: false
+
+    CalendarDTO:
+      type: object
+      required:
+        - checkin
+        - checkout
+        - day
+      properties:
+        checkin:
+          type: string
+          format: time
+          example: 08:00
+        checkout:
+          type: string
+          format: time
+          example: 16:00
+        day:
+          type: string
+          format: date
+          example: 2023-11-08
 
     WorkerDTO:
       type: object

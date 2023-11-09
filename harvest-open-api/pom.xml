@@ -135,6 +135,17 @@
                                 <unhandledException>true</unhandledException>
                                 <skipDefaultInterface>true</skipDefaultInterface>
                             </configOptions>
+
+                            <typeMappings>
+                                <typeMapping>
+                                    time=LocalTime</typeMapping>
+                                </typeMappings>
+                                <importMappings>
+                                    <importMapping>
+                                        LocalTime=java.time.LocalTime
+                                    </importMapping>
+                                </importMappings>
+
                         </configuration>
                     </execution>
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +32,9 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
 
     @Override
-    public List<Trabajador> obtenerTrabajadores(int page, int amount) {
+    public List<Trabajador> obtenerTrabajadoresDisponibles(int page, int amount) {
         Pageable pagina = PageRequest.of(page, amount);
-        return trabajadorRepository.findAll(pagina).getContent();
+        return trabajadorRepository.findByAvailable(true, pagina).getContent();
     }
 
     @Override
@@ -63,24 +64,45 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
         Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajador.getId());
         if (trabajadorOptional.isPresent()) {
-            LOGGER.info("Actualizando trabajador con id: {}", trabajador.getId());
-            Trabajador trabajadorObtenido = trabajadorOptional.get();
 
+            Trabajador trabajadorObtenido = trabajadorOptional.get();
+            if (!trabajadorObtenido.isAvailable()) {
+                throw new InstanceNotFoundException();
+            }
+            LOGGER.info("Actualizando trabajador con id: {}", trabajador.getId());
+
+            trabajador.setAvailable(trabajadorObtenido.isAvailable());
             trabajador.setCalendario(trabajadorObtenido.getCalendario());
+
             trabajadorRepository.save(trabajador);
 
             return trabajador;
         } else {
             throw new InstanceNotFoundException();
         }
-
-
     }
 
     @Override
-    public void eliminarTrabajador(Long id) {
-        LOGGER.info("Eliminando trabajador con id: {}", id);
-        trabajadorRepository.deleteById(id);
+    public void bajaTrabajador(Long id) throws InstanceNotFoundException {
+
+        Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(id);
+        if (trabajadorOptional.isPresent()) {
+            Trabajador trabajadorObtenido = trabajadorOptional.get();
+            if (!trabajadorObtenido.isAvailable()) {
+                throw new InstanceNotFoundException();
+            }
+
+            LOGGER.info("Dando de baja trabajador con id: {}", id);
+            disponibilidadRepository.deleteByTrabajadorId(id);
+
+
+            trabajadorObtenido.setAvailable(false);
+
+            trabajadorRepository.save(trabajadorObtenido);
+
+        } else {
+            throw new InstanceNotFoundException();
+        }
     }
 
     @Override
@@ -93,5 +115,10 @@ public class TrabajadorServiceImpl implements TrabajadorService {
         disponibilidad.setTrabajador(trabajador);
 
         disponibilidadRepository.save(disponibilidad);
+    }
+
+    @Override
+    public List<Trabajador> trabajadoresDisponiblesPorFecha(LocalDate date) {
+        return trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(date);
     }
 }
