@@ -1,5 +1,6 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.Asistencia;
 import com.udc.fic.model.Disponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
@@ -118,7 +119,9 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     }
 
     @Override
-    public List<Trabajador> trabajadoresDisponiblesPorFecha(LocalDate date) {
-        return trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(date);
+    public List<Asistencia> trabajadoresDisponiblesPorFecha(LocalDate date) {
+        return disponibilidadRepository.asistenciasByDia(date);
     }
+
+
 }

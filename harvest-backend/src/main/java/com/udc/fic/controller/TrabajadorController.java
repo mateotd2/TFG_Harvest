@@ -1,5 +1,6 @@
 package com.udc.fic.controller;
 
+import com.udc.fic.harvest.DTOs.AttendanceDTO;
 import com.udc.fic.harvest.DTOs.MessageResponseDTO;
 import com.udc.fic.harvest.DTOs.WorkerDTO;
 import com.udc.fic.harvest.controller.TrabajadoresApi;
@@ -14,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.management.InstanceNotFoundException;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,6 +39,13 @@ public class TrabajadorController implements TrabajadoresApi {
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Trabajador  dado de baja");
         return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<List<AttendanceDTO>> _getAssists() throws Exception {
+
+        List<AttendanceDTO> asistencias = trabajadorService.trabajadoresDisponiblesPorFecha(LocalDate.now()).stream().map(e -> mapper.toAttendance(e)).toList();
+        return ResponseEntity.ok(asistencias);
     }
 
     @Override

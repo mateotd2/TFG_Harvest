@@ -1,5 +1,6 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.Asistencia;
 import com.udc.fic.model.Disponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
@@ -24,6 +25,6 @@ public interface TrabajadorService {
 
     void registrarDisponibilidad(Disponibilidad disponibilidad, Trabajador trabajador) throws InstanceNotFoundException;
 
-    List<Trabajador> trabajadoresDisponiblesPorFecha(LocalDate date);
+    List<Asistencia> trabajadoresDisponiblesPorFecha(LocalDate date);
 
 }

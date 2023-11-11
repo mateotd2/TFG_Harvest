@@ -628,10 +628,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-
-
-################################################# COMPONENTS #######################################################
     delete:
       tags:
         - Trabajadores
@@ -700,6 +696,56 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+
+  /api/callroll:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Muestra la lista de trabajadores disponibles( Solo puede el administrador)
+      operationId: getAssists
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: Listado de trabajadores y horarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceDTO'
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+################################################# COMPONENTS #######################################################
 
 components:
   schemas:
@@ -959,6 +1005,50 @@ components:
             type: string
             maxLength: 255
       additionalProperties: false
+
+    AttendanceDTO:
+      type: object
+      required:
+        - id
+        - name
+        - lastname
+        - daywork
+        - checkin
+        - checkout
+        - attendance
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          example: name
+        lastname:
+          type: string
+          maxLength: 255
+          example: lastname
+        daywork:
+          type: string
+          format: date
+          example: 2023-08-19
+        checkin:
+          type: string
+          format: time
+          example: "08:00"
+        checkout:
+          type: string
+          format: time
+          example: "16:00"
+        attendance:
+          type: boolean
+          example: false
+
+
+
 
     Error:
       type: object
