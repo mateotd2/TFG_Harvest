@@ -1,5 +1,6 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.ElementoListaDisponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
@@ -12,16 +13,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class TrabajadorTest {
+class TrabajadorServiceImplTest {
 
 
     @InjectMocks
@@ -29,9 +32,6 @@ class TrabajadorTest {
 
     @Mock
     TrabajadorRepository trabajadorRepository;
-
-    @Mock
-    Logger logger;
 
 
     @Mock
@@ -41,7 +41,7 @@ class TrabajadorTest {
     @Test
     void obtenerTrabajadorTest() throws InstanceNotFoundException {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",true ,null);
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true, null);
 
         Optional<Trabajador> res = Optional.of(trabajador);
         when(trabajadorRepository.findById(1L)).thenReturn(res);
@@ -50,52 +50,51 @@ class TrabajadorTest {
     }
 
     @Test
-    void actualizarTrabajadorInstanceNotFoundTest(){
+    void actualizarTrabajadorInstanceNotFoundTest() {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",true ,null);;
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true, null);
 
         Optional<Trabajador> res = Optional.empty();
 
         when(trabajadorRepository.findById(1L)).thenReturn(res);
-        assertThrows(InstanceNotFoundException.class,()-> trabajadorService.actualizarTrabajador(trabajador));
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.actualizarTrabajador(trabajador));
     }
+
     @Test
-    void actualizarTrabajadorNotAvailableInstanceNotFoundTest(){
+    void actualizarTrabajadorNotAvailableInstanceNotFoundTest() {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",false ,null);;
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", false, null);
 
         Optional<Trabajador> res = Optional.of(trabajador);
 
         when(trabajadorRepository.findById(1L)).thenReturn(res);
         // Aunque buque el mismo trabajador con available true, va a fallar, ya que el que devuelve el repositorio no esta disponible
-        assertThrows(InstanceNotFoundException.class,()-> trabajadorService.actualizarTrabajador(new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",true ,null)));
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.actualizarTrabajador(new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true, null)));
     }
 
     @Test
-    void bajaTrabajadorNotAvailableTest(){
+    void bajaTrabajadorNotAvailableTest() {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",false ,null);
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", false, null);
 
         Optional<Trabajador> res = Optional.of(trabajador);
         when(trabajadorRepository.findById(1L)).thenReturn(res);
-        assertThrows(InstanceNotFoundException.class,()-> trabajadorService.bajaTrabajador(1L));
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.bajaTrabajador(1L));
 
     }
+
     @Test
-    void bajaTrabajadorNotFoundTest(){
+    void bajaTrabajadorNotFoundTest() {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address",false ,null);
 
         Optional<Trabajador> res = Optional.empty();
         when(trabajadorRepository.findById(1L)).thenReturn(res);
-        assertThrows(InstanceNotFoundException.class,()-> trabajadorService.bajaTrabajador(1L));
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.bajaTrabajador(1L));
 
     }
 
     @Test
     void obtenerTrabajadorNotFoundTest() throws InstanceNotFoundException {
-        LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = null;
 
         Optional<Trabajador> res = Optional.empty();
         when(trabajadorRepository.findById(1L)).thenReturn(res);
@@ -106,7 +105,7 @@ class TrabajadorTest {
     @Test
     void registrarTrabajadorTest() throws DuplicateInstanceException {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true,null);
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true, null);
         when(trabajadorRepository.existsByDniOrNss(trabajador.getDni(), trabajador.getNss())).thenReturn(false);
         when(trabajadorRepository.save(trabajador)).thenReturn(trabajador);
         assertEquals("12345678Q", trabajadorService.registrarTrabajador(trabajador).getDni());
@@ -115,11 +114,19 @@ class TrabajadorTest {
     @Test
     void registrarTrabajadorDuplicateExceptionTest() {
         LocalDate birthdate = LocalDate.now();
-        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true,null);
+        Trabajador trabajador = new Trabajador(1L, "test", "test", "12345678Q", "123456789012", "666666666", birthdate, "address", true, null);
         when(trabajadorRepository.existsByDniOrNss(trabajador.getDni(), trabajador.getNss())).thenReturn(true);
 
         assertThrows(DuplicateInstanceException.class, () -> trabajadorService.registrarTrabajador(trabajador));
 
+    }
+
+    @Test
+    void pasarListaInstaneNotFoundTest() {
+        List<ElementoListaDisponibilidad> elementos = new ArrayList<>();
+        elementos.add(new ElementoListaDisponibilidad(1L, LocalTime.now(), LocalTime.now()));
+        when(disponibilidadRepository.existsById(anyLong())).thenReturn(false);
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.pasarLista(elementos));
     }
 
 

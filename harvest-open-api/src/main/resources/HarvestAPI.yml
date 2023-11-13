@@ -705,7 +705,7 @@ paths:
       security:
         - bearerAuth: [ ]
       summary: Muestra la lista de trabajadores disponibles( Solo puede el administrador)
-      operationId: getAssists
+      operationId: getAttendances
       x-custom-role:
         - ADMIN
       responses:
@@ -745,6 +745,64 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Pasa lista de los empleados (Solo puede el administrador)
+      operationId: callRoll
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Ids de asistencias confirmadas y modificaciones de horas
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CallDTO'
+      responses:
+        200:
+          description: Mensaje de exito al pasar lista
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 ################################################# COMPONENTS #######################################################
 
 components:
@@ -1047,6 +1105,27 @@ components:
           type: boolean
           example: false
 
+    CallDTO:
+      type: object
+      required:
+        - id
+        - checkin
+        - checkout
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        checkin:
+          type: string
+          format: time
+          example: "08:00"
+        checkout:
+          type: string
+          format: time
+          example: "16:00"
 
 
 

@@ -1,10 +1,8 @@
 package com.udc.fic.mapper;
 
-import com.udc.fic.harvest.DTOs.AttendanceDTO;
-import com.udc.fic.harvest.DTOs.NewUserDTO;
-import com.udc.fic.harvest.DTOs.UpdateUserDTO;
-import com.udc.fic.harvest.DTOs.WorkerDTO;
+import com.udc.fic.harvest.DTOs.*;
 import com.udc.fic.model.Asistencia;
+import com.udc.fic.model.ElementoListaDisponibilidad;
 import com.udc.fic.model.Empleado;
 import com.udc.fic.model.Trabajador;
 import org.mapstruct.Mapper;
@@ -26,5 +24,7 @@ public interface SourceTargetMapper {
     Trabajador toTrabajador(WorkerDTO workerDTO);
 
     AttendanceDTO toAttendance(Asistencia asistencia);
+
+    ElementoListaDisponibilidad toElementoListDisponibilidad(CallDTO callDTO);
 
 }

@@ -2,6 +2,7 @@ package com.udc.fic.services;
 
 import com.udc.fic.model.Asistencia;
 import com.udc.fic.model.Disponibilidad;
+import com.udc.fic.model.ElementoListaDisponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
@@ -31,6 +32,29 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Autowired
     DisponibilidadRepository disponibilidadRepository;
 
+
+    @Override
+    public void pasarLista(List<ElementoListaDisponibilidad> lista) throws InstanceNotFoundException {
+
+
+        for (ElementoListaDisponibilidad elemento : lista) {
+            if (!disponibilidadRepository.existsById(elemento.getId())) {
+                throw new InstanceNotFoundException();
+            }
+        }
+
+        for (ElementoListaDisponibilidad elemento : lista) {
+            Disponibilidad disponibilidad = disponibilidadRepository.findById(elemento.getId()).get();
+            disponibilidad.setAttendance(true);
+
+            if (elemento.getCheckin() != null) disponibilidad.setCheckin(elemento.getCheckin());
+            if (elemento.getCheckout() != null) disponibilidad.setCheckout(elemento.getCheckout());
+
+            disponibilidadRepository.save(disponibilidad);
+        }
+
+
+    }
 
     @Override
     public List<Trabajador> obtenerTrabajadoresDisponibles(int page, int amount) {

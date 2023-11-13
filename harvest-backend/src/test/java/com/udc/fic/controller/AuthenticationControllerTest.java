@@ -7,7 +7,6 @@ import com.udc.fic.harvest.DTOs.ChangePasswordDTO;
 import com.udc.fic.harvest.DTOs.NewUserDTO;
 import com.udc.fic.harvest.DTOs.SignInRequestDTO;
 import com.udc.fic.harvest.DTOs.UpdateUserDTO;
-import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Empleado;
 import com.udc.fic.security.UserDetailsImpl;
 import com.udc.fic.security.jwt.JwtGeneratorInfo;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,15 +43,9 @@ class AuthenticationControllerTest {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    SourceTargetMapper mapper;
-    @Autowired
     JwtGeneratorInfo jwtUtils;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private AuthenticationController authenticationController;
-    @Autowired
-    private MessageSource messageSource;
 
 
     private Empleado crearAdmin() throws DuplicateInstanceException, NoRoleException {
@@ -302,6 +294,7 @@ class AuthenticationControllerTest {
         this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isOk());
     }
+
     @Test
     void updateUserSameEmail_Ok() throws Exception {
         Empleado admin = crearAdmin();

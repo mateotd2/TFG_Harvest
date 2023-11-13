@@ -1,6 +1,7 @@
 package com.udc.fic.controller;
 
 import com.udc.fic.harvest.DTOs.AttendanceDTO;
+import com.udc.fic.harvest.DTOs.CallDTO;
 import com.udc.fic.harvest.DTOs.MessageResponseDTO;
 import com.udc.fic.harvest.DTOs.WorkerDTO;
 import com.udc.fic.harvest.controller.TrabajadoresApi;
@@ -32,21 +33,28 @@ public class TrabajadorController implements TrabajadoresApi {
 
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _callRoll(List<CallDTO> callDTO) throws Exception {
+        trabajadorService.pasarLista(callDTO.stream().map(e -> mapper.toElementoListDisponibilidad(e)).toList());
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Asistencias actualizadas");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<MessageResponseDTO> _deleteWorker(Long id) throws Exception {
 
         trabajadorService.bajaTrabajador(id);
-
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Trabajador  dado de baja");
         return ResponseEntity.ok().body(message);
     }
 
     @Override
-    public ResponseEntity<List<AttendanceDTO>> _getAssists() throws Exception {
-
+    public ResponseEntity<List<AttendanceDTO>> _getAttendances() {
         List<AttendanceDTO> asistencias = trabajadorService.trabajadoresDisponiblesPorFecha(LocalDate.now()).stream().map(e -> mapper.toAttendance(e)).toList();
         return ResponseEntity.ok(asistencias);
     }
+
 
     @Override
     public ResponseEntity<WorkerDTO> _getWorker(Long id) throws Exception {
