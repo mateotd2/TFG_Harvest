@@ -232,9 +232,60 @@ class TrabajadoresControllerTest {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
 
-        this.mockMvc.perform(post("/api/callroll").contentType(MediaType.APPLICATION_JSON)
+        this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(calls))).andExpect(status().isOk());
     }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void callRoll404() throws Exception {
+        List<CallDTO> calls = new ArrayList<>();
+        CallDTO call1 = new CallDTO();
+        call1.setId(1L);
+        call1.setCheckin(LocalTime.of(8, 0, 0));
+        call1.setCheckout(LocalTime.of(16, 0, 0));
+        calls.add(call1);
+
+        CallDTO call2 = new CallDTO();
+        call2.setId(3L);
+        call2.setCheckin(LocalTime.of(8, 0, 0));
+        call2.setCheckout(LocalTime.of(16, 0, 0));
+        calls.add(call2);
+
+        CallDTO call3 = new CallDTO();
+        call3.setId(10L); // NO EXISTE NINGUNA DISPONIBLIDAD CON ID 10
+        call3.setCheckin(LocalTime.of(8, 0, 0));
+        call3.setCheckout(LocalTime.of(16, 0, 0));
+        calls.add(call3);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calls))).andExpect(status().isNotFound());
+    }
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void callRollCapataz() throws Exception {
+        List<CallDTO> calls = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calls))).andExpect(status().isForbidden());
+    }
+    @Test
+    @WithAnonymousUser
+    void callRollAnonymous() throws Exception {
+        List<CallDTO> calls = new ArrayList<>();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calls))).andExpect(status().isUnauthorized());
+    }
+
+
 
 
 }
