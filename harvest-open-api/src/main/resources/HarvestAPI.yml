@@ -360,6 +360,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+
+
   /api/workers:
     get:
       tags:
@@ -679,6 +681,121 @@ paths:
                 message: Bad credentials
                 status: 401
 
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/workers/{id}/calendar:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtiene calendario de trabajador( Solo puede el administrador)
+      operationId: getCalendar
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      responses:
+        200:
+          description: Calendario del trabajador
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarDTO'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Modifica calendario de trabajador( Solo puede el administrador)
+      operationId: updateCalendar
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      requestBody:
+        description: Dias y horas de entrada y salida
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CalendarDTO'
+
+      responses:
+        200:
+          description: Mensaje de exito al actualizar el calendario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         429:
           description: Error 429
           content:

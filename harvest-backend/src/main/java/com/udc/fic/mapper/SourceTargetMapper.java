@@ -1,10 +1,7 @@
 package com.udc.fic.mapper;
 
 import com.udc.fic.harvest.DTOs.*;
-import com.udc.fic.model.Asistencia;
-import com.udc.fic.model.ElementoListaDisponibilidad;
-import com.udc.fic.model.Empleado;
-import com.udc.fic.model.Trabajador;
+import com.udc.fic.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -26,5 +23,8 @@ public interface SourceTargetMapper {
     AttendanceDTO toAttendance(Asistencia asistencia);
 
     ElementoListaDisponibilidad toElementoListDisponibilidad(CallDTO callDTO);
+
+    @Mapping(target = "day", source = "disponibilidad.daywork")
+    CalendarDTO toCalendarDTO(Disponibilidad disponibilidad);
 
 }

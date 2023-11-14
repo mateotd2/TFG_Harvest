@@ -6,8 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Data
 @Entity
@@ -34,7 +33,6 @@ public class Trabajador {
     private String address;
     @Column(nullable = false)
     private boolean available;
-    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "trabajador", orphanRemoval = true)
-    @OneToMany(mappedBy = "trabajador")
-    private Set<Disponibilidad> calendario = new HashSet<>();
+    @OneToMany(mappedBy = "trabajador", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Disponibilidad> calendario;
 }

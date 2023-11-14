@@ -1,10 +1,7 @@
 package com.udc.fic.controller;
 
 import com.udc.fic.harvest.DTOs.Error;
-import com.udc.fic.services.exceptions.DuplicateInstanceException;
-import com.udc.fic.services.exceptions.IncorrectPasswordException;
-import com.udc.fic.services.exceptions.NoRoleException;
-import com.udc.fic.services.exceptions.PermissionException;
+import com.udc.fic.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,9 +14,6 @@ import javax.management.InstanceNotFoundException;
 @ControllerAdvice
 public class CustomExceptionHandler {
 
-//    @Autowired
-//    private MessageSource messageSource;
-
     @ExceptionHandler(DuplicateInstanceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
@@ -30,6 +24,20 @@ public class CustomExceptionHandler {
         error.setMessage("Conflicto de instancias");
         error.setPath(uri);
         error.setStatus(409);
+        return error;
+
+    }
+
+    @ExceptionHandler(WorkerNotAvailableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleDuplicateInstance(WorkerNotAvailableException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError("Bad Request");
+        error.setMessage("Trabajador no esta habilitado");
+        error.setPath(uri);
+        error.setStatus(400);
         return error;
 
     }

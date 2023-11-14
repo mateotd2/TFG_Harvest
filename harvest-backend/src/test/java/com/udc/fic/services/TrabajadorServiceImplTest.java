@@ -1,10 +1,12 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.Disponibilidad;
 import com.udc.fic.model.ElementoListaDisponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.WorkerNotAvailableException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -127,6 +129,49 @@ class TrabajadorServiceImplTest {
         elementos.add(new ElementoListaDisponibilidad(1L, LocalTime.now(), LocalTime.now()));
         when(disponibilidadRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(InstanceNotFoundException.class, () -> trabajadorService.pasarLista(elementos));
+    }
+
+
+    @Test
+    void obtenerCalendario() throws InstanceNotFoundException {
+        List<Disponibilidad> calendario = new ArrayList<>();
+        Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", true, calendario);
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 1), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 2), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 3), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 4), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+
+        when(trabajadorRepository.findById(1L)).thenReturn(Optional.of(trabajador));
+
+        assertEquals(calendario, trabajadorService.obtenerCalendario(1L));
+
+    }
+
+    @Test
+    void obtenerCalendarioInstanceNotFound() throws InstanceNotFoundException {
+
+        when(trabajadorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.obtenerCalendario(1L));
+    }
+
+    @Test
+    void actualizarCalendarioInstanceNotFoundException() {
+        when(trabajadorRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.actualizarCalendario(1L, new ArrayList<>()));
+    }
+
+    @Test
+    void actualizarCalendarioWorkerNotAvailableException() {
+        List<Disponibilidad> calendario = new ArrayList<>();
+        Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 1), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 2), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 3), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 4), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+
+        when(trabajadorRepository.findById(1L)).thenReturn(Optional.of(trabajador));
+        assertThrows(WorkerNotAvailableException.class, () -> trabajadorService.actualizarCalendario(1L, new ArrayList<>()));
     }
 
 

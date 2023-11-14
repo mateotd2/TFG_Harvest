@@ -7,6 +7,7 @@ import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.WorkerNotAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,13 +117,8 @@ public class TrabajadorServiceImpl implements TrabajadorService {
             if (!trabajadorObtenido.isAvailable()) {
                 throw new InstanceNotFoundException();
             }
-
             LOGGER.info("Dando de baja trabajador con id: {}", id);
-            disponibilidadRepository.deleteByTrabajadorId(id);
-
-
             trabajadorObtenido.setAvailable(false);
-
             trabajadorRepository.save(trabajadorObtenido);
 
         } else {
@@ -145,6 +141,44 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public List<Asistencia> trabajadoresDisponiblesPorFecha(LocalDate date) {
         return disponibilidadRepository.asistenciasByDia(date);
+    }
+
+    @Override
+    public List<Disponibilidad> obtenerCalendario(Long trabajadorId) throws InstanceNotFoundException {
+        Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajadorId);
+        LOGGER.info("Obtener calendario de trabajador: {}", trabajadorId);
+        if (trabajadorOptional.isPresent()) {
+            Trabajador trabajador = trabajadorOptional.get();
+            return trabajador.getCalendario();
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, WorkerNotAvailableException {
+        Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajadorId);
+        if (trabajadorOptional.isPresent()) {
+            Trabajador trabajador = trabajadorOptional.get();
+
+            if (trabajador.isAvailable()) {
+
+                trabajador.getCalendario().clear();
+
+                for (Disponibilidad disponibilidad : calendario) {
+                    disponibilidad.setTrabajador(trabajador);
+                    trabajador.getCalendario().add(disponibilidad);
+                }
+                trabajadorRepository.save(trabajador);
+
+
+            } else {
+                throw new WorkerNotAvailableException();
+            }
+        } else {
+            throw new InstanceNotFoundException();
+        }
+
     }
 
 

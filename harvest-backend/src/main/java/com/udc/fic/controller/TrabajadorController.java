@@ -1,11 +1,9 @@
 package com.udc.fic.controller;
 
-import com.udc.fic.harvest.DTOs.AttendanceDTO;
-import com.udc.fic.harvest.DTOs.CallDTO;
-import com.udc.fic.harvest.DTOs.MessageResponseDTO;
-import com.udc.fic.harvest.DTOs.WorkerDTO;
+import com.udc.fic.harvest.DTOs.*;
 import com.udc.fic.harvest.controller.TrabajadoresApi;
 import com.udc.fic.mapper.SourceTargetMapper;
+import com.udc.fic.model.Disponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.services.TrabajadorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.management.InstanceNotFoundException;
 import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
@@ -55,6 +54,13 @@ public class TrabajadorController implements TrabajadoresApi {
         return ResponseEntity.ok(asistencias);
     }
 
+    @Override
+    public ResponseEntity<List<CalendarDTO>> _getCalendar(Long id) throws Exception {
+
+        List<CalendarDTO> calendario = trabajadorService.obtenerCalendario(id).stream().map(e -> mapper.toCalendarDTO(e)).toList();
+        return ResponseEntity.ok(calendario);
+    }
+
 
     @Override
     public ResponseEntity<WorkerDTO> _getWorker(Long id) throws Exception {
@@ -77,6 +83,27 @@ public class TrabajadorController implements TrabajadoresApi {
         return ResponseEntity.created(location).body(message);
 
     }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _updateCalendar(Long id, List<CalendarDTO> calendarDTO) throws Exception {
+        List<Disponibilidad> calendario = new ArrayList<>();
+
+        for (CalendarDTO calendar : calendarDTO) {
+            Disponibilidad disponibilidad = new Disponibilidad();
+            disponibilidad.setAttendance(false);
+            disponibilidad.setCheckin(calendar.getCheckin());
+            disponibilidad.setCheckout(calendar.getCheckout());
+            disponibilidad.setDaywork(calendar.getDay());
+            calendario.add(disponibilidad);
+        }
+        trabajadorService.actualizarCalendario(id, calendario);
+
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Calendario actualizado!");
+
+        return ResponseEntity.ok(message);
+    }
+
 
     @Override
     public ResponseEntity<Void> _updateWorker(Long id, WorkerDTO workerDTO) throws InstanceNotFoundException {

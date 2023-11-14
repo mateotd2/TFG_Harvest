@@ -30,11 +30,12 @@ public class Disponibilidad {
     @Column(nullable = false, columnDefinition = "TIME")
     private LocalTime checkout;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
+    //    @ManyToOne(fetch = FetchType.EAGER)
     @ManyToOne
     @JoinColumn(name = "trabajador_id", nullable = false)
     private Trabajador trabajador;
 
     private boolean attendance = false;
+
 
 }

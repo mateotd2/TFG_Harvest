@@ -2,6 +2,7 @@ package com.udc.fic.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.udc.fic.harvest.DTOs.CalendarDTO;
 import com.udc.fic.harvest.DTOs.CallDTO;
 import com.udc.fic.harvest.DTOs.WorkerDTO;
 import jakarta.transaction.Transactional;
@@ -235,6 +236,7 @@ class TrabajadoresControllerTest {
         this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(calls))).andExpect(status().isOk());
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void callRoll404() throws Exception {
@@ -264,6 +266,7 @@ class TrabajadoresControllerTest {
         this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(calls))).andExpect(status().isNotFound());
     }
+
     @Test
     @WithMockUser(roles = "CAPATAZ")
     void callRollCapataz() throws Exception {
@@ -274,6 +277,7 @@ class TrabajadoresControllerTest {
         this.mockMvc.perform(put("/api/callroll").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(calls))).andExpect(status().isForbidden());
     }
+
     @Test
     @WithAnonymousUser
     void callRollAnonymous() throws Exception {
@@ -285,7 +289,29 @@ class TrabajadoresControllerTest {
                 .content(mapper.writeValueAsBytes(calls))).andExpect(status().isUnauthorized());
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void actualizarCalendario() throws Exception {
+        List<CalendarDTO> calendarioDtos = new ArrayList<>();
+        CalendarDTO dia1 = new CalendarDTO();
+        dia1.setCheckin(LocalTime.of(8, 0, 0));
+        dia1.setCheckout(LocalTime.of(16, 0, 0));
+        dia1.setDay(LocalDate.of(2023, 1, 1));
+        calendarioDtos.add(dia1);
+        CalendarDTO dia2 = new CalendarDTO();
+        dia2.setCheckin(LocalTime.of(8, 0, 0));
+        dia2.setCheckout(LocalTime.of(16, 0, 0));
+        dia2.setDay(LocalDate.of(2023, 1, 2));
+        calendarioDtos.add(dia2);
 
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(put("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calendarioDtos))).andExpect(status().isOk());
+    }
 
 
 }
