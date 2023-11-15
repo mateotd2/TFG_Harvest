@@ -35,6 +35,7 @@
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/harvest-backend/target/site/jacoco/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.java.spotbugs.reportPaths>${project.basedir}/harvest-backend/target/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
         <sonar.coverage.exclusions>**/com/udc/fic/security/**/*, **/com/udc/fic/mapper/**/*</sonar.coverage.exclusions>
     </properties>
 
