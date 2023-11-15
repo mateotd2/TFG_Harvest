@@ -313,5 +313,27 @@ class TrabajadoresControllerTest {
                 .content(mapper.writeValueAsBytes(calendarioDtos))).andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void obtenerCalendarioAdmin() throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(get("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void obtenerCalendarioCapataz() throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(get("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
 
 }

@@ -48,12 +48,12 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         }
 
         LOGGER.info("Registro de usuario {} ", empleado.getUsername());
-        if (empleadoRepository.existsByUsername(empleado.getUsername()) == Boolean.TRUE) {
+        if (empleadoRepository.existsByUsername(empleado.getUsername())) {
             LOGGER.error("Registro de usuario fallido Username no disponible");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
-        if (empleadoRepository.existsByEmail(empleado.getEmail()) == Boolean.TRUE) {
+        if (empleadoRepository.existsByEmail(empleado.getEmail())) {
             LOGGER.error("Registro de usuario fallido Email duplicado");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
@@ -87,10 +87,16 @@ public class EmpleadoServiceImpl implements EmpleadoService {
                     });
                     rolesParaUser.add(nuevoRol);
                 }
+                default -> {
+                }
+
 
             }
         });
 
+        if (rolesParaUser.isEmpty()) {
+            throw new NoRoleException("Registro de usuario fallido, ningun rol ");
+        }
 
         empleado.setRoles(rolesParaUser);
         empleadoRepository.save(empleado);

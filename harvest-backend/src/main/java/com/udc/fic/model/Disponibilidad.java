@@ -1,7 +1,6 @@
 package com.udc.fic.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -13,7 +12,6 @@ import java.time.LocalTime;
 @Entity
 @EntityScan("com.udc.fic.model")
 @NoArgsConstructor
-@AllArgsConstructor
 public class Disponibilidad {
 
     @Id
@@ -37,5 +35,16 @@ public class Disponibilidad {
 
     private boolean attendance = false;
 
+    public Disponibilidad(Long id, LocalDate daywork, LocalTime checkin, LocalTime checkout, Trabajador trabajador, boolean attendance) {
+        this.id = id;
+        this.daywork = daywork;
+        this.checkin = checkin;
+        this.checkout = checkout;
+        this.trabajador = new Trabajador(trabajador.getId(), trabajador.getName(), trabajador.getLastname(), trabajador.getDni(), trabajador.getNss(), trabajador.getPhone(), trabajador.getBirthdate(), trabajador.getAddress(), trabajador.isAvailable(), trabajador.getCalendario());
+        this.attendance = attendance;
+    }
 
+    public void setTrabajador(Trabajador trabajador) {
+        this.trabajador = new Trabajador(trabajador.getId(), trabajador.getName(), trabajador.getLastname(), trabajador.getDni(), trabajador.getNss(), trabajador.getPhone(), trabajador.getBirthdate(), trabajador.getAddress(), trabajador.isAvailable(), trabajador.getCalendario());
+    }
 }

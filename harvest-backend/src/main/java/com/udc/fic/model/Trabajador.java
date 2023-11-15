@@ -1,17 +1,16 @@
 package com.udc.fic.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "dni"), @UniqueConstraint(columnNames = "nss")})
 public class Trabajador {
     @Id
@@ -34,5 +33,27 @@ public class Trabajador {
     @Column(nullable = false)
     private boolean available;
     @OneToMany(mappedBy = "trabajador", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+//    @Singular
     private List<Disponibilidad> calendario;
+
+    public Trabajador(Long id, String name, String lastname, String dni, String nss, String phone, LocalDate birthdate, String address, boolean available, List<Disponibilidad> calendario) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.dni = dni;
+        this.nss = nss;
+        this.phone = phone;
+        this.birthdate = birthdate;
+        this.address = address;
+        this.available = available;
+        if (calendario != null) {
+            this.calendario = new ArrayList<>(calendario);
+        } else {
+            this.calendario = null;
+        }
+    }
+
+    public void setCalendario(List<Disponibilidad> calendario) {
+        this.calendario = new ArrayList<>(calendario);
+    }
 }

@@ -2,7 +2,6 @@ package com.udc.fic.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,6 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = "email"), @UniqueConstraint(columnNames = "username"),})
 public class Empleado {
 
@@ -45,4 +43,27 @@ public class Empleado {
     private Set<Rol> roles = new HashSet<>();
     @Column
     private String direccion;
+
+    public Empleado(Long id, String name, String lastname, String dni, String nss, String phone, String email, String username, String password, LocalDate birthdate, Set<Rol> roles, String direccion) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.dni = dni;
+        this.nss = nss;
+        this.phone = phone;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.birthdate = birthdate;
+        if (roles != null) {
+            this.roles = new HashSet<>(roles);
+        } else {
+            this.roles = null;
+        }
+        this.direccion = direccion;
+    }
+
+    public void setRoles(Set<Rol> roles) {
+        this.roles = new HashSet<>(roles);
+    }
 }

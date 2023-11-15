@@ -141,6 +141,8 @@ class TrabajadorServiceImplTest {
         calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 3), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
         calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 4), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
 
+        trabajador.setCalendario(calendario);
+
         when(trabajadorRepository.findById(1L)).thenReturn(Optional.of(trabajador));
 
         assertEquals(calendario, trabajadorService.obtenerCalendario(1L));

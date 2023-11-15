@@ -318,11 +318,38 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.3.2</version>
+                <configuration>
+                    <excludeFilterFile>${project.basedir}/conf/spotbugs-security-exclude.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>spotbugs</goal>
+                        </goals>
+                        <configuration>
+                            <includeFilterFile>${project.basedir}/conf/spotbugs-security-include.xml</includeFilterFile>
+                            <excludeFilterFile>${project.basedir}/conf/spotbugs-security-exclude.xml</excludeFilterFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
     </build>
     <reporting>
         <plugins>
-
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.3.2</version>
+            </plugin>
 
             <!-- see pom.xml for rest of reporting section -->
 

@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -378,6 +379,47 @@ class AuthenticationControllerTest {
 
         this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void signupUserNoRolesAdmin() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        newUserDTO.setRoles(new ArrayList<>());
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void signupUserNoRolesCapataz() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        newUserDTO.setRoles(new ArrayList<>());
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void signupUserNotValidRoles() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        List<String> invalidRoles = new ArrayList<>();
+        invalidRoles.add("invalido");
+        newUserDTO.setRoles(invalidRoles);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isBadRequest());
     }
 
 

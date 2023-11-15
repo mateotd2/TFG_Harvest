@@ -507,7 +507,7 @@ paths:
         - Trabajadores
       security:
         - bearerAuth: [ ]
-      summary: Actualizar un trabajador ( Solo puede el administrador)
+      summary: Obtener un trabajador ( Solo puede el administrador)
       operationId: getWorker
       x-custom-role:
         - ADMIN

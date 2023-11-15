@@ -1,12 +1,11 @@
 package com.udc.fic.security.jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 public class JwtInfo {
 
     /**
@@ -24,5 +23,17 @@ public class JwtInfo {
      */
     private List<String> roles;
 
+    public JwtInfo(Long empleadoId, String userName, List<String> roles) {
+        this.empleadoId = empleadoId;
+        this.userName = userName;
+        if (roles != null) {
+            this.roles = new ArrayList<>(roles);
+        } else {
+            this.roles = null;
+        }
+    }
 
+    public void setRoles(List<String> roles) {
+        this.roles = new ArrayList<>(roles);
+    }
 }
