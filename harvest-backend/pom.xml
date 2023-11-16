@@ -51,41 +51,6 @@
                 </dependency>
             </dependencies>
         </profile>
-
-<!--        <profile>-->
-<!--            <id>coverage</id>-->
-<!--            <build>-->
-<!--                <plugins>-->
-<!--                    &lt;!&ndash; Jacoco setup &ndash;&gt;-->
-<!--                    <plugin>-->
-<!--                        <groupId>org.jacoco</groupId>-->
-<!--                        <artifactId>jacoco-maven-plugin</artifactId>-->
-<!--                        <version>0.8.10</version>-->
-<!--                        <configuration>-->
-<!--                            <excludes>-->
-<!--                                <exclude>**/com/udc/fic/security/**/*</exclude>-->
-<!--                                <exclude>**/com/udc/fic/mapper/**/*</exclude>-->
-<!--                            </excludes>-->
-<!--                        </configuration>-->
-<!--                        <executions>-->
-<!--                            <execution>-->
-<!--                                <goals>-->
-<!--                                    <goal>prepare-agent</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                            &lt;!&ndash; attached to Maven test phase &ndash;&gt;-->
-<!--                            <execution>-->
-<!--                                <id>coverage</id>-->
-<!--                                <phase>verify</phase>-->
-<!--                                <goals>-->
-<!--                                    <goal>report</goal>-->
-<!--                                </goals>-->
-<!--                            </execution>-->
-<!--                        </executions>-->
-<!--                    </plugin>-->
-<!--                </plugins>-->
-<!--            </build>-->
-<!--        </profile>-->
     </profiles>
 
 
@@ -345,7 +310,7 @@
                     </execution>
                     <!-- attached to Maven test phase -->
                     <execution>
-                        <id>coverage</id>
+                        <id>report</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
