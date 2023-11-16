@@ -20,7 +20,6 @@
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.28</org.projectlombok.version>
 
-        <sonar.profile>h2</sonar.profile>
     </properties>
 
     <!-- ********************************************** -->

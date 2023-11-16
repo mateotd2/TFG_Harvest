@@ -36,7 +36,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify -Pcoverage org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mateotd2_TFG_Harvest_backend
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=mateotd2_TFG_Harvest_backend
       # FLUTTER
       - name: Flutter #https://github.com/subosito/flutter-action
         uses: subosito/flutter-action@v2
