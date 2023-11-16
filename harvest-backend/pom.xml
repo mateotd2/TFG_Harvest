@@ -310,7 +310,7 @@
                     </execution>
                     <!-- attached to Maven test phase -->
                     <execution>
-                        <id>report</id>
+                        <id>coverage</id>
                         <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
