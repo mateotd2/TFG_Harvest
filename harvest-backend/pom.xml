@@ -19,6 +19,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.28</org.projectlombok.version>
+
+        <sonar.profile>h2</sonar.profile>
     </properties>
 
     <!-- ********************************************** -->
@@ -31,7 +33,7 @@
         <profile>
             <!-- H2 database profile -->
             <!-- Prepares the project to make use of an H2 in-memory database -->
-            <id>coverage</id>
+            <id>h2</id>
             <activation>
                 <!-- Active by default so it can be installed by CI -->
                 <activeByDefault>true</activeByDefault>
