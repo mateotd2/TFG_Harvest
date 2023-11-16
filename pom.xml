@@ -48,7 +48,6 @@
                 <sonar.organization>mateotd2</sonar.organization>
                 <sonar.projectKey>mateotd2_TFG_Harvest_backend</sonar.projectKey>
                 <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
-                <sonar.profile>h2</sonar.profile>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
