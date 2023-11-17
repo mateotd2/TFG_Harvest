@@ -115,6 +115,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
+        <dependency>
 
             <groupId>org.springframework.boot</groupId>
 
@@ -229,6 +235,7 @@
         </dependency>
 
 
+
     </dependencies>
 
 
@@ -303,8 +310,7 @@
                 <version>0.8.10</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/com/udc/fic/security/**/*</exclude>
-                        <exclude>**/com/udc/fic/mapper/**/*</exclude>
+                        <exclude>**/com/udc/fic/mapper/**/*, **/com/udc/fic/security/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -322,6 +328,41 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>
+                                mutationCoverage
+                            </goal>
+                        </goals>
+                    </execution>
+                </executions>
+<!--            OPTIMIZACION DE PITEST: https://blog.frankel.ch/faster-mutation-testing/-->
+                <configuration>
+
+                    <historyInputFile>${project.basedir}/.historyMutation</historyInputFile>
+                    <historyOutputFile>${project.basedir}/.historyMutation</historyOutputFile>
+                    <features>
+                        <feature>-frecord</feature>
+                        <feature>+auto_threads</feature>
+                    </features>
+                    <excludedClasses>com.udc.fic.security.**</excludedClasses>
+                    <excludedClasses>com.udc.fic.mapper.**</excludedClasses>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -373,6 +414,19 @@
                     <reportSet>
                         <reports>
                             <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.3</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
                             <report>report</report>
                         </reports>
                     </reportSet>
