@@ -79,6 +79,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
         if (trabajadorRepository.existsByDniOrNss(trabajador.getDni(), trabajador.getNss())) {
             throw new DuplicateInstanceException("DNI or NSS already exists", trabajador.getDni());
         }
+        trabajador.setAvailable(true);
         LOGGER.info("Añadiendo trabajador con dni: {}", trabajador.getDni());
         trabajadorRepository.save(trabajador);
 

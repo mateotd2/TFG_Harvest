@@ -360,8 +360,11 @@
                         <feature>-frecord</feature>
                         <feature>+auto_threads</feature>
                     </features>
-                    <excludedClasses>com.udc.fic.security.**</excludedClasses>
-                    <excludedClasses>com.udc.fic.mapper.**</excludedClasses>
+
+                    <excludedClasses>
+                        <param>com.udc.fic.security.*</param>
+                        <param>com.udc.fic.mapper.*</param>
+                    </excludedClasses>
                 </configuration>
             </plugin>
 
