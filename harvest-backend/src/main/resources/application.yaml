@@ -9,6 +9,7 @@ management:
         allow-origins: "http://localhost:8080"
 spring:
   datasource:
+    initialization-mode: always
     url: @dataSource.url@
     driverClassName: org.h2.Driver
     username: @dataSource.user@
@@ -19,8 +20,14 @@ spring:
       enabled: true
 
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop
+#    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
 
 app:
   jwtcookie: Bu:GW8bgPlEw
@@ -39,8 +46,7 @@ springdoc:
     persistAuthorization: true
     use-root-path: true
     disable-swagger-default-url: true
-    tryItOutEnabled: false
+    tryItOutEnabled: true
 
-    oAuthFlow:
-      authorizationUrl: https://localhost:8080
-      tokenUrl: https://localhost:8080/api/auth/signin
+
+

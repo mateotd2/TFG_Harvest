@@ -27,7 +27,6 @@ class _UpdateUserState extends State<UpdateUser> {
   final TextEditingController _nssController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     // Estado y API con token
@@ -191,7 +190,7 @@ class _UpdateUserState extends State<UpdateUser> {
                               content: Text(
                                   'Comunicacion con el servidor fallida')));
                           Navigator.pop(context);
-                        } catch(e){
+                        } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               key: Key('snackKey'),
                               backgroundColor: Colors.red,

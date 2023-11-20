@@ -6,6 +6,7 @@ import com.udc.fic.model.RolUser;
 import com.udc.fic.repository.EmpleadoRepository;
 import com.udc.fic.repository.RolRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.NoRoleException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,7 @@ class EmpleadoServiceTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"admin", "tractorista", "capataz"})
-    void signUpTest(String rolParametrico) throws DuplicateInstanceException {
+    void signUpTest(String rolParametrico) throws DuplicateInstanceException, NoRoleException {
         Empleado empleado = new Empleado();
         empleado.setName("Mateo");
         empleado.setLastname("tilves");
@@ -118,6 +119,7 @@ class EmpleadoServiceTest {
         empleado.setRoles(roles);
 
         List<String> rolesString = new ArrayList<>();
+        rolesString.add("admin");
         assertThrows(DuplicateInstanceException.class, () -> empleadoService.signUp(empleado, rolesString));
 
     }
@@ -151,7 +153,7 @@ class EmpleadoServiceTest {
         empleado.setRoles(roles);
 
         List<String> rolesString = new ArrayList<>();
-
+        rolesString.add("admin");
         assertThrows(DuplicateInstanceException.class, () -> empleadoService.signUp(empleado, rolesString));
 
     }

@@ -7,22 +7,22 @@ import com.udc.fic.harvest.DTOs.ChangePasswordDTO;
 import com.udc.fic.harvest.DTOs.NewUserDTO;
 import com.udc.fic.harvest.DTOs.SignInRequestDTO;
 import com.udc.fic.harvest.DTOs.UpdateUserDTO;
-import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Empleado;
 import com.udc.fic.security.UserDetailsImpl;
 import com.udc.fic.security.jwt.JwtGeneratorInfo;
 import com.udc.fic.services.EmpleadoService;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.NoRoleException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,21 +44,15 @@ class AuthenticationControllerTest {
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
-    SourceTargetMapper mapper;
-    @Autowired
     JwtGeneratorInfo jwtUtils;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    private AuthenticationController authenticationController;
-    @Autowired
-    private MessageSource messageSource;
 
 
-    private Empleado crearAdmin() throws DuplicateInstanceException {
+    private Empleado crearAdmin() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "admin", "admin", "123456789Q", "123456789012",
-                "123456789", "admin@prueba.com", "admin", "admin", LocalDate.now(), null);
+                "123456789", "admin@prueba.com", "admin", "admin", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("admin");
@@ -66,10 +60,10 @@ class AuthenticationControllerTest {
         return empleadoService.signUp(empleado, roles);
     }
 
-    private Empleado crearCapataz() throws DuplicateInstanceException {
+    private Empleado crearCapataz() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "capataz", "capataz", "123456789Q", "123456789012",
-                "123456789", "capataz@prueba.com", "capataz", "capataz", LocalDate.now(), null);
+                "123456789", "capataz@prueba.com", "capataz", "capataz", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("capataz");
@@ -77,10 +71,10 @@ class AuthenticationControllerTest {
         return empleadoService.signUp(empleado, roles);
     }
 
-    private Empleado crearTractorista() throws DuplicateInstanceException {
+    private Empleado crearTractorista() throws DuplicateInstanceException, NoRoleException {
 
         Empleado empleado = new Empleado(null, "tractorista", "tractorista", "123456789Q", "123456789012",
-                "123456789", "tractorista@prueba.com", "tractorista", "tractorista", LocalDate.now(), null);
+                "123456789", "tractorista@prueba.com", "tractorista", "tractorista", LocalDate.now(), null, "Direccion");
 
         List<String> roles = new ArrayList<>();
         roles.add("tractorista");
@@ -104,7 +98,7 @@ class AuthenticationControllerTest {
 
     @Test
     void postSignin_BadCredentials() throws Exception {
-        Empleado admin = crearAdmin();
+//        Empleado admin = crearAdmin();
         SignInRequestDTO signInRequestDTO = new SignInRequestDTO();
         signInRequestDTO.setPassword("bad");
         signInRequestDTO.setUsername("bad");
@@ -271,7 +265,7 @@ class AuthenticationControllerTest {
 
         // ID que no es del admin con id 2
         this.mockMvc.perform(post("/api/auth/{0}/changePassword", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsBytes(changePasswordDTO))).andExpect(status().isUnauthorized());
+                .content(mapper.writeValueAsBytes(changePasswordDTO))).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -289,6 +283,34 @@ class AuthenticationControllerTest {
         updateUserDTO.setBirthdate(admin.getBirthdate());
         updateUserDTO.setDni("12345879Q");
         updateUserDTO.setEmail("nuevo@email.com");
+        updateUserDTO.setLastname("lastname");
+        updateUserDTO.setName(admin.getName());
+        updateUserDTO.setNss(admin.getNss());
+        updateUserDTO.setPhone("987654321");
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isOk());
+    }
+
+    @Test
+    void updateUserSameEmail_Ok() throws Exception {
+        Empleado admin = crearAdmin();
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("admin", "admin"));
+
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        String jwt = jwtUtils.generateJwtToken(userDetails);
+
+        UpdateUserDTO updateUserDTO = new UpdateUserDTO();
+        updateUserDTO.setBirthdate(admin.getBirthdate());
+        updateUserDTO.setDni("12345879Q");
+        updateUserDTO.setEmail("admin@prueba.com");
         updateUserDTO.setLastname("lastname");
         updateUserDTO.setName(admin.getName());
         updateUserDTO.setNss(admin.getNss());
@@ -357,6 +379,47 @@ class AuthenticationControllerTest {
 
         this.mockMvc.perform(post("/api/auth/{0}/updateUser", admin.getId()).header("Authorization", "Bearer " + jwt).contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(updateUserDTO))).andExpect(status().isConflict());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void signupUserNoRolesAdmin() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        newUserDTO.setRoles(new ArrayList<>());
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void signupUserNoRolesCapataz() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        newUserDTO.setRoles(new ArrayList<>());
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void signupUserNotValidRoles() throws Exception {
+        NewUserDTO newUserDTO = nuevoUser("prueba", "prueba@prueba.com");
+        List<String> invalidRoles = new ArrayList<>();
+        invalidRoles.add("invalido");
+        newUserDTO.setRoles(invalidRoles);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsBytes(newUserDTO))).andExpect(status().isBadRequest());
     }
 
 

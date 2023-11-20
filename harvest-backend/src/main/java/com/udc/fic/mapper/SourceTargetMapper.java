@@ -1,8 +1,7 @@
 package com.udc.fic.mapper;
 
-import com.udc.fic.harvest.DTOs.NewUserDTO;
-import com.udc.fic.harvest.DTOs.UpdateUserDTO;
-import com.udc.fic.model.Empleado;
+import com.udc.fic.harvest.DTOs.*;
+import com.udc.fic.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -13,5 +12,19 @@ public interface SourceTargetMapper {
     Empleado toEmpleado(NewUserDTO newUserDto);
 
     Empleado toEmpleado(UpdateUserDTO updateUserDTO);
+
+
+    WorkerDTO toWorker(Trabajador trabajador);
+
+    @Mapping(target = "calendario", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    Trabajador toTrabajador(WorkerDTO workerDTO);
+
+    AttendanceDTO toAttendance(Asistencia asistencia);
+
+    ElementoListaDisponibilidad toElementoListDisponibilidad(CallDTO callDTO);
+
+    @Mapping(target = "day", source = "disponibilidad.daywork")
+    CalendarDTO toCalendarDTO(Disponibilidad disponibilidad);
 
 }

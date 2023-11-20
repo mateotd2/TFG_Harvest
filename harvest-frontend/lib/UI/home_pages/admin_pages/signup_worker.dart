@@ -3,46 +3,42 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/plataform_apis/auth_api.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/validators.dart';
 
-class SignupEmp extends StatefulWidget {
+class SignupWorker extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SignupEmpState();
+  State<StatefulWidget> createState() => _SignupWorkerState();
 }
 
-class _SignupEmpState extends State<SignupEmp> {
+class _SignupWorkerState extends State<SignupWorker> {
   var logger = Logger();
   final _form = GlobalKey<FormState>();
   DateTime _fehaNac = DateTime.now();
 
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _nssController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final apiInstance = autenticadoApiPlataform(auth);
+    final apiInstance = (trabajadoresApiPlataform(auth));
 
-    final emailValidator =
-        ValidationBuilder(localeName: 'es').email().maxLength(254).build();
     final phoneValidator =
         ValidationBuilder(localeName: 'es').phone().maxLength(254).build();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agregar Empleado'),
+        title: const Text('Agregar Trabajador'),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
@@ -50,45 +46,6 @@ class _SignupEmpState extends State<SignupEmp> {
           key: _form,
           child: Column(
             children: [
-              TextFormField(
-                key: Key('emailKey'),
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                validator: emailValidator,
-              ),
-              TextFormField(
-                key: Key('usernameKey'),
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Nombre de usuario'),
-                validator: (valor) {
-                  if (valor!.isEmpty) {
-                    return 'Ingresar Nombre de usuario';
-                  }
-                  valor = valor.trim();
-                  if (valor.length >= 254 || !isNamesValid(valor)) {
-                    return 'Ingresar un Nombre de usuario valido';
-                  }
-
-                  return null;
-                },
-              ),
-              TextFormField(
-                obscureText: true,
-                key: Key('passwordKey'),
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Contraseña'),
-                validator: (valor) {
-                  if (valor!.isEmpty) {
-                    return 'Ingresar Contraseña';
-                  }
-                  valor = valor.trim();
-                  if (valor.length >= 254 || !isNamesValid(valor)) {
-                    return 'Ingresar Contraseña valida';
-                  }
-
-                  return null;
-                },
-              ),
               TextFormField(
                 key: Key('nameKey'),
                 controller: _nameController,
@@ -153,6 +110,21 @@ class _SignupEmpState extends State<SignupEmp> {
                 },
               ),
               TextFormField(
+                key: Key('addressKey'),
+                controller: _addressController,
+                decoration: InputDecoration(labelText: 'address'),
+                validator: (valor) {
+                  if (valor!.isEmpty) {
+                    return 'Ingresar direccion';
+                  }
+                  valor = valor.trim();
+                  if (valor.length > 254) {
+                    return 'Ingresar direccion valido';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
                 key: Key('phoneKey'),
                 controller: _phoneController,
                 decoration: InputDecoration(labelText: 'Telefono'),
@@ -165,7 +137,7 @@ class _SignupEmpState extends State<SignupEmp> {
                   key: Key('dateKey'),
                   readOnly: true,
                   decoration: InputDecoration(
-                      labelText: 'Fecha de nacimiento',
+                      labelText: 'Fecha de Nacimiento',
                       suffixIcon: IconButton(
                         icon: Icon(Icons.calendar_month),
                         onPressed: () async {
@@ -195,20 +167,19 @@ class _SignupEmpState extends State<SignupEmp> {
                       _form.currentState!.save();
                       logger.d('Cambio de informacion de usuario:');
 
-                      NewUserDTO user = NewUserDTO(
-                          email: _emailController.text,
-                          name: _nameController.text,
-                          lastname: _lastnameController.text,
-                          dni: _dniController.text,
-                          nss: _nssController.text,
-                          phone: _phoneController.text,
-                          birthdate: _fehaNac,
-                          username: _usernameController.text,
-                          password: _passwordController.text);
-                      logger.d(user);
+                      WorkerDTO worker = WorkerDTO(
+                        name: _nameController.text,
+                        lastname: _lastnameController.text,
+                        dni: _dniController.text,
+                        nss: _nssController.text,
+                        phone: _phoneController.text,
+                        birthdate: _fehaNac,
+                        address: _addressController.text,
+                      );
+                      logger.d(worker);
                       try {
                         MessageResponseDTO? response = await apiInstance
-                            .signUp(user)
+                            .signUpWorker(worker)
                             .timeout(Duration(seconds: 10));
 
                         logger.d('Respuesta:');
@@ -216,7 +187,7 @@ class _SignupEmpState extends State<SignupEmp> {
                         logger.d('Cambio de datos de usuario Finalizado');
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Empleado agregado.')));
+                            SnackBar(content: Text('Trabajador agregado.')));
                         Navigator.pop(context);
                       } on TimeoutException {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -229,7 +200,8 @@ class _SignupEmpState extends State<SignupEmp> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
-                            content: Text('Error al dar de alta al usuario.')));
+                            content:
+                                Text('Error al dar de alta al trabajadors.')));
                         Navigator.pop(context);
                       }
                     }

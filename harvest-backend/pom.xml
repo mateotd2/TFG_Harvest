@@ -19,6 +19,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.28</org.projectlombok.version>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            ${project.basedir}/target/site/jacoco/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.java.spotbugs.reportPaths>${project.basedir}/target/spotbugsXml.xml</sonar.java.spotbugs.reportPaths>
+
     </properties>
 
     <!-- ********************************************** -->
@@ -107,6 +112,12 @@
             <version>2.0</version>
 
 
+        </dependency>
+
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.1</version>
         </dependency>
 
         <dependency>
@@ -224,6 +235,7 @@
         </dependency>
 
 
+
     </dependencies>
 
 
@@ -298,8 +310,7 @@
                 <version>0.8.10</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/com/udc/fic/security/**/*</exclude>
-                        <exclude>**/com/udc/fic/mapper/**/*</exclude>
+                        <exclude>**/com/udc/fic/mapper/**/*, **/com/udc/fic/security/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -318,6 +329,112 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.3</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>
+                                mutationCoverage
+                            </goal>
+                        </goals>
+                    </execution>
+                </executions>
+<!--            OPTIMIZACION DE PITEST: https://blog.frankel.ch/faster-mutation-testing/-->
+                <configuration>
+
+                    <historyInputFile>${project.basedir}/.historyMutation</historyInputFile>
+                    <historyOutputFile>${project.basedir}/.historyMutation</historyOutputFile>
+                    <features>
+                        <feature>-frecord</feature>
+                        <feature>+auto_threads</feature>
+                    </features>
+
+                    <excludedClasses>
+                        <param>com.udc.fic.security.*</param>
+                        <param>com.udc.fic.mapper.*</param>
+                    </excludedClasses>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.3.2</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <spotbugsXmlOutput>true</spotbugsXmlOutput>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>spotbugs</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+            </plugin>
+
+
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.7.3.2</version>
+            </plugin>
+
+            <!-- see pom.xml for rest of reporting section -->
+
+            <!-- generate the coverage report using Jacoco -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.10</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/com/udc/fic/security/**/*</exclude>
+                        <exclude>**/com/udc/fic/mapper/**/*</exclude>
+                    </excludes>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <!-- select non-aggregate reports -->
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.3</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

@@ -7,6 +7,7 @@ import com.udc.fic.repository.EmpleadoRepository;
 import com.udc.fic.repository.RolRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import com.udc.fic.services.exceptions.IncorrectPasswordException;
+import com.udc.fic.services.exceptions.NoRoleException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.Set;
 @Service
 @Transactional
 public class EmpleadoServiceImpl implements EmpleadoService {
-    public static final String ROL_INVALIDO = "Registro de usuario fallido, ROL invalido";
+    public static final String ROLE_NOT_VALID = "Registro de usuario fallido, ROL invalido";
     public static final String ROLE_IS_NOT_FOUND = "Error: Role is not found.";
     private static final Logger LOGGER = LoggerFactory.getLogger(EmpleadoServiceImpl.class);
     @Autowired
@@ -39,19 +40,24 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
 
     @Override
-//    @PreAuthorize("hasRole('ADMIN')")
-    public Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException {
+    public Empleado signUp(Empleado empleado, List<String> roles) throws DuplicateInstanceException, NoRoleException {
+
+        if (roles.isEmpty()) {
+            LOGGER.error("Registro de usuario fallido, ningun rol.");
+            throw new NoRoleException("Registro de usuario fallido, ningun rol ");
+        }
 
         LOGGER.info("Registro de usuario {} ", empleado.getUsername());
-        if (empleadoRepository.existsByUsername(empleado.getUsername()) == Boolean.TRUE) {
+        if (empleadoRepository.existsByUsername(empleado.getUsername())) {
             LOGGER.error("Registro de usuario fallido Username no disponible");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
 
-        if (empleadoRepository.existsByEmail(empleado.getEmail()) == Boolean.TRUE) {
+        if (empleadoRepository.existsByEmail(empleado.getEmail())) {
             LOGGER.error("Registro de usuario fallido Email duplicado");
             throw new DuplicateInstanceException("Username already exists", empleado.getUsername());
         }
+
 
         empleado.setPassword(bCryptPasswordEncoder.encode(empleado.getPassword()));
         Set<Rol> rolesParaUser = new HashSet<>();
@@ -60,7 +66,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
             switch (rol) {
                 case "admin" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_ADMIN).orElseThrow(() -> {
-                        LOGGER.error(ROL_INVALIDO);
+                        LOGGER.error(ROLE_NOT_VALID);
                         return new RuntimeException(ROLE_IS_NOT_FOUND);
                     });
                     rolesParaUser.add(nuevoRol);
@@ -68,23 +74,29 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
                 case "tractorista" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_TRACTORISTA).orElseThrow(() -> {
-                        LOGGER.error(ROL_INVALIDO);
+                        LOGGER.error(ROLE_NOT_VALID);
                         return new RuntimeException(ROLE_IS_NOT_FOUND);
                     });
                     rolesParaUser.add(nuevoRol);
                 }
                 case "capataz" -> {
                     Rol nuevoRol = rolRepository.findByName(RolUser.ROLE_CAPATAZ).orElseThrow(() -> {
-                        LOGGER.error(ROL_INVALIDO);
+                        LOGGER.error(ROLE_NOT_VALID);
                         return new RuntimeException(ROLE_IS_NOT_FOUND);
 
                     });
                     rolesParaUser.add(nuevoRol);
                 }
+                default -> {
+                }
+
 
             }
         });
 
+        if (rolesParaUser.isEmpty()) {
+            throw new NoRoleException("Registro de usuario fallido, ningun rol ");
+        }
 
         empleado.setRoles(rolesParaUser);
         empleadoRepository.save(empleado);
