@@ -1,15 +1,13 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/signup_emp.dart';
 import 'package:logger/logger.dart';
 
-class Empleados extends StatefulWidget{
+class Empleados extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _EmpleadosState();
-  }
+}
 
-class _EmpleadosState extends State<Empleados>{
+class _EmpleadosState extends State<Empleados> {
   var logger = Logger();
 
   @override
@@ -21,15 +19,14 @@ class _EmpleadosState extends State<Empleados>{
             Text('Empleado 1'),
             Text('Empleado 2'),
             Text('Empleado 3')
-
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){
+        onPressed: () {
           logger.d('ADD USER PULSADO');
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SignupEmp()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => SignupEmp()));
         },
         key: Key('addEmpKey'),
         child: Icon(Icons.group_add_rounded),
@@ -37,4 +34,3 @@ class _EmpleadosState extends State<Empleados>{
     );
   }
 }
-  

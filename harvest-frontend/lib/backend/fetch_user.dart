@@ -20,14 +20,14 @@ Future<void> fetchUser(SignInResponseModel responseState, context,
   }
 
   try {
-    final result = await apiInstance.signin(signInRequest).timeout(Duration(seconds: 10));
+    final result =
+        await apiInstance.signin(signInRequest).timeout(Duration(seconds: 10));
     processResponse(result);
-  }on TimeoutException {
+  } on TimeoutException {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
         content: Text('Comunicacion con el servidor fallida')));
-    logger.d(
-        'Comunicacion con el servidor fallida');
+    logger.d('Comunicacion con el servidor fallida');
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,

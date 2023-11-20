@@ -91,7 +91,6 @@ class _ConfigState extends State<Config> {
                                           backgroundColor: Colors.red,
                                           content: Text(
                                               'Comunicacion con el servidor fallida')));
-
                                 } catch (e) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
