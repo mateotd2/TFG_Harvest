@@ -121,6 +121,7 @@ class AuthenticationControllerTest {
         newUserDTO.setNss("098765432123");
         newUserDTO.setPhone("987654321");
         newUserDTO.setUsername(username);
+        newUserDTO.setAddress("13 Rua del percebe");
         List<String> roles = new ArrayList<>();
         roles.add("tractorista");
         newUserDTO.setRoles(roles);

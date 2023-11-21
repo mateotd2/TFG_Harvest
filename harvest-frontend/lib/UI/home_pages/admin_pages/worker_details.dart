@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_details_update.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -96,8 +97,20 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           logger.d("Boton Modificar pulstado");
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      WorkerDetailsUpdate(worker: trabajadorObtenido!)));
+                          // trabajadorObtenido = await apiInstance.getWorker(workerId!).timeout(Duration(seconds: 10));
+                          setState(() {
+                            trabajador =
+                                apiInstance.getWorker(workerId!).timeout(Duration(seconds: 10));
+                          });
+
+                          // Navigator.pop(context);
                         },
                         child: Text("Modificar"),
                       ),
@@ -187,3 +200,4 @@ class _WorkerDetailsState extends State<WorkerDetails> {
     ));
   }
 }
+

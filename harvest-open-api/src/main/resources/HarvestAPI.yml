@@ -984,6 +984,7 @@ components:
         - nss
         - phone
         - birthdate
+        - address
 
       properties:
         username:
@@ -1030,6 +1031,10 @@ components:
           type: string
           format: date
           example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
       #          maxLength: 20
       additionalProperties: false
 
