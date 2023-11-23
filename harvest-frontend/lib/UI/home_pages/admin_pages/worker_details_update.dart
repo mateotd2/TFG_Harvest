@@ -11,7 +11,7 @@ import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/validators.dart';
 
 class WorkerDetailsUpdate extends StatefulWidget {
-  WorkerDTO worker;
+  final WorkerDTO worker;
 
   WorkerDetailsUpdate({required this.worker});
 

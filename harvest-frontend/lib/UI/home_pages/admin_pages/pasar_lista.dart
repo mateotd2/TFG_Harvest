@@ -213,17 +213,17 @@ class _PasarLista extends State<PasarLista> {
   Future<void> _showTimePickerDialog(
       BuildContext context, String hora, String tipoEntrada, int index) async {
     logger.d("Hora actual: ${DateTime.now()}");
-    logger.d("Se intenta parsear la hora ${hora}");
+    logger.d("Se intenta parsear la hora $hora");
     DateTime? nuevaHora = DateTime.parse(hora);
-    logger.d("Nueva HORA ${nuevaHora}");
+    logger.d("Nueva HORA $nuevaHora");
     TimeOfDay horaInicial =
         TimeOfDay(hour: nuevaHora.hour, minute: nuevaHora.minute);
-    logger.d("Hora: ${hora}");
+    logger.d("Hora: $hora");
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Selecciona la hora de ${tipoEntrada}:'),
+          title: Text('Selecciona la hora de $tipoEntrada:'),
           content: TimePickerSpinner(
             time: nuevaHora,
             is24HourMode: true,
@@ -252,7 +252,7 @@ class _PasarLista extends State<PasarLista> {
                       case "entrada":
                         DateTime salida = DateTime.parse(
                             "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkout}.000000");
-                        logger.d("Salida: ${salida}");
+                        logger.d("Salida: $salida");
                         if (nuevaHora!.isBefore(salida)) {
                           listaAsistencias[index] = CallDTO(
                               id: listaAsistencias[index].id,
@@ -273,7 +273,7 @@ class _PasarLista extends State<PasarLista> {
                       case "salida":
                         DateTime? entrada = DateTime.tryParse(
                             "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkin}.000000");
-                        logger.d("Entrada: ${entrada}");
+                        logger.d("Entrada: $entrada");
                         if (!nuevaHora!.isBefore(entrada!)) {
                           listaAsistencias[index] = CallDTO(
                               id: listaAsistencias[index].id,
