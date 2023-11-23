@@ -1233,6 +1233,7 @@ components:
         - id
         - checkin
         - checkout
+        - attendance
       properties:
         id:
           type: integer
@@ -1248,6 +1249,9 @@ components:
           type: string
           format: time
           example: "16:00"
+        attendance:
+          type: boolean
+          example: true
 
 
 

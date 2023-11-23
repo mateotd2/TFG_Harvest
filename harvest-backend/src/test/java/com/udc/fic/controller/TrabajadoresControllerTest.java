@@ -215,18 +215,21 @@ class TrabajadoresControllerTest {
         call1.setId(1L);
         call1.setCheckin(LocalTime.of(8, 0, 0));
         call1.setCheckout(LocalTime.of(16, 0, 0));
+        call1.setAttendance(true);
         calls.add(call1);
 
         CallDTO call2 = new CallDTO();
         call2.setId(3L);
         call2.setCheckin(LocalTime.of(8, 0, 0));
         call2.setCheckout(LocalTime.of(16, 0, 0));
+        call2.setAttendance(true);
         calls.add(call2);
 
         CallDTO call3 = new CallDTO();
         call3.setId(5L);
         call3.setCheckin(LocalTime.of(8, 0, 0));
         call3.setCheckout(LocalTime.of(16, 0, 0));
+        call3.setAttendance(true);
         calls.add(call3);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -245,18 +248,21 @@ class TrabajadoresControllerTest {
         call1.setId(1L);
         call1.setCheckin(LocalTime.of(8, 0, 0));
         call1.setCheckout(LocalTime.of(16, 0, 0));
+        call1.setAttendance(true);
         calls.add(call1);
 
         CallDTO call2 = new CallDTO();
         call2.setId(3L);
         call2.setCheckin(LocalTime.of(8, 0, 0));
         call2.setCheckout(LocalTime.of(16, 0, 0));
+        call2.setAttendance(true);
         calls.add(call2);
 
         CallDTO call3 = new CallDTO();
         call3.setId(10L); // NO EXISTE NINGUNA DISPONIBLIDAD CON ID 10
         call3.setCheckin(LocalTime.of(8, 0, 0));
         call3.setCheckout(LocalTime.of(16, 0, 0));
+        call3.setAttendance(true);
         calls.add(call3);
 
         ObjectMapper mapper = new ObjectMapper();

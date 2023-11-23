@@ -13,4 +13,5 @@ public class ElementoListaDisponibilidad {
     Long id;
     LocalTime checkin;
     LocalTime checkout;
+    boolean attendance;
 }

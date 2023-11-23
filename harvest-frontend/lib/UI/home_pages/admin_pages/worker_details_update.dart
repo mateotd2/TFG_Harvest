@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
@@ -11,23 +10,21 @@ import 'package:provider/provider.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/validators.dart';
 
-class WorkerDetailsUpdate  extends StatefulWidget{
-
+class WorkerDetailsUpdate extends StatefulWidget {
   WorkerDTO worker;
 
   WorkerDetailsUpdate({required this.worker});
-
 
   @override
   State<StatefulWidget> createState() => WorkerDetailsUpdateState();
 }
 
-class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
+class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate> {
   var logger = Logger();
   final _form = GlobalKey<FormState>();
+
   // DateTime _fehaNac = DateTime.now();
   DateTime _fechaNac = DateTime.now();
-
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
@@ -35,7 +32,6 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
   final TextEditingController _nssController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-
 
   @override
   void initState() {
@@ -51,27 +47,23 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
 
   @override
   Widget build(BuildContext context) {
-
-
-
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final apiInstance = trabajadoresApiPlataform(auth);
 
     final phoneValidator =
-    ValidationBuilder(localeName: 'es').phone().maxLength(254).build();
+        ValidationBuilder(localeName: 'es').phone().maxLength(254).build();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Actualizar información.'),
-      ),
-      body: SingleChildScrollView(
-        child: Form(
+        appBar: AppBar(
+          title: const Text('Actualizar información.'),
+        ),
+        body: SingleChildScrollView(
+            child: Form(
           key: _form,
           child: Column(
             children: [
               TextFormField(
-
                 key: Key('nameKey'),
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Nombre'),
@@ -111,7 +103,7 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
                     return 'Ingresar Direccion';
                   }
                   valor = valor.trim();
-                  if (valor.length >= 1024 ) {
+                  if (valor.length >= 1024) {
                     return 'Ingresar Direccion validos';
                   }
                   return null;
@@ -200,7 +192,8 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
                           birthdate: _fechaNac);
                       logger.d(worker);
                       try {
-                        await apiInstance.updateWorker(widget.worker.id!,worker)
+                        await apiInstance
+                            .updateWorker(widget.worker.id!, worker)
                             .timeout(Duration(seconds: 10));
 
                         logger.d('Respuesta:');
@@ -214,13 +207,14 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
                             content:
-                            Text('Comunicacion con el servidor fallida')));
+                                Text('Comunicacion con el servidor fallida')));
                         Navigator.pop(context);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
-                            content: Text('Error al actualizar datos de trabajador.')));
+                            content: Text(
+                                'Error al actualizar datos de trabajador.')));
                         Navigator.pop(context);
                       }
                     }
@@ -228,9 +222,6 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate>{
                   child: const Text('Confirmar'))
             ],
           ),
-        )
-      )
-    );
+        )));
   }
-
 }

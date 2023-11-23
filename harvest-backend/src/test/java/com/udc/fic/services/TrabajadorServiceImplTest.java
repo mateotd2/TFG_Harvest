@@ -126,7 +126,7 @@ class TrabajadorServiceImplTest {
     @Test
     void pasarListaInstaneNotFoundTest() {
         List<ElementoListaDisponibilidad> elementos = new ArrayList<>();
-        elementos.add(new ElementoListaDisponibilidad(1L, LocalTime.now(), LocalTime.now()));
+        elementos.add(new ElementoListaDisponibilidad(1L, LocalTime.now(), LocalTime.now(),true));
         when(disponibilidadRepository.existsById(anyLong())).thenReturn(false);
         assertThrows(InstanceNotFoundException.class, () -> trabajadorService.pasarLista(elementos));
     }

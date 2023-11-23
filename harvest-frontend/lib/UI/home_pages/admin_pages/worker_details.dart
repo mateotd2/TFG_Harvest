@@ -102,12 +102,13 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                           await Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      WorkerDetailsUpdate(worker: trabajadorObtenido!)));
+                                  builder: (context) => WorkerDetailsUpdate(
+                                      worker: trabajadorObtenido!)));
                           // trabajadorObtenido = await apiInstance.getWorker(workerId!).timeout(Duration(seconds: 10));
                           setState(() {
-                            trabajador =
-                                apiInstance.getWorker(workerId!).timeout(Duration(seconds: 10));
+                            trabajador = apiInstance
+                                .getWorker(workerId!)
+                                .timeout(Duration(seconds: 10));
                           });
 
                           // Navigator.pop(context);
@@ -200,4 +201,3 @@ class _WorkerDetailsState extends State<WorkerDetails> {
     ));
   }
 }
-

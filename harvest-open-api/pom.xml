@@ -139,12 +139,12 @@
                             <typeMappings>
                                 <typeMapping>
                                     time=LocalTime</typeMapping>
-                                </typeMappings>
-                                <importMappings>
-                                    <importMapping>
-                                        LocalTime=java.time.LocalTime
-                                    </importMapping>
-                                </importMappings>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>
+                                    LocalTime=java.time.LocalTime
+                                </importMapping>
+                            </importMappings>
 
                         </configuration>
                     </execution>

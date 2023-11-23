@@ -128,7 +128,7 @@ class _UpdateUserState extends State<UpdateUser> {
                       return 'Ingresar Direccion';
                     }
                     valor = valor.trim();
-                    if (valor.length >= 1024 ) {
+                    if (valor.length >= 1024) {
                       return 'Ingresar Direccion validos';
                     }
                     return null;

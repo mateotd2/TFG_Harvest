@@ -34,6 +34,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   harvest_api:
     path: ../harvest-open-api/target/dart
+  time_picker_spinner: any
 
 
   # The following adds the Cupertino Icons font to your application.

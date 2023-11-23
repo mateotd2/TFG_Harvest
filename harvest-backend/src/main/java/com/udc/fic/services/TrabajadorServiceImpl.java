@@ -37,7 +37,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public void pasarLista(List<ElementoListaDisponibilidad> lista) throws InstanceNotFoundException {
 
-
+        LOGGER.info("Realizando actualizacion de asistencias.");
         for (ElementoListaDisponibilidad elemento : lista) {
             if (!disponibilidadRepository.existsById(elemento.getId())) {
                 throw new InstanceNotFoundException();
@@ -46,7 +46,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
         for (ElementoListaDisponibilidad elemento : lista) {
             Disponibilidad disponibilidad = disponibilidadRepository.findById(elemento.getId()).get();
-            disponibilidad.setAttendance(true);
+            disponibilidad.setAttendance(elemento.isAttendance());
 
             if (elemento.getCheckin() != null) disponibilidad.setCheckin(elemento.getCheckin());
             if (elemento.getCheckout() != null) disponibilidad.setCheckout(elemento.getCheckout());
