@@ -185,7 +185,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     }
 
     @Override
-    public void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, InvalidChecksException{
+    public void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, InvalidChecksException {
         Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajadorId);
         calendario.sort(Comparator.comparing(Disponibilidad::getId));
         if (trabajadorOptional.isPresent()) {

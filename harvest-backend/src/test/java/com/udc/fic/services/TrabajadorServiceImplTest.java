@@ -6,6 +6,8 @@ import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.InvalidChecksException;
+import com.udc.fic.services.exceptions.InvalidDateException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -172,6 +174,70 @@ class TrabajadorServiceImplTest {
 //        when(trabajadorRepository.findById(1L)).thenReturn(Optional.of(trabajador));
 //        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.actualizarCalendario(1L, new ArrayList<>()));
 //    }
+
+    @Test
+    void altaDiaCalendarioChecksInvalidosTest() {
+        List<Disponibilidad> calendario = new ArrayList<>();
+        Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 1), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 2), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 3), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 4), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+
+        Optional<Trabajador> trabajadorOptional = Optional.of(trabajador);
+
+
+        Disponibilidad disponibilidad = new Disponibilidad();
+        disponibilidad.setCheckin(LocalTime.of(14, 0, 0));
+        disponibilidad.setCheckout(LocalTime.of(8, 0, 0));
+        disponibilidad.setDaywork(LocalDate.now().plusDays(1));
+
+        when(trabajadorRepository.findById(1L)).thenReturn(trabajadorOptional);
+//        when(trabajadorOptional.get()).thenReturn(trabajador);
+
+        assertThrows(InvalidChecksException.class, () -> {
+            trabajadorService.altaDiaCalendario(1L, disponibilidad);
+        });
+
+    }
+
+    @Test
+    void altaDiaCalendarioFechaInvalidaTest() {
+        List<Disponibilidad> calendario = new ArrayList<>();
+        Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 1), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 2), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 3), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+        calendario.add(new Disponibilidad(1L, LocalDate.of(2023, 1, 4), LocalTime.of(8, 0, 0), LocalTime.of(16, 0, 0), trabajador, false));
+
+        Optional<Trabajador> trabajadorOptional = Optional.of(trabajador);
+
+
+        Disponibilidad disponibilidad = new Disponibilidad();
+        disponibilidad.setCheckin(LocalTime.of(8, 0, 0));
+        disponibilidad.setCheckout(LocalTime.of(14, 0, 0));
+        disponibilidad.setDaywork(LocalDate.now().minusDays(1));
+
+        when(trabajadorRepository.findById(1L)).thenReturn(trabajadorOptional);
+
+        assertThrows(InvalidDateException.class, () -> {
+            trabajadorService.altaDiaCalendario(1L, disponibilidad);
+        });
+
+    }
+
+    @Test
+    void altaDiaCalendarioInstanceNotFoundTest() throws InvalidDateException, InstanceNotFoundException, InvalidChecksException {
+        List<Disponibilidad> calendario = new ArrayList<>();
+        Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
+        Disponibilidad disponibilidad = new Disponibilidad();
+        disponibilidad.setTrabajador(trabajador);
+        disponibilidad.setCheckin(LocalTime.of(8, 0, 0));
+        disponibilidad.setCheckout(LocalTime.of(14, 0, 0));
+        when(trabajadorRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(InstanceNotFoundException.class, () -> trabajadorService.altaDiaCalendario(1L, disponibilidad));
+    }
 
 
 }
