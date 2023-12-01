@@ -302,13 +302,24 @@ class TrabajadoresControllerTest {
         CalendarDTO dia1 = new CalendarDTO();
         dia1.setCheckin(LocalTime.of(8, 0, 0));
         dia1.setCheckout(LocalTime.of(16, 0, 0));
-        dia1.setDay(LocalDate.of(2023, 1, 1));
+        dia1.setDay(LocalDate.now());
+        dia1.setAttendance(false);
+        dia1.setId(1L);
         calendarioDtos.add(dia1);
         CalendarDTO dia2 = new CalendarDTO();
         dia2.setCheckin(LocalTime.of(8, 0, 0));
         dia2.setCheckout(LocalTime.of(16, 0, 0));
-        dia2.setDay(LocalDate.of(2023, 1, 2));
+        dia2.setDay(LocalDate.now().plusDays(1L));
+        dia2.setAttendance(false);
+        dia2.setId(2L);
         calendarioDtos.add(dia2);
+        CalendarDTO dia3 = new CalendarDTO();
+        dia3.setCheckin(LocalTime.of(8, 0, 0));
+        dia3.setCheckout(LocalTime.of(16, 0, 0));
+        dia3.setDay(LocalDate.of(2023, 10, 25));
+        dia3.setAttendance(true);
+        dia3.setId(3L);
+        calendarioDtos.add(dia3);
 
 
         ObjectMapper mapper = new ObjectMapper();

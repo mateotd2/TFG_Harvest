@@ -18,8 +18,8 @@ class PasarLista extends StatefulWidget {
 class _PasarLista extends State<PasarLista> {
   var logger = Logger();
   late Future<List<AttendanceDTO>?>
-      asistencias; // Se carga con la llamada al API de las asistencias registradas en el dia actual
-  late List<CallDTO> listaAsistencias =
+      asistencias; // Se carga con la respuesta de la llamada API de las asistencias registradas en el dia actual
+  List<CallDTO> listaAsistencias =
       []; // Se inicializa con las asistencias del dia actual, pero solo se podran actualizar si se realizan cambios
   bool asistenciasNuevas =
       true; // Para que no estar añadiendo a la lista CallDTOs cada vez que carga la pantalla
@@ -187,14 +187,7 @@ class _PasarLista extends State<PasarLista> {
                     ],
                   );
                 }
-              } else if (snapshot.hasError) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.red,
-                    content: Text('Error obteniendo las asistencias')));
-                Navigator.pop(context);
-                return Text("Nada que mostrar :(");
-              } else {
+            }  else {
                 return Center(child: CircularProgressIndicator());
               }
             }),
@@ -261,13 +254,11 @@ class _PasarLista extends State<PasarLista> {
                               checkout: listaAsistencias[index].checkout,
                               attendance: listaAsistencias[index].attendance);
                           showButtonUpdate = true;
-                          Navigator.of(context).pop();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               key: Key('snackKey'),
                               backgroundColor: Colors.red,
                               content: Text('Hora no valida')));
-                          Navigator.of(context).pop();
                         }
 
                       case "salida":
@@ -282,18 +273,16 @@ class _PasarLista extends State<PasarLista> {
                                   "${nuevaHora?.hour.toString().padLeft(2, '0')}:${nuevaHora?.minute.toString().padLeft(2, '0')}:00",
                               attendance: listaAsistencias[index].attendance);
                           showButtonUpdate = true;
-                          Navigator.of(context).pop();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               key: Key('snackKey'),
                               backgroundColor: Colors.red,
                               content: Text('Hora no valida')));
-                          Navigator.of(context).pop();
                         }
                     }
                   });
                 }
-                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
               },
               child: Text('Aceptar'),
             ),

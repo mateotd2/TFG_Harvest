@@ -24,6 +24,9 @@ public interface SourceTargetMapper {
 
     ElementoListaDisponibilidad toElementoListDisponibilidad(CallDTO callDTO);
 
+    @Mapping(target = "daywork", source = "calendarDTO.day")
+    Disponibilidad toDisponibilidad(CalendarDTO calendarDTO);
+
     @Mapping(target = "day", source = "disponibilidad.daywork")
     CalendarDTO toCalendarDTO(Disponibilidad disponibilidad);
 

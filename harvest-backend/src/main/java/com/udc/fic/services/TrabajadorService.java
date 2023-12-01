@@ -5,6 +5,8 @@ import com.udc.fic.model.Disponibilidad;
 import com.udc.fic.model.ElementoListaDisponibilidad;
 import com.udc.fic.model.Trabajador;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.InvalidChecksException;
+import com.udc.fic.services.exceptions.InvalidDateException;
 import com.udc.fic.services.exceptions.WorkerNotAvailableException;
 
 import javax.management.InstanceNotFoundException;
@@ -26,12 +28,13 @@ public interface TrabajadorService {
 
     void bajaTrabajador(Long id) throws InstanceNotFoundException;
 
-    void registrarDisponibilidad(Disponibilidad disponibilidad, Trabajador trabajador) throws InstanceNotFoundException;
-
     List<Asistencia> trabajadoresDisponiblesPorFecha(LocalDate date);
 
     List<Disponibilidad> obtenerCalendario(Long trabajadorId) throws InstanceNotFoundException;
 
-    void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, WorkerNotAvailableException;
+    void altaDiaCalendario(Long trabajadorId, Disponibilidad disponibilidad) throws InstanceNotFoundException, InvalidDateException, InvalidChecksException;
 
+    void eliminarDiaCalendario(Long trabajadorId, Long disponibilidadId) throws InstanceNotFoundException;
+
+    void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, WorkerNotAvailableException, InvalidChecksException, InvalidDateException;
 }

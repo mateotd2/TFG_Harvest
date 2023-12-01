@@ -14,6 +14,8 @@ import javax.management.InstanceNotFoundException;
 @ControllerAdvice
 public class CustomExceptionHandler {
 
+    static final String BAD_REQUEST = "Bad Request";
+
     @ExceptionHandler(DuplicateInstanceException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
@@ -28,13 +30,41 @@ public class CustomExceptionHandler {
 
     }
 
+    @ExceptionHandler(InvalidChecksException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleInvalidChecksExceptionInstance(InvalidChecksException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError(BAD_REQUEST);
+        error.setMessage("CheckIn o Checkout Invalido");
+        error.setPath(uri);
+        error.setStatus(400);
+        return error;
+
+    }
+
+    @ExceptionHandler(InvalidDateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleInvalidDateExceptionInstance(InvalidDateException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError(BAD_REQUEST);
+        error.setMessage("Dia de trabajo invalido");
+        error.setPath(uri);
+        error.setStatus(400);
+        return error;
+
+    }
+
     @ExceptionHandler(WorkerNotAvailableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public Error handleDuplicateInstance(WorkerNotAvailableException exception, HttpServletRequest request) {
         String uri = request.getRequestURI();
         Error error = new Error();
-        error.setError("Bad Request");
+        error.setError(BAD_REQUEST);
         error.setMessage("Trabajador no esta habilitado");
         error.setPath(uri);
         error.setStatus(400);
@@ -62,7 +92,7 @@ public class CustomExceptionHandler {
     public Error handleNoRoleException(NoRoleException exception, HttpServletRequest request) {
         String uri = request.getRequestURI();
         Error error = new Error();
-        error.setError("Bad request");
+        error.setError(BAD_REQUEST);
         error.setMessage("Ningun rol asignado");
         error.setPath(uri);
         error.setStatus(400);

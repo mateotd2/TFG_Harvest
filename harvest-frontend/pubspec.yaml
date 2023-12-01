@@ -35,6 +35,7 @@ dependencies:
   harvest_api:
     path: ../harvest-open-api/target/dart
   time_picker_spinner: any
+  date_time_picker: "^2.1.0"
 
 
   # The following adds the Cupertino Icons font to your application.

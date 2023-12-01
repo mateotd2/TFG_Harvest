@@ -32,10 +32,26 @@ public class TrabajadorController implements TrabajadoresApi {
 
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _addDayOfWork(Long id, CalendarDTO calendarDTO) throws Exception {
+        trabajadorService.altaDiaCalendario(id, mapper.toDisponibilidad(calendarDTO));
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Calendario actualizado");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<MessageResponseDTO> _callRoll(List<CallDTO> callDTO) throws Exception {
         trabajadorService.pasarLista(callDTO.stream().map(e -> mapper.toElementoListDisponibilidad(e)).toList());
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Asistencias actualizadas");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _deleteDayOfWork(Long id, Long calendarId) throws Exception {
+        trabajadorService.eliminarDiaCalendario(id, calendarId);
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Asistencia eliminada");
         return ResponseEntity.ok().body(message);
     }
 
@@ -90,7 +106,7 @@ public class TrabajadorController implements TrabajadoresApi {
 
         for (CalendarDTO calendar : calendarDTO) {
             Disponibilidad disponibilidad = new Disponibilidad();
-            disponibilidad.setAttendance(false);
+            disponibilidad.setId(calendar.getId());
             disponibilidad.setCheckin(calendar.getCheckin());
             disponibilidad.setCheckout(calendar.getCheckout());
             disponibilidad.setDaywork(calendar.getDay());

@@ -184,7 +184,7 @@ class _UpdateUserState extends State<UpdateUser> {
                             dni: _dniController.text,
                             nss: _nssController.text,
                             phone: _phoneController.text,
-                            birthdate: _fehaNac);
+                            birthdate: _fehaNac, address: _addressController.text );
                         logger.d(user);
                         try {
                           MessageResponseDTO? response = await apiInstance

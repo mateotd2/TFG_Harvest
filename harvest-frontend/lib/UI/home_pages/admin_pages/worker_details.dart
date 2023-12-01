@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_calendar.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_details_update.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
@@ -93,12 +94,22 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                             .format(trabajadorObtenido!.birthdate),
                         style: TextStyle(fontSize: 18.0)),
                   ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        logger.d("Calendario pulsado");
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WorkerCalendar(
+                                    workerId: trabajadorObtenido!.id)));
+                      },
+                      child: Text("Calendario")),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          logger.d("Boton Modificar pulstado");
+                          logger.d("Boton Modificar pulsado");
                           await Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -148,8 +159,6 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                                         ),
                                       ],
                                     ));
-                            // mostrarAlerta(context,trabajadorObtenido!.id!, apiInstance);
-                            // AlertDialog()
                             Navigator.pop(context);
                           },
                           child: Text("Dar de baja trabajador"),
@@ -200,4 +209,5 @@ class _WorkerDetailsState extends State<WorkerDetails> {
       ],
     ));
   }
+
 }
