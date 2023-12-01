@@ -395,5 +395,41 @@ class TrabajadoresControllerTest {
                 .content(mapper.writeValueAsBytes(calendarDTO))).andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void anadirDiaDeTrabajoInvalidDate() throws Exception {
+        CalendarDTO calendarDTO = new CalendarDTO();
+        calendarDTO.setDay(LocalDate.now());
+        calendarDTO.setCheckin(LocalTime.of(8, 0, 0));
+        calendarDTO.setCheckout(LocalTime.of(14, 0, 0));
+        calendarDTO.setAttendance(false);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calendarDTO))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void anadirDiaDeTrabajoInvalidChecks() throws Exception {
+        CalendarDTO calendarDTO = new CalendarDTO();
+        calendarDTO.setDay(LocalDate.now());
+        calendarDTO.setCheckin(LocalTime.of(14, 0, 0));
+        calendarDTO.setCheckout(LocalTime.of(8, 0, 0));
+        calendarDTO.setAttendance(false);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calendarDTO))).andExpect(status().isBadRequest());
+    }
+
 
 }
