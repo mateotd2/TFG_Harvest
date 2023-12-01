@@ -209,5 +209,4 @@ class _WorkerDetailsState extends State<WorkerDetails> {
       ],
     ));
   }
-
 }

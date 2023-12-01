@@ -187,7 +187,7 @@ class _PasarLista extends State<PasarLista> {
                     ],
                   );
                 }
-            }  else {
+              } else {
                 return Center(child: CircularProgressIndicator());
               }
             }),
