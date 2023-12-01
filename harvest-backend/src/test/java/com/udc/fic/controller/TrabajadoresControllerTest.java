@@ -338,7 +338,7 @@ class TrabajadoresControllerTest {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
 
-        this.mockMvc.perform(get("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        this.mockMvc.perform(get("/api/workers/1/calendar")).andExpect(status().isOk());
     }
 
     @Test
@@ -349,7 +349,50 @@ class TrabajadoresControllerTest {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
 
-        this.mockMvc.perform(get("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+        this.mockMvc.perform(get("/api/workers/1/calendar")).andExpect(status().isForbidden());
+    }
+
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarDiaDeTrabajo() throws Exception {
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(delete("/api/workers/1/calendar/2")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarDiaDeTrabajoInvalid() throws Exception {
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(delete("/api/workers/1/calendar/1")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void anadirDiaDeTrabajo() throws Exception {
+        CalendarDTO calendarDTO = new CalendarDTO();
+        calendarDTO.setDay(LocalDate.now().plusDays(1));
+        calendarDTO.setCheckin(LocalTime.of(8, 0, 0));
+        calendarDTO.setCheckout(LocalTime.of(14, 0, 0));
+        calendarDTO.setAttendance(false);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/workers/1/calendar").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(calendarDTO))).andExpect(status().isOk());
     }
 
 
