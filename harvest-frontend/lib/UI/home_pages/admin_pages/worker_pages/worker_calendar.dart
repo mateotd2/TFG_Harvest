@@ -6,8 +6,8 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 
-import '../../../utils/plataform_apis/workers_api.dart';
-import '../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/plataform_apis/workers_api.dart';
+import '../../../../utils/provider/sign_in_model.dart';
 import 'day_of_work_form.dart';
 
 class WorkerCalendar extends StatefulWidget {

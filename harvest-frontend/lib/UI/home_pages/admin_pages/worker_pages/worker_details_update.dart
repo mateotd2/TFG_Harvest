@@ -7,8 +7,8 @@ import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/provider/sign_in_model.dart';
-import '../../../utils/validators.dart';
+import '../../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/validators.dart';
 
 class WorkerDetailsUpdate extends StatefulWidget {
   final WorkerDTO worker;

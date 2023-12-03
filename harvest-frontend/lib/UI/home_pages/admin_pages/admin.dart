@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/empleados.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/pasar_lista.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/workers.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/emp_pages/emps.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/pasar_lista.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/workers.dart';
 import 'package:logger/logger.dart';
 
 class Admin extends StatefulWidget {
@@ -19,7 +19,7 @@ class _AdminState extends State<Admin> {
     });
   }
 
-  final List _paginasAdmin = [Empleados(), Trabajadores(), PasarLista()];
+  final List _paginasAdmin = [Emps(), Trabajadores(), PasarLista()];
 
   @override
   Widget build(BuildContext context) {

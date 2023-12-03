@@ -2,14 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_calendar.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_details_update.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_calendar.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_details_update.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/plataform_apis/workers_api.dart';
-import '../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/plataform_apis/workers_api.dart';
+import '../../../../utils/provider/sign_in_model.dart';
 
 class WorkerDetails extends StatefulWidget {
   final int? workerId;
