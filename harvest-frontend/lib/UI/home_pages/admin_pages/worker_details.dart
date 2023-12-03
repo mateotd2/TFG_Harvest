@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_calendar.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_details_update.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -92,12 +94,35 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                             .format(trabajadorObtenido!.birthdate),
                         style: TextStyle(fontSize: 18.0)),
                   ),
+                  ElevatedButton(
+                      onPressed: () async {
+                        logger.d("Calendario pulsado");
+                        await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WorkerCalendar(
+                                    workerId: trabajadorObtenido!.id)));
+                      },
+                      child: Text("Calendario")),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {
-                          logger.d("Boton Modificar pulstado");
+                        onPressed: () async {
+                          logger.d("Boton Modificar pulsado");
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => WorkerDetailsUpdate(
+                                      worker: trabajadorObtenido!)));
+                          // trabajadorObtenido = await apiInstance.getWorker(workerId!).timeout(Duration(seconds: 10));
+                          setState(() {
+                            trabajador = apiInstance
+                                .getWorker(workerId!)
+                                .timeout(Duration(seconds: 10));
+                          });
+
+                          // Navigator.pop(context);
                         },
                         child: Text("Modificar"),
                       ),
@@ -134,8 +159,6 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                                         ),
                                       ],
                                     ));
-                            // mostrarAlerta(context,trabajadorObtenido!.id!, apiInstance);
-                            // AlertDialog()
                             Navigator.pop(context);
                           },
                           child: Text("Dar de baja trabajador"),

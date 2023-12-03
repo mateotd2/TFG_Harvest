@@ -10,19 +10,6 @@ import 'package:provider/provider.dart';
 
 import '../../../utils/provider/sign_in_model.dart';
 
-// class Trabajador extends StatelessWidget{
-//   late String nombre;
-//   late String apellidos;
-//   late int id;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return(Text(''))
-//     throw UnimplementedError();
-//   }
-//
-// }
-
 class Trabajadores extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _TrabajadoresState();
@@ -34,15 +21,6 @@ class _TrabajadoresState extends State<Trabajadores> {
 
   Future<List<WorkerDTO>?> obtenerTrabajadores(TrabajadoresApi api) {
     return api.getWorkers().timeout(Duration(seconds: 10));
-
-    // }on TimeoutException {
-    //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    //       key: Key('snackKey'),
-    //       backgroundColor: Colors.red,
-    //       content: Text(
-    //           'Comunicacion con el servidor fallida')));
-    //   Navigator.pop(context);
-    // }
   }
 
   @override

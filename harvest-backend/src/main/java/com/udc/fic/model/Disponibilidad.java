@@ -29,7 +29,7 @@ public class Disponibilidad {
     private LocalTime checkout;
 
     //    @ManyToOne(fetch = FetchType.EAGER)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trabajador_id", nullable = false)
     private Trabajador trabajador;
 

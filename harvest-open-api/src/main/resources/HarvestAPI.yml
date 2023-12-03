@@ -813,7 +813,142 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Añade un dia de trabajo al trabajador( Solo puede el administrador)
+      operationId: addDayOfWork
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      requestBody:
+        description: Dia y horas de entrada y salida
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarDTO'
 
+      responses:
+        200:
+          description: Mensaje de exito al actualizar el calendario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/workers/{id}/calendar/{calendarId}:
+    delete:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Elimina un dia de trabajo( Solo puede el administrador)
+      operationId: deleteDayOfWork
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+        - in: path
+          name: calendarId
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la fecha
+      responses:
+        200:
+          description: Trabajador dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Dia dado de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Dia no valido'
+                status: 404
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/callroll:
     get:
@@ -934,6 +1069,7 @@ components:
         - nss
         - phone
         - birthdate
+        - address
 
       properties:
 
@@ -966,6 +1102,10 @@ components:
           type: string
           format: date
           example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
       #          maxLength: 20
       additionalProperties: false
 
@@ -984,6 +1124,7 @@ components:
         - nss
         - phone
         - birthdate
+        - address
 
       properties:
         username:
@@ -1030,6 +1171,10 @@ components:
           type: string
           format: date
           example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
       #          maxLength: 20
       additionalProperties: false
 
@@ -1039,7 +1184,14 @@ components:
         - checkin
         - checkout
         - day
+        - attendance
       properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
         checkin:
           type: string
           format: time
@@ -1052,6 +1204,9 @@ components:
           type: string
           format: date
           example: 2023-11-08
+        attendance:
+          type: boolean
+          example: false
 
     WorkerDTO:
       type: object
@@ -1228,6 +1383,7 @@ components:
         - id
         - checkin
         - checkout
+        - attendance
       properties:
         id:
           type: integer
@@ -1243,6 +1399,9 @@ components:
           type: string
           format: time
           example: "16:00"
+        attendance:
+          type: boolean
+          example: true
 
 
 

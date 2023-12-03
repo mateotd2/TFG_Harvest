@@ -7,7 +7,8 @@ import com.udc.fic.model.Trabajador;
 import com.udc.fic.repository.DisponibilidadRepository;
 import com.udc.fic.repository.TrabajadorRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
-import com.udc.fic.services.exceptions.WorkerNotAvailableException;
+import com.udc.fic.services.exceptions.InvalidChecksException;
+import com.udc.fic.services.exceptions.InvalidDateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     @Override
     public void pasarLista(List<ElementoListaDisponibilidad> lista) throws InstanceNotFoundException {
 
-
+        LOGGER.info("Realizando actualizacion de asistencias.");
         for (ElementoListaDisponibilidad elemento : lista) {
             if (!disponibilidadRepository.existsById(elemento.getId())) {
                 throw new InstanceNotFoundException();
@@ -46,7 +48,7 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
         for (ElementoListaDisponibilidad elemento : lista) {
             Disponibilidad disponibilidad = disponibilidadRepository.findById(elemento.getId()).get();
-            disponibilidad.setAttendance(true);
+            disponibilidad.setAttendance(elemento.isAttendance());
 
             if (elemento.getCheckin() != null) disponibilidad.setCheckin(elemento.getCheckin());
             if (elemento.getCheckout() != null) disponibilidad.setCheckout(elemento.getCheckout());
@@ -128,18 +130,6 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     }
 
     @Override
-    public void registrarDisponibilidad(Disponibilidad disponibilidad, Trabajador trabajador) throws InstanceNotFoundException {
-
-        if (!trabajadorRepository.existsById(trabajador.getId())) {
-            throw new InstanceNotFoundException();
-        }
-        LOGGER.info("Añadiendo disponibildad al trabajador con id: {}", trabajador.getId());
-        disponibilidad.setTrabajador(trabajador);
-
-        disponibilidadRepository.save(disponibilidad);
-    }
-
-    @Override
     public List<Asistencia> trabajadoresDisponiblesPorFecha(LocalDate date) {
         return disponibilidadRepository.asistenciasByDia(date);
     }
@@ -157,25 +147,77 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     }
 
     @Override
-    public void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, WorkerNotAvailableException {
+    public void altaDiaCalendario(Long trabajadorId, Disponibilidad disponibilidad) throws InstanceNotFoundException, InvalidDateException, InvalidChecksException {
         Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajadorId);
+        LOGGER.info("Obtener calendario de trabajador: {}", trabajadorId);
+        if (trabajadorOptional.isPresent()) {
+
+
+            // Valida que no es una fecha anterior a la actual
+            if (!disponibilidad.getDaywork().isAfter(LocalDate.now())) {
+                throw new InvalidDateException();
+            }
+
+            // Valida que checkIn y checkout estan en orden
+            if (!disponibilidad.getCheckin().isBefore(disponibilidad.getCheckout())) {
+                throw new InvalidChecksException();
+            }
+            Trabajador trabajador = trabajadorOptional.get();
+            disponibilidad.setTrabajador(trabajador);
+
+            trabajador.getCalendario().add(disponibilidad);
+            trabajadorRepository.save(trabajador);
+        } else {
+            throw new InstanceNotFoundException();
+        }
+
+
+    }
+
+    @Override
+    public void eliminarDiaCalendario(Long trabajadorId, Long disponibilidadId) throws InstanceNotFoundException {
+        if (disponibilidadRepository.existsByIdAndTrabajadorIdAndDayworkAfter(disponibilidadId, trabajadorId, LocalDate.now())) {
+            LOGGER.info("Eliminando dia de trabajo con id: {}", disponibilidadId);
+            disponibilidadRepository.deleteById(disponibilidadId);
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, InvalidChecksException {
+        Optional<Trabajador> trabajadorOptional = trabajadorRepository.findById(trabajadorId);
+        calendario.sort(Comparator.comparing(Disponibilidad::getId));
         if (trabajadorOptional.isPresent()) {
             Trabajador trabajador = trabajadorOptional.get();
 
-            if (trabajador.isAvailable()) {
-
-                trabajador.getCalendario().clear();
-
-                for (Disponibilidad disponibilidad : calendario) {
-                    disponibilidad.setTrabajador(trabajador);
-                    trabajador.getCalendario().add(disponibilidad);
-                }
-                trabajadorRepository.save(trabajador);
-
-
-            } else {
-                throw new WorkerNotAvailableException();
+            // Compruebo que el calendario del trabajador y el calendario para actualizar tienen la misma cantidad de items y los mismos Ids
+            if (trabajador.getCalendario().size() != calendario.size()) {
+                throw new InstanceNotFoundException();
             }
+            boolean sameIds = trabajador.getCalendario().stream().allMatch(itemTrab -> calendario.stream().anyMatch(
+                    itemCal -> itemCal.getId().equals(itemTrab.getId())             // Comprueba que son los mimsos Ids
+                            && itemCal.getDaywork().isEqual(itemTrab.getDaywork()))); // Y ademas que son las mismas fechas
+            if (!sameIds) {
+                throw new InstanceNotFoundException();
+            }
+
+            //Validar si los checkins son anteriores que los checkouts
+            for (int i = 0; i < trabajador.getCalendario().size(); i++) {
+                //  Validacion de checks
+                if (!calendario.get(i).getCheckin().isBefore(calendario.get(i).getCheckout())) {
+                    throw new InvalidChecksException();
+                }
+                // Solo actualiza las horas
+                LOGGER.info("Actualizando calendario de trabajador {}, con checkin:{} y checkout:{}", trabajadorId, trabajador.getCalendario().get(i).getCheckin(), trabajador.getCalendario().get(i).getCheckout());
+                trabajador.getCalendario().get(i).setCheckin(calendario.get(i).getCheckin());
+                trabajador.getCalendario().get(i).setCheckout(calendario.get(i).getCheckout());
+
+            }
+
+            trabajadorRepository.save(trabajador);
+
+
         } else {
             throw new InstanceNotFoundException();
         }

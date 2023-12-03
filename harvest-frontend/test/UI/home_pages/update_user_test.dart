@@ -64,11 +64,12 @@ void main() {
     final dniInput = find.byKey(Key('dniKey'));
     final nssInput = find.byKey(Key('nssKey'));
     final phoneInput = find.byKey(Key('phoneKey'));
+    final addressInput = find.byKey(Key('addressKey'));
     final dateInput = find.byKey(Key('dateKey'));
     final button = find.byKey(Key('buttonKey'));
 
 
-    expect(emailInput, findsOneWidget);
+    expect(addressInput, findsOneWidget);
 
     // emailInput.
 
@@ -79,6 +80,7 @@ void main() {
     await tester.enterText(nssInput, '123456789012');
     await tester.enterText(phoneInput, '123456789');
     await tester.enterText(dateInput, '2023-10-04');
+    await tester.enterText(addressInput, 'Addresss');
 
     // await tester.pumpAndSettle();
     expect(find.text('test@test.com'), findsOneWidget);

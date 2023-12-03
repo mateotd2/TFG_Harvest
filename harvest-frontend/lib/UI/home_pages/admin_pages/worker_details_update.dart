@@ -3,93 +3,66 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/plataform_apis/auth_api.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/validators.dart';
 
-class SignupEmp extends StatefulWidget {
+class WorkerDetailsUpdate extends StatefulWidget {
+  final WorkerDTO worker;
+
+  WorkerDetailsUpdate({required this.worker});
+
   @override
-  State<StatefulWidget> createState() => _SignupEmpState();
+  State<StatefulWidget> createState() => WorkerDetailsUpdateState();
 }
 
-class _SignupEmpState extends State<SignupEmp> {
+class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate> {
   var logger = Logger();
   final _form = GlobalKey<FormState>();
-  DateTime _fehaNac = DateTime.now();
 
-  final TextEditingController _emailController = TextEditingController();
+  // DateTime _fehaNac = DateTime.now();
+  DateTime _fechaNac = DateTime.now();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _nssController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.worker.name;
+    _lastnameController.text = widget.worker.lastname;
+    _addressController.text = widget.worker.address;
+    _phoneController.text = widget.worker.phone;
+    _nssController.text = widget.worker.nss;
+    _dniController.text = widget.worker.dni;
+    _fechaNac = widget.worker.birthdate;
+  }
 
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final apiInstance = autenticadoApiPlataform(auth);
+    final apiInstance = trabajadoresApiPlataform(auth);
 
-    final emailValidator =
-        ValidationBuilder(localeName: 'es').email().maxLength(254).build();
     final phoneValidator =
         ValidationBuilder(localeName: 'es').phone().maxLength(254).build();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Agregar Empleado'),
-        backgroundColor: Colors.green,
-      ),
-      body: SingleChildScrollView(
-        child: Form(
+        appBar: AppBar(
+          title: const Text('Actualizar información.'),
+        ),
+        body: SingleChildScrollView(
+            child: Form(
           key: _form,
           child: Column(
             children: [
-              TextFormField(
-                key: Key('emailKey'),
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                validator: emailValidator,
-              ),
-              TextFormField(
-                key: Key('usernameKey'),
-                controller: _usernameController,
-                decoration: InputDecoration(labelText: 'Nombre de usuario'),
-                validator: (valor) {
-                  if (valor!.isEmpty) {
-                    return 'Ingresar Nombre de usuario';
-                  }
-                  valor = valor.trim();
-                  if (valor.length >= 254 || !isNamesValid(valor)) {
-                    return 'Ingresar un Nombre de usuario valido';
-                  }
-
-                  return null;
-                },
-              ),
-              TextFormField(
-                obscureText: true,
-                key: Key('passwordKey'),
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Contraseña'),
-                validator: (valor) {
-                  if (valor!.isEmpty) {
-                    return 'Ingresar Contraseña';
-                  }
-                  valor = valor.trim();
-                  if (valor.length >= 254 || !isNamesValid(valor)) {
-                    return 'Ingresar Contraseña valida';
-                  }
-
-                  return null;
-                },
-              ),
               TextFormField(
                 key: Key('nameKey'),
                 controller: _nameController,
@@ -174,7 +147,6 @@ class _SignupEmpState extends State<SignupEmp> {
                 decoration: InputDecoration(labelText: 'Telefono'),
                 validator: phoneValidator,
               ),
-
               // Esto mantiene el estado del formulario al seleccionar una nueva fecha
               StatefulBuilder(builder: (context, setState) {
                 return TextFormField(
@@ -187,23 +159,22 @@ class _SignupEmpState extends State<SignupEmp> {
                         onPressed: () async {
                           final DateTime? seleccion = await showDatePicker(
                               context: context,
-                              initialDate: _fehaNac,
+                              initialDate: _fechaNac,
                               firstDate: DateTime(1940),
                               lastDate: DateTime(2050));
                           if (seleccion != null) {
                             setState(() {
                               logger.d('Nuevo valor de fecha de nacimiento');
                               logger.d(seleccion);
-                              _fehaNac = seleccion;
+                              _fechaNac = seleccion;
                             });
                           }
                         },
                       )),
                   controller: TextEditingController(
-                      text: "${_fehaNac.toLocal()}".substring(0, 10)),
+                      text: "${_fechaNac.toLocal()}".substring(0, 10)),
                 );
               }),
-
               ElevatedButton(
                   key: Key('buttonKey'),
                   onPressed: () async {
@@ -211,29 +182,25 @@ class _SignupEmpState extends State<SignupEmp> {
                       _form.currentState!.save();
                       logger.d('Cambio de informacion de usuario:');
 
-                      NewUserDTO user = NewUserDTO(
-                          email: _emailController.text,
+                      WorkerDTO worker = WorkerDTO(
                           name: _nameController.text,
                           lastname: _lastnameController.text,
-                          address: _lastnameController.text,
+                          address: _addressController.text,
                           dni: _dniController.text,
                           nss: _nssController.text,
                           phone: _phoneController.text,
-                          birthdate: _fehaNac,
-                          username: _usernameController.text,
-                          password: _passwordController.text);
-                      logger.d(user);
+                          birthdate: _fechaNac);
+                      logger.d(worker);
                       try {
-                        MessageResponseDTO? response = await apiInstance
-                            .signUp(user)
+                        await apiInstance
+                            .updateWorker(widget.worker.id!, worker)
                             .timeout(Duration(seconds: 10));
 
                         logger.d('Respuesta:');
-                        logger.d(response);
                         logger.d('Cambio de datos de usuario Finalizado');
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Empleado agregado.')));
+                            SnackBar(content: Text('Trabajador actualizado.')));
                         Navigator.pop(context);
                       } on TimeoutException {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -246,7 +213,8 @@ class _SignupEmpState extends State<SignupEmp> {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
-                            content: Text('Error al dar de alta al usuario.')));
+                            content: Text(
+                                'Error al actualizar datos de trabajador.')));
                         Navigator.pop(context);
                       }
                     }
@@ -254,8 +222,6 @@ class _SignupEmpState extends State<SignupEmp> {
                   child: const Text('Confirmar'))
             ],
           ),
-        ),
-      ),
-    );
+        )));
   }
 }

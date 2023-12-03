@@ -20,6 +20,7 @@ class _UpdateUserState extends State<UpdateUser> {
   final _form = GlobalKey<FormState>();
   DateTime _fehaNac = DateTime.now();
 
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _lastnameController = TextEditingController();
@@ -119,6 +120,21 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  key: Key('addressKey'),
+                  controller: _addressController,
+                  decoration: InputDecoration(labelText: 'Direccion'),
+                  validator: (valor) {
+                    if (valor == null || valor.isEmpty) {
+                      return 'Ingresar Direccion';
+                    }
+                    valor = valor.trim();
+                    if (valor.length >= 1024) {
+                      return 'Ingresar Direccion validos';
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
                   key: Key('phoneKey'),
                   controller: _phoneController,
                   decoration: InputDecoration(labelText: 'Telefono'),
@@ -168,7 +184,8 @@ class _UpdateUserState extends State<UpdateUser> {
                             dni: _dniController.text,
                             nss: _nssController.text,
                             phone: _phoneController.text,
-                            birthdate: _fehaNac);
+                            birthdate: _fehaNac,
+                            address: _addressController.text);
                         logger.d(user);
                         try {
                           MessageResponseDTO? response = await apiInstance

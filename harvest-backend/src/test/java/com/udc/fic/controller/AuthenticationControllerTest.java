@@ -121,6 +121,7 @@ class AuthenticationControllerTest {
         newUserDTO.setNss("098765432123");
         newUserDTO.setPhone("987654321");
         newUserDTO.setUsername(username);
+        newUserDTO.setAddress("13 Rua del percebe");
         List<String> roles = new ArrayList<>();
         roles.add("tractorista");
         newUserDTO.setRoles(roles);
@@ -287,6 +288,7 @@ class AuthenticationControllerTest {
         updateUserDTO.setName(admin.getName());
         updateUserDTO.setNss(admin.getNss());
         updateUserDTO.setPhone("987654321");
+        updateUserDTO.setAddress("Rua percebe");
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -315,6 +317,7 @@ class AuthenticationControllerTest {
         updateUserDTO.setName(admin.getName());
         updateUserDTO.setNss(admin.getNss());
         updateUserDTO.setPhone("987654321");
+        updateUserDTO.setAddress("Percebeiro");
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -343,6 +346,7 @@ class AuthenticationControllerTest {
         updateUserDTO.setName(admin.getName());
         updateUserDTO.setNss(admin.getNss());
         updateUserDTO.setPhone("987654321");
+        updateUserDTO.setAddress("Percebeiro");
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -372,6 +376,7 @@ class AuthenticationControllerTest {
         updateUserDTO.setName(admin.getName());
         updateUserDTO.setNss(admin.getNss());
         updateUserDTO.setPhone("987654321");
+        updateUserDTO.setAddress("Percebeiro");
 
         ObjectMapper mapper = new ObjectMapper();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
