@@ -30,4 +30,8 @@ public interface SourceTargetMapper {
     @Mapping(target = "day", source = "disponibilidad.daywork")
     CalendarDTO toCalendarDTO(Disponibilidad disponibilidad);
 
+
+    ZoneDTO toZoneDTO(Zona zona);
+
+    Zona toZona(ZoneDTO zoneDTO);
 }

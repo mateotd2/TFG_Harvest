@@ -22,11 +22,14 @@ tags:
   - name: Trabajadores
     description: Funcionalidades para la gestion de Trabajadores
 
-  - name: Capataz
-    description: Funcionalidades de Capataz
-
-  - name: Tractorista
-    description: Funcionalidades de Tractorista
+  - name: Lineas
+    description: Funcionalidades para la gestion de Zonas y Lineas
+#
+#  - name: Capataz
+#    description: Funcionalidades de Capataz
+#
+#  - name: Tractorista
+#    description: Funcionalidades de Tractorista
 
 
 paths:
@@ -1055,6 +1058,139 @@ paths:
                 $ref: '#/components/schemas/Error'
 
 
+################################################# Zonas-Lineas ###########################################################
+  /api/zones:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener zonas de lineas
+      operationId: getZones
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de Zonas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoneDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+    post:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar una zona ( Solo puede el administrador)
+      operationId: addZone
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de La zona
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneDTO'
+      responses:
+        201:
+          description: Exito en el registro de la zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/workers
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+
 ################################################# COMPONENTS #######################################################
 
 components:
@@ -1402,6 +1538,44 @@ components:
         attendance:
           type: boolean
           example: true
+
+    ZoneDTO:
+      type: object
+      required:
+        - name
+        - surface
+        - description
+        - formation
+        - reference
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          example: "Zona 1"
+        surface:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 100
+        description:
+          type: string
+          example: "Zona con uva de mesa"
+        formation:
+          type: string
+          enum:
+            - ESPALDERA
+            - EMPARRADO
+          example: "ESPALDERA"
+        reference:
+          type: string
+          minimum: 20
+          maximum: 20
+          example: "1234567AB1234N0001CD"
 
 
 

@@ -36,3 +36,6 @@ insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',3,false)
+
+insert into Zona (name, surface, description, formation, reference) values ('Zona 1', 200, 'Descripcion de zona 1', 'ESPALDERA', '12345678901234567890')
+insert into Zona (name, surface, description, formation, reference) values ('Zona 2', 200, 'Descripcion de zona 2', 'EMPARRADO', '12345678901234567891')

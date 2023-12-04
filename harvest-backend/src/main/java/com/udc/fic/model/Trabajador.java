@@ -33,7 +33,6 @@ public class Trabajador {
     @Column(nullable = false)
     private boolean available;
     @OneToMany(mappedBy = "trabajador", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-//    @Singular
     private List<Disponibilidad> calendario;
 
     public Trabajador(Long id, String name, String lastname, String dni, String nss, String phone, LocalDate birthdate, String address, boolean available, List<Disponibilidad> calendario) {
