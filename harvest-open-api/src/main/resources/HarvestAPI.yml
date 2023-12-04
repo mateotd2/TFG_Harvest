@@ -24,12 +24,12 @@ tags:
 
   - name: Lineas
     description: Funcionalidades para la gestion de Zonas y Lineas
-#
-#  - name: Capataz
-#    description: Funcionalidades de Capataz
-#
-#  - name: Tractorista
-#    description: Funcionalidades de Tractorista
+
+  - name: Capataz
+    description: Funcionalidades de Capataz
+
+  - name: Tractorista
+    description: Funcionalidades de Tractorista
 
 
 paths:
@@ -1188,6 +1188,133 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /api/zones/{id}:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener zona de lineas
+      operationId: getZone
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+
+      responses:
+        200:
+          description: Detalles de zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoneDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar una zona ( Solo puede el administrador)
+      operationId: updateZone
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+      requestBody:
+        description: Datos de la zona
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneDTO'
+      responses:
+        200:
+          description: Mensaje de exito al actualizar la zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zona actualizada'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 
 
 

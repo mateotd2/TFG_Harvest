@@ -32,8 +32,22 @@ public class LineasController implements LineasApi {
     }
 
     @Override
-    public ResponseEntity<List<ZoneDTO>> _getZones() throws Exception {
+    public ResponseEntity<ZoneDTO> _getZone(Long id) throws Exception {
+
+        return ResponseEntity.ok(mapper.toZoneDTO(zonasService.obtenerZona(id)));
+    }
+
+    @Override
+    public ResponseEntity<List<ZoneDTO>> _getZones() {
         List<ZoneDTO> zonas = zonasService.obtenerZonas().stream().map(e -> mapper.toZoneDTO(e)).toList();
         return ResponseEntity.ok(zonas);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _updateZone(Long id, ZoneDTO zoneDTO) throws Exception {
+        zonasService.actualizarZona(id,mapper.toZona(zoneDTO));
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Zona Actualizada");
+        return ResponseEntity.ok().body(message);
     }
 }
