@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
@@ -25,10 +27,11 @@ public class LineasController implements LineasApi {
     @Override
     public ResponseEntity<MessageResponseDTO> _addZone(ZoneDTO zoneDTO) throws Exception {
 
-        mapper.toZoneDTO(zonasService.registrarZona(mapper.toZona(zoneDTO)));
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(mapper.toZoneDTO(zonasService.registrarZona(mapper.toZona(zoneDTO)))).toUri();
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Zona añadida");
-        return ResponseEntity.ok().body(message);
+        return ResponseEntity.created(location).body(message);
     }
 
     @Override
@@ -45,7 +48,7 @@ public class LineasController implements LineasApi {
 
     @Override
     public ResponseEntity<MessageResponseDTO> _updateZone(Long id, ZoneDTO zoneDTO) throws Exception {
-        zonasService.actualizarZona(id,mapper.toZona(zoneDTO));
+        zonasService.actualizarZona(id, mapper.toZona(zoneDTO));
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Zona Actualizada");
         return ResponseEntity.ok().body(message);
