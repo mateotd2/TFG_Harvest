@@ -33,5 +33,6 @@ public interface SourceTargetMapper {
 
     ZoneDTO toZoneDTO(Zona zona);
 
+    @Mapping(target = "id",ignore = true)
     Zona toZona(ZoneDTO zoneDTO);
 }
