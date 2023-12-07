@@ -1315,6 +1315,353 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/zones/{id}/lines:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener lineas de una zona
+      operationId: getLines
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+
+      responses:
+        200:
+          description: Listado de lineas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LineDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Lineas
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar una linea ( Solo puede el administrador)
+      operationId: addLine
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de la linea
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineDTO'
+      responses:
+        201:
+          description: Exito en el registro de la linea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/lines/{id}:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener linea
+      operationId: getLineDetails
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        200:
+          description: Linea detallada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineDetailsDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar linea
+      operationId: updateLineDetails
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+      requestBody:
+        description: Datos de la linea
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineDTO'
+      responses:
+        201:
+          description: Exito en el registro de la linea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/tipeVids:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener los tipos de vids disponibles
+      operationId: getVids
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Vid detallada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/TypeVidDTO'
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/tipeVids
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/tipeVids
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 
 
 
@@ -1665,7 +2012,6 @@ components:
         attendance:
           type: boolean
           example: true
-
     ZoneDTO:
       type: object
       required:
@@ -1703,8 +2049,89 @@ components:
           minimum: 20
           maximum: 20
           example: "1234567AB1234N0001CD"
+    LineDTO:
+      type: object
+      required:
+        - lineNumber
+        - plantingDate
+        - idTypeVid
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        lineNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        plantingDate:
+          type: string
+          format: date
+          example: 1995-08-19
+        harvestEnabled:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Vitis vinifera
+        idTypeVid:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
 
+    LineDetailsDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        lineNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        plantingDate:
+          type: string
+          format: date
+          example: 1995-08-19
+        harvestEnabled:
+          type: boolean
+          example: true
+        idTypeVid:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        vid:
+          $ref: '#/components/schemas/TypeVidDTO'
 
+    TypeVidDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          example: Vitis vinifera
+        yearsMaturity:
+          type: integer
+          format: int32
+          minimum: 0
+          example: 15
+        description:
+          type: string
+          example: Es una planta semileñosa o trepadora que cuando se deja crecer libremente puede alcanzar más de 30 m, pero que, por la acción humana...
 
     Error:
       type: object

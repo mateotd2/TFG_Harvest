@@ -13,5 +13,5 @@ public interface ZonasService {
 
     Zona obtenerZona(Long id) throws InstanceNotFoundException;
 
-    void actualizarZona(Long id, Zona zona) throws InstanceNotFoundException,DuplicateInstanceException;
+    void actualizarZona(Long id, Zona zona) throws InstanceNotFoundException, DuplicateInstanceException;
 }

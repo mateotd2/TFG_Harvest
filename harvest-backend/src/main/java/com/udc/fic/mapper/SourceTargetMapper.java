@@ -33,6 +33,19 @@ public interface SourceTargetMapper {
 
     ZoneDTO toZoneDTO(Zona zona);
 
-    @Mapping(target = "id",ignore = true)
+    @Mapping(target = "id", ignore = true)
     Zona toZona(ZoneDTO zoneDTO);
+
+    @Mapping(target = "id", ignore = true)
+    Linea toLine(LineDTO lineDTO);
+
+
+    @Mapping(target = "idTypeVid", source = "tipoVid.id")
+    @Mapping(target = "name", source = "tipoVid.name")
+    LineDTO toLineDTO(Linea linea);
+
+    TypeVidDTO toTypeVidDTO(TipoVid tipoVid);
+
+    @Mapping(target = "idTypeVid", source = "tipoVid.id")
+    LineDetailsDTO toLineDetailsDTO(Linea linea);
 }

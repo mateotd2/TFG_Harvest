@@ -42,9 +42,9 @@ public class ZonasServiceImpl implements ZonasService {
     @Override
     public Zona obtenerZona(Long id) throws InstanceNotFoundException {
         Optional<Zona> zonaOptional = zonasRepository.findById(id);
-        if (zonaOptional.isPresent()){
+        if (zonaOptional.isPresent()) {
             return zonaOptional.get();
-        }else{
+        } else {
             throw new InstanceNotFoundException();
         }
 
@@ -54,11 +54,11 @@ public class ZonasServiceImpl implements ZonasService {
     public void actualizarZona(Long id, Zona zona) throws InstanceNotFoundException, DuplicateInstanceException {
 
         Optional<Zona> zonaOptional = zonasRepository.findById(id);
-        if (zonaOptional.isPresent()){
+        if (zonaOptional.isPresent()) {
             Zona zonaObtenida = zonaOptional.get();
-            if (!zona.getReference().equals(zonaObtenida.getReference())){
+            if (!zona.getReference().equals(zonaObtenida.getReference())) {
                 // Check si nueva referencia coincide con alguna en DB
-                if (zonasRepository.existsByReference(zona.getReference())){
+                if (zonasRepository.existsByReference(zona.getReference())) {
                     throw new DuplicateInstanceException("Reference already exists", zona.getReference());
                 }
                 zonaObtenida.setDescription(zona.getDescription());
@@ -68,7 +68,7 @@ public class ZonasServiceImpl implements ZonasService {
                 zonaObtenida.setReference(zona.getReference());
             }
 
-        }else {
+        } else {
             throw new InstanceNotFoundException();
         }
     }
