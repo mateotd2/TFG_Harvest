@@ -6,6 +6,8 @@ import com.udc.fic.model.Zona;
 import com.udc.fic.repository.LineasRepository;
 import com.udc.fic.repository.TipoVidRepository;
 import com.udc.fic.repository.ZonasRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class LineasServiceImpl implements LineasService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LineasServiceImpl.class);
 
     @Autowired
     LineasRepository lineasRepository;
@@ -44,7 +48,7 @@ public class LineasServiceImpl implements LineasService {
         Optional<TipoVid> tipoVidOptional = tipoVidRepository.findById(tipoVidId);
         if (zonaOptional.isPresent() && tipoVidOptional.isPresent()) {
             Zona zona = zonaOptional.get();
-
+            LOGGER.info("Registrando nueva linea en la zona con id {}", zonaId);
             linea.setZona(zona);
             linea.setTipoVid(tipoVidOptional.get());
             zona.getLineas().add(linea);
@@ -69,7 +73,7 @@ public class LineasServiceImpl implements LineasService {
         Optional<Linea> lineaOptional = lineasRepository.findById(id);
         if (lineaOptional.isPresent()) {
             Linea lineaObtenida = lineaOptional.get();
-
+            LOGGER.info("Actualizando detalles de la linea con id:{}", id);
             // Solo puedo modificar el numero de linea, fecha de plantacion y el tipo de vid
             lineaObtenida.setLineNumber(linea.getLineNumber());
             lineaObtenida.setPlantingDate(linea.getPlantingDate());
@@ -92,6 +96,32 @@ public class LineasServiceImpl implements LineasService {
         Optional<Linea> optionalLinea = lineasRepository.findById(id);
         if (optionalLinea.isPresent()) {
             return optionalLinea.get();
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void habilitarLinea(Long id) throws InstanceNotFoundException {
+        Optional<Linea> optionalLinea = lineasRepository.findById(id);
+        if (optionalLinea.isPresent()) {
+            LOGGER.info("Habilitando recoleccion de la linea con id:{}", id);
+            Linea linea = optionalLinea.get();
+            linea.setHarvestEnabled(true);
+            lineasRepository.save(linea);
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void deshabilitarLinea(Long id) throws InstanceNotFoundException {
+        Optional<Linea> optionalLinea = lineasRepository.findById(id);
+        if (optionalLinea.isPresent()) {
+            Linea linea = optionalLinea.get();
+            LOGGER.info("Deshabilitando recoleccion de la linea con id:{}", id);
+            linea.setHarvestEnabled(false);
+            lineasRepository.save(linea);
         } else {
             throw new InstanceNotFoundException();
         }

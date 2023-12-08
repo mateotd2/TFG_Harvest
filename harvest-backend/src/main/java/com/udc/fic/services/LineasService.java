@@ -16,4 +16,8 @@ public interface LineasService {
     void actualizarLinea(Long id, Long typeVidId, Linea linea) throws InstanceNotFoundException;
 
     Linea obtenerDetalleLinea(Long id) throws InstanceNotFoundException;
+
+    void habilitarLinea(Long id) throws InstanceNotFoundException;
+
+    void deshabilitarLinea(Long id) throws InstanceNotFoundException;
 }

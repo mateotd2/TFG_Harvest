@@ -1661,7 +1661,130 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/lines/{id}/enable:
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Habilita la recolección de la linea
+      operationId: enableLine
+      x-custom-role:
+        - ADMIN
 
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        204:
+          description: No content
+
+        404:
+          description: Linea no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/lines/{id}/disable:
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Deshabilita la recolección de la linea
+      operationId: disableLine
+      x-custom-role:
+        - ADMIN
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        204:
+          description: No content
+
+        404:
+          description: Linea no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
 

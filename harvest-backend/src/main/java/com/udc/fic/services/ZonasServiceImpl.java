@@ -57,6 +57,8 @@ public class ZonasServiceImpl implements ZonasService {
         if (zonaOptional.isPresent()) {
             Zona zonaObtenida = zonaOptional.get();
             if (!zona.getReference().equals(zonaObtenida.getReference())) {
+                LOGGER.info("Actualizando detalles de la zona con id {}", id);
+
                 // Check si nueva referencia coincide con alguna en DB
                 if (zonasRepository.existsByReference(zona.getReference())) {
                     throw new DuplicateInstanceException("Reference already exists", zona.getReference());

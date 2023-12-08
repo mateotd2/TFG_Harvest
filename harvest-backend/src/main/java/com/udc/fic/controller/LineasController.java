@@ -39,6 +39,18 @@ public class LineasController implements LineasApi {
     }
 
     @Override
+    public ResponseEntity<Void> _disableLine(Long id) throws Exception {
+        lineasService.habilitarLinea(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> _enableLine(Long id) throws Exception {
+        lineasService.deshabilitarLinea(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
     public ResponseEntity<LineDetailsDTO> _getLineDetails(Long id) throws Exception {
         Linea linea = lineasService.obtenerDetalleLinea(id);
         LineDetailsDTO lineDetailsDTO = mapper.toLineDetailsDTO(linea);
