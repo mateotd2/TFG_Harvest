@@ -22,8 +22,8 @@ spring:
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      show_sql: true
-      format_sql: true
+#      show_sql: true
+#      format_sql: true
 
       properties:
         hibernate:
@@ -48,8 +48,8 @@ springdoc:
     disable-swagger-default-url: true
     tryItOutEnabled: true
 
-logging:
-  level:
-    org.hibernate.SQL: debug   # Establece el nivel de registro para las sentencias SQL a "info"
-    org.hibernate.type: debug  # Establece el nivel de registro para los tipos de datos de Hibernate a "info"
+#logging:
+#  level:
+#    org.hibernate.SQL: debug   # Establece el nivel de registro para las sentencias SQL a "info"
+#    org.hibernate.type: debug  # Establece el nivel de registro para los tipos de datos de Hibernate a "info"
 
