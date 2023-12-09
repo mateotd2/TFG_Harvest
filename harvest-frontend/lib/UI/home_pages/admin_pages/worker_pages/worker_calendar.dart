@@ -386,7 +386,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
 
   Future<void> _showTimePickerDialog(
       BuildContext context, String hora, String tipoEntrada, int index) async {
-    logger.d("Hora actual: ${hora}");
+    logger.d("Hora actual: $hora");
     DateTime? nuevaHora = DateTime.parse(hora);
     logger.d("Nueva HORA $nuevaHora");
     TimeOfDay horaInicial =
