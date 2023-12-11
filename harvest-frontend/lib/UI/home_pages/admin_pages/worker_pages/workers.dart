@@ -59,21 +59,7 @@ class _TrabajadoresState extends State<Trabajadores> {
                     return ListTile(
                         title:
                             Text("${trabajador.name} ${trabajador.lastname}"),
-                        trailing: IconButton(
-                          icon: Icon(Icons.arrow_forward_ios_sharp),
-                          onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => WorkerDetails(
-                                        workerId: trabajador.id)));
-                            setState(() {
-                              trabajadores = apiInstance
-                                  .getWorkers()
-                                  .timeout(Duration(seconds: 10));
-                            });
-                          },
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_sharp),
                         onTap: () async {
                           await Navigator.push(
                               context,
