@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/signup_worker.dart';
-import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_details.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/signup_worker.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_details.dart';
 import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/provider/sign_in_model.dart';
 
 class Trabajadores extends StatefulWidget {
   @override

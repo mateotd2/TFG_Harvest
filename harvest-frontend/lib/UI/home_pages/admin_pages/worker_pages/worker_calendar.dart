@@ -6,8 +6,8 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
 
-import '../../../utils/plataform_apis/workers_api.dart';
-import '../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/plataform_apis/workers_api.dart';
+import '../../../../utils/provider/sign_in_model.dart';
 import 'day_of_work_form.dart';
 
 class WorkerCalendar extends StatefulWidget {
@@ -179,7 +179,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                                                 logger
                                                     .d("Reloj CHECKIN Pulsado");
                                                 final String initTime =
-                                                    "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${fila.checkin}.000000";
+                                                    "2000-10-10 ${fila.checkin}";
                                                 await _showTimePickerDialog(
                                                     context,
                                                     initTime,
@@ -217,7 +217,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                                                 logger.d(
                                                     "Reloj CHECKOUT Pulsado");
                                                 final String initTime =
-                                                    "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${fila.checkout}.000000";
+                                                    "2000-10-10 ${fila.checkout}";
                                                 await _showTimePickerDialog(
                                                     context,
                                                     initTime,
@@ -386,7 +386,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
 
   Future<void> _showTimePickerDialog(
       BuildContext context, String hora, String tipoEntrada, int index) async {
-    logger.d("Hora actual: ${DateTime.now()}");
+    logger.d("Hora actual: $hora");
     DateTime? nuevaHora = DateTime.parse(hora);
     logger.d("Nueva HORA $nuevaHora");
     TimeOfDay horaInicial =
@@ -423,7 +423,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                     switch (tipoEntrada) {
                       case "entrada":
                         DateTime salida = DateTime.parse(
-                            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${nuevoCalendario[index].checkout}.000000");
+                            "2000-10-10 ${nuevoCalendario[index].checkout}");
                         logger.d("Salida: $salida");
                         if (nuevaHora!.isBefore(salida)) {
                           nuevoCalendario[index] = CalendarDTO(
@@ -442,10 +442,10 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                         }
 
                       case "salida":
-                        DateTime? entrada = DateTime.tryParse(
-                            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${nuevoCalendario[index].checkin}.000000");
+                        DateTime? entrada = DateTime.parse(
+                            "2000-10-10 ${nuevoCalendario[index].checkin}");
                         logger.d("Entrada: $entrada");
-                        if (!nuevaHora!.isBefore(entrada!)) {
+                        if (!nuevaHora!.isBefore(entrada)) {
                           nuevoCalendario[index] = CalendarDTO(
                               attendance: nuevoCalendario[index].attendance,
                               checkin: nuevoCalendario[index].checkin,

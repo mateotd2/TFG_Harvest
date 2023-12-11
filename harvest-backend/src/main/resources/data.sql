@@ -36,3 +36,16 @@ insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',3,false)
+
+insert into Zona (name, surface, description, formation, reference) values ('Zona 1', 200, 'Descripcion de zona 1', 'ESPALDERA', '12345678901234567890')
+insert into Zona (name, surface, description, formation, reference) values ('Zona 2', 200, 'Descripcion de zona 2', 'EMPARRADO', '12345678901234567891')
+
+insert into Tipo_Vid (name, years_Maturity, description) values ('Vitis vinifera', 15, 'La vid o parra, cuyo nombre científico es Vitis vinifera, es una planta semi')
+insert into Tipo_Vid (name, years_Maturity, description) values ('Vitis vinifera 2', 15, 'La vid o parra, cuyo nombre científico es Vitis vinifera, es una planta semileñosa o trepadora que cuando se deja crecer libremente puede alcanzar más de 30 m, pero que, por la acción humana, podándola anualmente, queda reducida a un pequeño arbusto...')
+
+insert into Linea (line_Number, planting_Date, harvest_Enabled, tipo_vid_id, zona_id) values (1, '2000-10-25', true, 1, 1)
+insert into Linea (line_Number, planting_Date, harvest_Enabled, tipo_vid_id, zona_id) values (2, '2000-10-25', true, 1, 1)
+insert into Linea (line_Number, planting_Date, harvest_Enabled, tipo_vid_id, zona_id) values (3, '2020-10-25', false, 2, 1)
+insert into Linea (line_Number, planting_Date, harvest_Enabled, tipo_vid_id, zona_id) values (4, '2000-10-25', true, 1, 1)
+
+

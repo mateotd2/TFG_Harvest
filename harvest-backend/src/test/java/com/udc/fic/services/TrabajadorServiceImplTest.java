@@ -222,7 +222,7 @@ class TrabajadorServiceImplTest {
     }
 
     @Test
-    void altaDiaCalendarioInstanceNotFoundTest()  {
+    void altaDiaCalendarioInstanceNotFoundTest() {
         List<Disponibilidad> calendario = new ArrayList<>();
         Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
         Disponibilidad disponibilidad = new Disponibilidad();
@@ -235,7 +235,7 @@ class TrabajadorServiceImplTest {
     }
 
     @Test
-    void altaDiaCalendarioInvalidDate()  {
+    void altaDiaCalendarioInvalidDate() {
         List<Disponibilidad> calendario = new ArrayList<>();
         Trabajador trabajador = new Trabajador(1L, "name", "lastname", "12345678A", "123456789012", "666666666", LocalDate.of(1990, 1, 1), "13 Rua del Percebe", false, calendario);
         Disponibilidad disponibilidad = new Disponibilidad();

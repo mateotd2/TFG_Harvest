@@ -6,8 +6,8 @@ import 'package:harvest_api/api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/plataform_apis/workers_api.dart';
-import '../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/plataform_apis/workers_api.dart';
+import '../../../../utils/provider/sign_in_model.dart';
 
 class DayOfWorkForm extends StatefulWidget {
   @override

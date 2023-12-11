@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/signup_emp.dart';
 import 'package:logger/logger.dart';
 
-class Empleados extends StatefulWidget {
+class Emps extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _EmpleadosState();
+  State<StatefulWidget> createState() => _EmpsState();
 }
 
-class _EmpleadosState extends State<Empleados> {
+class _EmpsState extends State<Emps> {
   var logger = Logger();
 
   @override
