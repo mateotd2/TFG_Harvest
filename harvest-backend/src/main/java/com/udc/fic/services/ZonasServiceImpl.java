@@ -31,7 +31,7 @@ public class ZonasServiceImpl implements ZonasService {
 
     @Override
     public Zona registrarZona(Zona zona) throws DuplicateInstanceException {
-        if (zonasRepository.existsByReference(zona.getReference())) {
+        if (zonasRepository.existsByName(zona.getName())) {
             throw new DuplicateInstanceException("Reference already exists", zona.getReference());
         }
         LOGGER.info("Añadiendo zona con referencia: {}", zona.getReference());
@@ -60,7 +60,7 @@ public class ZonasServiceImpl implements ZonasService {
                 LOGGER.info("Actualizando detalles de la zona con id {}", id);
 
                 // Check si nueva referencia coincide con alguna en DB
-                if (zonasRepository.existsByReference(zona.getReference())) {
+                if (zonasRepository.existsByName(zona.getReference())) {
                     throw new DuplicateInstanceException("Reference already exists", zona.getReference());
                 }
                 zonaObtenida.setDescription(zona.getDescription());

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/zone_details.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../utils/plataform_apis/lines_api.dart';
 import '../../../../utils/provider/sign_in_model.dart';
+import 'add_zone.dart';
 
 class Zonas extends StatefulWidget {
   @override
@@ -15,10 +17,6 @@ class _ZonasState extends State<Zonas> {
   var logger = Logger();
 
   late Future<List<ZoneDTO>?> zonas;
-
-  Future<List<ZoneDTO>?> obtenerTrabajadores(LineasApi api) {
-    return api.getZones().timeout(Duration(seconds: 10));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,24 +53,47 @@ class _ZonasState extends State<Zonas> {
                       return ListTile(
                         title: Text(zona.name),
                         trailing: Icon(Icons.arrow_forward_ios_sharp),
-                        onTap: () {
+                        onTap: () async {
                           logger.d("Zona ${zona.name} pulsada");
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ZoneDetails(zoneId: zona.id))
+                          );
+                          setState(() {
+                            zonas = api.getZones().timeout(Duration(seconds: 10));
+                          });
                         },
                       );
                     });
               }
             } else if (snapshot.hasError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  key: Key('snackKey'),
-                  backgroundColor: Colors.red,
-                  content: Text('Error obteniendo los trabajadores')));
-              Navigator.pop(context);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    key: Key('snackKey'),
+                    backgroundColor: Colors.red,
+                    content: Text('Error obteniendo las zonas')));
+              });
               return Text("Nada que enseñar :(");
             } else {
               return Center(child: CircularProgressIndicator());
             }
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          logger.d('ADD Zone PULSADO');
+          await Navigator.push(context, MaterialPageRoute(builder: (context)=>
+              AddZone()));
+          setState(() {
+            zonas = api.getZones().timeout(Duration(seconds: 10));
+          });
+
+        },
+        key: Key('addZoneKey'),
+        child: Icon(Icons.add),
       ),
     );
   }

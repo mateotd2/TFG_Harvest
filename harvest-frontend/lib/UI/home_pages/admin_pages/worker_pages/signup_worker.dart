@@ -186,22 +186,23 @@ class _SignupWorkerState extends State<SignupWorker> {
                         logger.d(response);
                         logger.d('Cambio de datos de usuario Finalizado');
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Trabajador agregado.')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Colors.green,
+                            content: Text('Trabajador agregado.')));
                         Navigator.pop(context);
                       } on TimeoutException {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
                             content:
-                                Text('Comunicacion con el servidor fallida')));
+                            Text('Comunicacion con el servidor fallida')));
                         Navigator.pop(context);
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             key: Key('snackKey'),
                             backgroundColor: Colors.red,
                             content:
-                                Text('Error al dar de alta al trabajadors.')));
+                                Text('Error al dar de alta al trabajador.')));
                         Navigator.pop(context);
                       }
                     }

@@ -126,4 +126,13 @@ public class LineasServiceImpl implements LineasService {
             throw new InstanceNotFoundException();
         }
     }
+
+    @Override
+    public void eliminarLinea(Long id) throws InstanceNotFoundException {
+        if (lineasRepository.existsById(id)) {
+            lineasRepository.deleteById(id);
+        }else{
+            throw new InstanceNotFoundException();
+        }
+    }
 }

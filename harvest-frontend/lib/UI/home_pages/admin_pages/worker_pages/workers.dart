@@ -19,10 +19,6 @@ class _TrabajadoresState extends State<Trabajadores> {
   var logger = Logger();
   late Future<List<WorkerDTO>?> trabajadores;
 
-  Future<List<WorkerDTO>?> obtenerTrabajadores(TrabajadoresApi api) {
-    return api.getWorkers().timeout(Duration(seconds: 10));
-  }
-
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
@@ -76,11 +72,12 @@ class _TrabajadoresState extends State<Trabajadores> {
                 );
               }
             } else if (snapshot.hasError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  key: Key('snackKey'),
-                  backgroundColor: Colors.red,
-                  content: Text('Error obteniendo los trabajadores')));
-              Navigator.pop(context);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    key: Key('snackKey'),
+                    backgroundColor: Colors.red,
+                    content: Text('Error obteniendo los trabajadores')));
+              });
               return Text("Nada que enseñar :(");
             } else {
               return Center(child: CircularProgressIndicator());

@@ -20,4 +20,6 @@ public interface LineasService {
     void habilitarLinea(Long id) throws InstanceNotFoundException;
 
     void deshabilitarLinea(Long id) throws InstanceNotFoundException;
+
+    void eliminarLinea(Long id) throws InstanceNotFoundException;
 }
