@@ -1,9 +1,9 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -11,13 +11,12 @@ import '../../../../utils/plataform_apis/lines_api.dart';
 import '../../../../utils/provider/sign_in_model.dart';
 import '../../../../utils/validators.dart';
 
-class AddZone extends StatefulWidget{
+class AddZone extends StatefulWidget {
   @override
-  State<StatefulWidget> createState()=>_AddZoneState();
-
+  State<StatefulWidget> createState() => _AddZoneState();
 }
 
-class _AddZoneState extends State<AddZone>{
+class _AddZoneState extends State<AddZone> {
   var logger = Logger();
   final _form = GlobalKey<FormState>();
 
@@ -27,8 +26,7 @@ class _AddZoneState extends State<AddZone>{
   final TextEditingController _referenceController = TextEditingController();
   final RegExp _regex = RegExp(r'^[a-zA-Z0-9]{20}$');
 
-  ZoneDTOFormationEnum opcion=ZoneDTOFormationEnum.EMPARRADO;
-
+  ZoneDTOFormationEnum opcion = ZoneDTOFormationEnum.EMPARRADO;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,8 @@ class _AddZoneState extends State<AddZone>{
     final api = lineasApiPlataform(auth);
 
     return Scaffold(
-      appBar:AppBar(title:const Text('Añadir Zona'),
+      appBar: AppBar(
+        title: const Text('Añadir Zona'),
         backgroundColor: Colors.green,
       ),
       body: SingleChildScrollView(
@@ -98,16 +97,18 @@ class _AddZoneState extends State<AddZone>{
                 key: Key('surfaceKey'),
                 controller: _surfaceController,
                 keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                decoration: InputDecoration(labelText: 'Superficie(en metros cuadrados)'),
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                decoration: InputDecoration(
+                    labelText: 'Superficie(en metros cuadrados)'),
                 validator: (valor) {
                   if (valor!.isEmpty) {
                     return 'Ingresar numero ';
                   }
                   valor = valor.trim();
-                  if (valor.length > 6 || (int.tryParse(_surfaceController.text)!<=0)) {
+                  if (valor.length > 6 ||
+                      (int.tryParse(_surfaceController.text)! <= 0)) {
                     return 'Ingresar superficie valida';
                   }
                   return null;
@@ -115,67 +116,54 @@ class _AddZoneState extends State<AddZone>{
               ),
               DropdownButtonFormField<ZoneDTOFormationEnum>(
                 value: opcion,
-                  items: ZoneDTOFormationEnum.values.map((value) {
-                    return DropdownMenuItem<ZoneDTOFormationEnum>(
-                      value: value,
-                      child: Text(value.toString()),
-                    );
-                  }).toList(),
+                items: ZoneDTOFormationEnum.values.map((value) {
+                  return DropdownMenuItem<ZoneDTOFormationEnum>(
+                    value: value,
+                    child: Text(value.toString()),
+                  );
+                }).toList(),
                 onChanged: (ZoneDTOFormationEnum? value) {
-                    logger.d('Elegido elemento $value');
-                    setState(() {
-                      opcion = value!;
-                    });
+                  logger.d('Elegido elemento $value');
+                  setState(() {
+                    opcion = value!;
+                  });
                 },
-
               ),
               ElevatedButton(
-                key: Key('okButtonKey'),
-                onPressed: () async{
-                  if (_form.currentState!.validate()) {
-                    _form.currentState!.save();
-                    logger.d('Boton de añadir zona pulsado');
-                    ZoneDTO nuevaZona = ZoneDTO(
-                        name: _nameController.text,
-                        surface: int.tryParse(_surfaceController.text)!,
-                        description: _descController.text,
-                        formation: opcion,
-                        reference: _referenceController.text
-                    );
+                  key: Key('okButtonKey'),
+                  onPressed: () async {
+                    if (_form.currentState!.validate()) {
+                      _form.currentState!.save();
+                      logger.d('Boton de añadir zona pulsado');
+                      ZoneDTO nuevaZona = ZoneDTO(
+                          name: _nameController.text,
+                          surface: int.tryParse(_surfaceController.text)!,
+                          description: _descController.text,
+                          formation: opcion,
+                          reference: _referenceController.text);
 
-                    logger.d(nuevaZona);
-                    try {
-                      MessageResponseDTO? response = await api.addZone(nuevaZona)
-                          .timeout(Duration(seconds: 10));
-                      logger.d('Respuesta:');
-                      logger.d(response);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(backgroundColor: Colors.green,content: Text('Zona registrada correctamente.')));
-                      Navigator.pop(context);
-                    }on TimeoutException{
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          key: Key('snackKey'),
-                          backgroundColor: Colors.red,
-                          content:
-                          Text('Comunicacion con el servidor fallida')));
-                      Navigator.pop(context);
-                    }catch(e){
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          key: Key('snackKey'),
-                          backgroundColor: Colors.red,
-                          content:
-                            Text('Error al dar intentar registrar la zona.')));
-                      Navigator.pop(context);
+                      logger.d(nuevaZona);
+                      try {
+                        MessageResponseDTO? response = await api
+                            .addZone(nuevaZona)
+                            .timeout(Duration(seconds: 10));
+                        logger.d('Respuesta:');
+                        logger.d(response);
+                        snackGreen(context, 'Zona registrada correctamente.');
+                      } on TimeoutException {
+                        snackTimeout(context);
+                      } catch (e) {
+                        snackRed(context,
+                            'Error al dar intentar registrar la zona.');
+                      }
                     }
-                  }
-                },
-                child: Text('Registrar Zona')),
+                    Navigator.pop(context);
+                  },
+                  child: Text('Registrar Zona')),
             ],
           ),
         ),
       ),
     );
-
   }
-
 }

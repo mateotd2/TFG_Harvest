@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_calendar.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_details_update.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -132,10 +133,7 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                             logger.d("Boton Baja pulsado");
 
                             await showDialog(
-                                // barrierDismissible: false,
                                 context: context,
-                                // builder: (_) => mostrarAlerta(context,trabajadorObtenido!.id!, apiInstance)
-                                // TODO: No funciona el volver a la pantalla del trabajador
                                 builder: (BuildContext context2) => AlertDialog(
                                       title: Text("Confirmación"),
                                       content:
@@ -169,10 +167,7 @@ class _WorkerDetailsState extends State<WorkerDetails> {
                 ],
               );
             } else if (snapshot.hasError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  key: Key('snackKey'),
-                  backgroundColor: Colors.red,
-                  content: Text('Error obteniendo el trabajador')));
+              snackRed(context, 'Error obteniendo el trabajador');
               Navigator.pop(context);
               return Text("Nada que enseñar :(");
             } else {

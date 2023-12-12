@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/zone_details.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -59,10 +60,10 @@ class _ZonasState extends State<Zonas> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      ZoneDetails(zoneId: zona.id))
-                          );
+                                      ZoneDetails(zoneId: zona.id)));
                           setState(() {
-                            zonas = api.getZones().timeout(Duration(seconds: 10));
+                            zonas =
+                                api.getZones().timeout(Duration(seconds: 10));
                           });
                         },
                       );
@@ -70,10 +71,7 @@ class _ZonasState extends State<Zonas> {
               }
             } else if (snapshot.hasError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.red,
-                    content: Text('Error obteniendo las zonas')));
+                snackRed(context, 'Error obteniendo las zonas');
               });
               return Text("Nada que enseñar :(");
             } else {
@@ -85,12 +83,11 @@ class _ZonasState extends State<Zonas> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           logger.d('ADD Zone PULSADO');
-          await Navigator.push(context, MaterialPageRoute(builder: (context)=>
-              AddZone()));
+          await Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AddZone()));
           setState(() {
             zonas = api.getZones().timeout(Duration(seconds: 10));
           });
-
         },
         key: Key('addZoneKey'),
         child: Icon(Icons.add),

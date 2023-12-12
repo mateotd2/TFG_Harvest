@@ -3,6 +3,7 @@ import 'dart:core';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
@@ -155,28 +156,15 @@ class _PasarLista extends State<PasarLista> {
                               await apiInstance
                                   .callRoll(listaAsistencias)
                                   .timeout(Duration(seconds: 10));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      key: Key('snackKey'),
-                                      backgroundColor: Colors.green,
-                                      content:
-                                          Text('Asistencias Actualizadas')));
+                              snackGreen(context, 'Asistencias Actualizadas');
                               setState(() {
                                 showButtonUpdate = false;
                               });
                             } on TimeoutException {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  key: Key('snackKey'),
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                      'Comunicacion con el servidor fallida')));
-                              // Navigator.pop(context);
+                              snackTimeout(context);
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  key: Key('snackKey'),
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                      'Error al actualizar las asistencias.')));
+                              snackRed(context,
+                                  'Error al actualizar las asistencias.');
                               // Navigator.pop(context);
                             }
                             // Navigator.pop(context);
@@ -255,10 +243,7 @@ class _PasarLista extends State<PasarLista> {
                               attendance: listaAsistencias[index].attendance);
                           showButtonUpdate = true;
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text('Hora no valida')));
+                          snackRed(context, 'Hora no valida');
                         }
 
                       case "salida":
@@ -274,10 +259,7 @@ class _PasarLista extends State<PasarLista> {
                               attendance: listaAsistencias[index].attendance);
                           showButtonUpdate = true;
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text('Hora no valida')));
+                          snackRed(context, 'Hora no valida');
                         }
                     }
                   });

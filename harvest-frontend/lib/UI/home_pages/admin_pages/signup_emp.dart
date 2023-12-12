@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -232,24 +233,14 @@ class _SignupEmpState extends State<SignupEmp> {
                         logger.d(response);
                         logger.d('Cambio de datos de usuario Finalizado');
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Empleado agregado.')));
-                        Navigator.pop(context);
+                        snackGreen(context, 'Empleado agregado.');
                       } on TimeoutException {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            key: Key('snackKey'),
-                            backgroundColor: Colors.red,
-                            content:
-                                Text('Comunicacion con el servidor fallida')));
-                        Navigator.pop(context);
+                        snackTimeout(context);
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            key: Key('snackKey'),
-                            backgroundColor: Colors.red,
-                            content: Text('Error al dar de alta al usuario.')));
-                        Navigator.pop(context);
+                        snackRed(context, 'Error al dar de alta al usuario.');
                       }
                     }
+                    Navigator.pop(context);
                   },
                   child: const Text('Confirmar'))
             ],

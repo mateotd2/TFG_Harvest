@@ -5,6 +5,7 @@ import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/signup_worker.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_details.dart';
 import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -73,10 +74,7 @@ class _TrabajadoresState extends State<Trabajadores> {
               }
             } else if (snapshot.hasError) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.red,
-                    content: Text('Error obteniendo los trabajadores')));
+                snackRed(context, 'Error obteniendo los trabajadores');
               });
               return Text("Nada que enseñar :(");
             } else {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/config_pages/update_user.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -69,7 +70,6 @@ class _ConfigState extends State<Config> {
                                         oldPassword: _oldPassword,
                                         newPassword: _newPassword);
                                 logger.d(changePass);
-                                // TODO: Segun el error, mostrar un SnackBar distinto
                                 try {
                                   MessageResponseDTO? response =
                                       await apiInstance
@@ -79,27 +79,17 @@ class _ConfigState extends State<Config> {
                                           .timeout(Duration(seconds: 10));
                                   logger.d('Respuesta:');
                                   logger.d(response);
-
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              'Cambio de contraseña finalizado.')));
+                                  snackGreen(context,
+                                      'Cambio de contraseña finalizado.');
                                   logger.d('Cambio de contraseña finalizado');
                                 } on TimeoutException {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          backgroundColor: Colors.red,
-                                          content: Text(
-                                              'Comunicacion con el servidor fallida')));
+                                  snackTimeout(context);
                                 } catch (e) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          backgroundColor: Colors.red,
-                                          content: Text(
-                                              'Error en el cambio de contraseña.')));
+                                  snackRed(context,
+                                      'Error en el cambio de contraseña.');
                                 }
-                                Navigator.of(context).pop();
                               }
+                              Navigator.of(context).pop();
                             },
                             child: Text('Listo')),
                       ],

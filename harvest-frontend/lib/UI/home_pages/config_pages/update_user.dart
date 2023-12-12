@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:form_validator/form_validator.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -196,26 +197,16 @@ class _UpdateUserState extends State<UpdateUser> {
                           logger.d(response);
                           logger.d('Cambio de datos de usuario Finalizado');
 
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(
-                                  'Cambio de datos de usuario finalizado.')));
-                          Navigator.pop(context);
+                          snackGreen(context,
+                              'Cambio de datos de usuario finalizado.');
                         } on TimeoutException {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                  'Comunicacion con el servidor fallida')));
-                          Navigator.pop(context);
+                          snackTimeout(context);
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                  'Error en el cambio de informacion de usuario.')));
-                          Navigator.pop(context);
+                          snackRed(context,
+                              'Error en el cambio de informacion de usuario.');
                         }
                       }
+                      Navigator.pop(context);
                     },
                     child: const Text('Actualizar'))
               ],

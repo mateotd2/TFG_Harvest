@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -120,30 +121,16 @@ class DayOfWorkState extends State<DayOfWorkForm> {
                     .addDayOfWork(estado.lastResponse!.id, nuevaFecha)
                     .timeout(Duration(seconds: 10));
 
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.green,
-                    content: Text('Calendario Actualizadas')));
+                snackGreen(context, 'Calendario Actualizadas');
               } on TimeoutException {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.red,
-                    content: Text('Comunicacion con el servidor fallida')));
+                snackTimeout(context);
               } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    key: Key('snackKey'),
-                    backgroundColor: Colors.red,
-                    content: Text('Error al añadir fecha al calendario.')));
+                snackRed(context, 'Error al añadir fecha al calendario.');
               }
-              // Navigator.pop(context, new CalendarDTO(checkin: "${_horaCheckIn}:00", checkout: "${_horaCheckOut}:00", day: _fechaTrabajo, attendance: false, id: null));
-              Navigator.pop(context);
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  key: Key('snackKey'),
-                  backgroundColor: Colors.red,
-                  content: Text('Fecha no valida')));
-              Navigator.pop(context);
+              snackRed(context, 'Fecha no valida');
             }
+            Navigator.pop(context);
           },
           child: Text('Aceptar'),
         ),
