@@ -100,6 +100,7 @@ class LineasControllerTest {
     @WithMockUser(roles = "ADMIN")
     void crearZonaDuplicate() throws Exception {
         ZoneDTO zona = crearZona();
+        zona.setName("Zona 1");
         zona.setReference("12345678901234567890"); // Esta ya existe
         ObjectMapper mapper = new ObjectMapper();
 
@@ -147,7 +148,7 @@ class LineasControllerTest {
         ZoneDTO zona = new ZoneDTO();
         zona.setReference("12345678901234567890");
         zona.setSurface(300);
-        zona.setName("Nuevo nombre de zona Test");
+        zona.setName("Zona 2");
         zona.setDescription("Nueva Descripcion de zona Test");
         zona.setFormation(ZoneDTO.FormationEnum.EMPARRADO);
         zona.setReference("12345678901234567891"); // Conflicto de referencia en la zona 2
