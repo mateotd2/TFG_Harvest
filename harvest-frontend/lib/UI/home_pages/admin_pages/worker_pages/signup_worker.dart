@@ -80,6 +80,7 @@ class _SignupWorkerState extends State<SignupWorker> {
               ),
 
               TextFormField(
+                maxLength: 9,
                 key: Key('dniKey'),
                 controller: _dniController,
                 decoration: InputDecoration(labelText: 'DNI'),
@@ -96,6 +97,7 @@ class _SignupWorkerState extends State<SignupWorker> {
                 },
               ),
               TextFormField(
+                maxLength: 12,
                 key: Key('nssKey'),
                 controller: _nssController,
                 decoration: InputDecoration(labelText: 'NSS'),
@@ -126,6 +128,7 @@ class _SignupWorkerState extends State<SignupWorker> {
                 },
               ),
               TextFormField(
+                maxLength: 9,
                 key: Key('phoneKey'),
                 controller: _phoneController,
                 decoration: InputDecoration(labelText: 'Telefono'),

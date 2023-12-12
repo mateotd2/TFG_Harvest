@@ -90,6 +90,7 @@ class _UpdateUserState extends State<UpdateUser> {
                 ),
 
                 TextFormField(
+                  maxLength: 9,
                   key: Key('dniKey'),
                   controller: _dniController,
                   decoration: InputDecoration(labelText: 'DNI'),
@@ -106,6 +107,7 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  maxLength: 12,
                   key: Key('nssKey'),
                   controller: _nssController,
                   decoration: InputDecoration(labelText: 'NSS'),
@@ -136,6 +138,7 @@ class _UpdateUserState extends State<UpdateUser> {
                   },
                 ),
                 TextFormField(
+                  maxLength: 9,
                   key: Key('phoneKey'),
                   controller: _phoneController,
                   decoration: InputDecoration(labelText: 'Telefono'),
