@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/update_zone.dart';
 import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -77,8 +78,13 @@ class _ZoneDetailsState extends State<ZoneDetails> {
                       ElevatedButton(
                           onPressed: () {
                             logger.d("Modificar datos de zona pulsado");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UpdateZone(
+                                        zoneId: zoneId, zone: zonaObtenida!)));
                           },
-                          child: Text("Modificar")),
+                          child: Text("Actualizar Datos")),
                       SizedBox(width: 96.0),
                       ElevatedButton(
                           onPressed: () async {
