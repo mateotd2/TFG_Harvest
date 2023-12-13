@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/lines.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/update_zone.dart';
 import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
@@ -88,7 +89,13 @@ class _ZoneDetailsState extends State<ZoneDetails> {
                       SizedBox(width: 96.0),
                       ElevatedButton(
                           onPressed: () async {
-                            logger.d("Mostrar lineas pulsado");
+                            logger
+                                .d("Mostrar lineas de zona ${zoneId} pulsado");
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        Lines(zoneId: zoneId!)));
                           },
                           child: Text("Mostrar Lineas")),
                     ],

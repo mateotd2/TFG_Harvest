@@ -2247,6 +2247,7 @@ components:
       required:
         - lineNumber
         - plantingDate
+        - distance
         - idTypeVid
       properties:
         id:
@@ -2259,6 +2260,11 @@ components:
           type: integer
           format: int32
           minimum: 1
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
         plantingDate:
           type: string
           format: date
@@ -2289,6 +2295,11 @@ components:
           type: integer
           format: int32
           minimum: 1
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
         plantingDate:
           type: string
           format: date

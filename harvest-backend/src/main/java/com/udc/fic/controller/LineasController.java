@@ -41,7 +41,7 @@ public class LineasController implements LineasApi {
     @Override
     public ResponseEntity<MessageResponseDTO> _deleteLine(Long id) throws Exception {
         MessageResponseDTO message = new MessageResponseDTO();
-        message.message("Zona añadida");
+        message.message("Linea  borrada");
 
         lineasService.eliminarLinea(id);
         return ResponseEntity.ok().body(message);

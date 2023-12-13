@@ -34,7 +34,7 @@ public class Zona {
     @Column(nullable = false,length = 20)
     private String reference;
 
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Linea> lineas;
 
 }

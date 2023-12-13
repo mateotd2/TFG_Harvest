@@ -42,6 +42,7 @@ class LineasControllerTest {
         LineDTO linea = new LineDTO();
         linea.setHarvestEnabled(true);
         linea.setLineNumber(6);
+        linea.setDistance(50);
         linea.setIdTypeVid(1L);
         linea.setPlantingDate(LocalDate.now().minusYears(10));
         return linea;
@@ -275,6 +276,20 @@ class LineasControllerTest {
 
         this.mockMvc.perform(post("/api/zones/33/lines").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(linea))).andExpect(status().isNotFound());
+
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void agregarLineaDuplicated() throws Exception {
+        LineDTO linea = crearLinea();
+        linea.setLineNumber(1);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/zones/1/lines").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(linea))).andExpect(status().isConflict());
 
     }
 
