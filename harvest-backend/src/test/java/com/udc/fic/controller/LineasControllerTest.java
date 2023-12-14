@@ -232,6 +232,13 @@ class LineasControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
+    void deshabilitarLineaNotFound() throws Exception {
+
+        this.mockMvc.perform(put("/api/lines/55/disable")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
     void habilitarLineaAdmin() throws Exception {
 
         this.mockMvc.perform(put("/api/lines/3/enable")).andExpect(status().isNoContent());
@@ -243,13 +250,14 @@ class LineasControllerTest {
 
         this.mockMvc.perform(put("/api/lines/3/enable")).andExpect(status().isForbidden());
     }
-
     @Test
     @WithMockUser(roles = "ADMIN")
-    void deshabilitarLineaNotFound() throws Exception {
+    void habilitarLineaNotFound() throws Exception {
 
-        this.mockMvc.perform(get("/api/lines/10")).andExpect(status().isNotFound());
+        this.mockMvc.perform(put("/api/lines/55/enable")).andExpect(status().isNotFound());
     }
+
+
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -291,6 +299,21 @@ class LineasControllerTest {
         this.mockMvc.perform(post("/api/zones/1/lines").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(linea))).andExpect(status().isConflict());
 
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarLinea() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/1")).andExpect(status().isOk());
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarLineaNotFound() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/400")).andExpect(status().isNotFound());
+    }
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void eliminarLineaCapataz() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/1")).andExpect(status().isForbidden());
     }
 
     @Test

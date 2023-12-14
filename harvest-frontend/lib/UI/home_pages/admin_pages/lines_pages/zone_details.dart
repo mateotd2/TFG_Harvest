@@ -90,8 +90,7 @@ class _ZoneDetailsState extends State<ZoneDetails> {
                       SizedBox(width: 96.0),
                       ElevatedButton(
                           onPressed: () async {
-                            logger
-                                .d("Mostrar lineas de zona $zoneId pulsado");
+                            logger.d("Mostrar lineas de zona $zoneId pulsado");
                             await Navigator.push(
                                 context,
                                 MaterialPageRoute(

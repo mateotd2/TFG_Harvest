@@ -72,7 +72,6 @@ class _LineDetailsState extends State<LineDetails> {
                     subtitle: Text("${lineaObtenida?.distance} metros",
                         style: TextStyle(fontSize: 18.0)),
                   ),
-
                   ListTile(
                     title: Text("Vid:"),
                     subtitle: Text("${lineaObtenida?.vid?.name}",

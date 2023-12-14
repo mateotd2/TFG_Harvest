@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/config_pages/update_user.dart';
-import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -79,17 +78,27 @@ class _ConfigState extends State<Config> {
                                           .timeout(Duration(seconds: 10));
                                   logger.d('Respuesta:');
                                   logger.d(response);
-                                  snackGreen(context,
-                                      'Cambio de contraseña finalizado.');
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              'Cambio de contraseña finalizado.')));
                                   logger.d('Cambio de contraseña finalizado');
                                 } on TimeoutException {
-                                  snackTimeout(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                              'Comunicacion con el servidor fallida')));
                                 } catch (e) {
-                                  snackRed(context,
-                                      'Error en el cambio de contraseña.');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          backgroundColor: Colors.red,
+                                          content: Text(
+                                              'Error en el cambio de contraseña.')));
                                 }
+                                Navigator.of(context).pop();
                               }
-                              Navigator.of(context).pop();
                             },
                             child: Text('Listo')),
                       ],
