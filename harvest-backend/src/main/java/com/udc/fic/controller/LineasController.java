@@ -49,13 +49,13 @@ public class LineasController implements LineasApi {
 
     @Override
     public ResponseEntity<Void> _disableLine(Long id) throws Exception {
-        lineasService.habilitarLinea(id);
+        lineasService.deshabilitarLinea(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Void> _enableLine(Long id) throws Exception {
-        lineasService.deshabilitarLinea(id);
+        lineasService.habilitarLinea(id);
         return ResponseEntity.noContent().build();
     }
 

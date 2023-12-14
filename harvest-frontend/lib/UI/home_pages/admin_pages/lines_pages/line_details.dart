@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/lines_pages/update_line.dart';
@@ -10,8 +12,9 @@ import '../../../../utils/provider/sign_in_model.dart';
 
 class LineDetails extends StatefulWidget {
   final int? lineId;
+  final bool? enabled;
 
-  LineDetails({required this.lineId});
+  LineDetails({required this.lineId, required this.enabled});
 
   @override
   State<StatefulWidget> createState() => _LineDetailsState();
@@ -20,6 +23,8 @@ class LineDetails extends StatefulWidget {
 class _LineDetailsState extends State<LineDetails> {
   var logger = Logger();
   late Future<LineDetailsDTO?> linea;
+  late bool? harEnabled;
+  bool primeraConstruccion = true;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +37,14 @@ class _LineDetailsState extends State<LineDetails> {
 
     setState(() {
       linea = api.getLineDetails(lineaId!).timeout(Duration(seconds: 10));
+      if (primeraConstruccion) {
+        harEnabled = widget.enabled;
+      }
     });
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text('Detalles Linea $lineaId'),
       ),
       body: RefreshIndicator(
@@ -74,18 +83,49 @@ class _LineDetailsState extends State<LineDetails> {
                     subtitle: Text("${lineaObtenida?.vid?.description}",
                         style: TextStyle(fontSize: 18.0)),
                   ),
-                  // TODO: añadir funcionalidad para Habilitar/Deshabilitar
-                  Visibility(
-                    visible: lineaObtenida!.harvestEnabled!,
-                    replacement: ListTile(
-                      title: Text("Recoleccion de linea Deshabilitada",
-                          style: TextStyle(fontSize: 18.0)),
-                    ),
-                    child: ListTile(
-                      title: Text("Recolecciond de linea Habilitada",
-                          style: TextStyle(fontSize: 18.0)),
+                  Center(
+                    child: Row(
+                      children: [
+                        Text("    Recoleccion de linea:",
+                            style: TextStyle(fontSize: 18.0)),
+                        Switch(
+                          value: harEnabled!,
+                          onChanged: (value) async {
+                            logger.d("Switch pulsado");
+                            try {
+                              if (value) {
+                                await api
+                                    .enableLine(lineaId!)
+                                    .timeout(Duration(seconds: 10));
+                              } else {
+                                await api
+                                    .disableLine(lineaId!)
+                                    .timeout(Duration(seconds: 10));
+                              }
+                              setState(() {
+                                logger.d("Cambia a valor $value");
+                                primeraConstruccion = false;
+                                harEnabled = value;
+                              });
+                            } on TimeoutException {
+                              snackTimeout(context);
+                            } catch (e) {
+                              snackRed(context,
+                                  'Error al intentar modificar la linea');
+                            }
+                          },
+                        ),
+                        Visibility(
+                          visible: harEnabled!,
+                          child: Text("Habilitada",
+                              style: TextStyle(color: Colors.lightBlue)),
+                          replacement: Text("Deshabilitada",
+                              style: TextStyle(color: Colors.red)),
+                        )
+                      ],
                     ),
                   ),
+                  SizedBox(width: 96.0, height: 48),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -106,7 +146,7 @@ class _LineDetailsState extends State<LineDetails> {
                               backgroundColor: Colors.red),
                           onPressed: () async {
                             logger.d("Eliminar linea pulsado");
-                            await showDialog(
+                            bool res = await showDialog(
                                 context: context,
                                 builder: (BuildContext context2) => AlertDialog(
                                       title: Text("Confirmación"),
@@ -116,26 +156,35 @@ class _LineDetailsState extends State<LineDetails> {
                                         TextButton(
                                           onPressed: () {
                                             logger.d("Cancelado");
-                                            Navigator.pop(context);
+                                            Navigator.of(context2).pop(false);
                                           },
                                           child: Text('Cancelar'),
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            logger.d("Dado de baja");
-                                            MessageResponseDTO? response =
-                                                await api
-                                                    .deleteLine(lineaId!)
-                                                    .timeout(
-                                                        Duration(seconds: 10));
-                                            logger.d(response);
-                                            Navigator.pop(context2);
+                                            logger.d("Eliminar linea");
+                                            try {
+                                              MessageResponseDTO? response =
+                                                  await api
+                                                      .deleteLine(lineaId!)
+                                                      .timeout(Duration(
+                                                          seconds: 10));
+                                              logger.d(response);
+                                            } on TimeoutException {
+                                              snackTimeout(context);
+                                            } catch (e) {
+                                              snackRed(context,
+                                                  'Error al intentar eliminar la zona');
+                                            }
+                                            Navigator.of(context2).pop(true);
                                           },
                                           child: Text('Eliminar'),
                                         ),
                                       ],
                                     ));
-                            Navigator.pop(context);
+                            if (res) {
+                              Navigator.pop(context);
+                            }
                           },
                           child: Text("Eliminar Linea")),
                     ],

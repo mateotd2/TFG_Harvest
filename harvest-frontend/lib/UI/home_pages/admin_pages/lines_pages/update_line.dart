@@ -44,7 +44,7 @@ class _UpdateLineState extends State<UpdateLine> {
 
     _distanceController.text = lineInit.distance.toString();
     _lineNumberController.text = lineInit.lineNumber.toString();
-    DateTime _fechaPlantacion = lineInit.plantingDate!;
+    DateTime fechaPlantacion = lineInit.plantingDate!;
     // bool habilitado = lineInit.harvestEnabled!;
 
     logger.d(lineInit);
@@ -138,20 +138,20 @@ class _UpdateLineState extends State<UpdateLine> {
                                   final DateTime? seleccion =
                                       await showDatePicker(
                                           context: context,
-                                          initialDate: _fechaPlantacion,
+                                          initialDate: fechaPlantacion,
                                           firstDate: DateTime(1940),
                                           lastDate: DateTime(2050));
                                   if (seleccion != null) {
                                     setState(() {
                                       logger
                                           .d('Nuevo valor fecha de plantacion');
-                                      _fechaPlantacion = seleccion;
+                                      fechaPlantacion = seleccion;
                                     });
                                   }
                                 },
                               )),
                           controller: TextEditingController(
-                              text: "${_fechaPlantacion.toLocal()}"
+                              text: "${fechaPlantacion.toLocal()}"
                                   .substring(0, 10)),
                         );
                       }),
@@ -166,7 +166,7 @@ class _UpdateLineState extends State<UpdateLine> {
                                   lineNumber:
                                       int.parse(_lineNumberController.text),
                                   distance: int.parse(_distanceController.text),
-                                  plantingDate: _fechaPlantacion,
+                                  plantingDate: fechaPlantacion,
                                   idTypeVid: opcion!.id!);
 
                               logger.d(lineaActualizada);

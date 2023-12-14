@@ -57,6 +57,7 @@ class WorkerDetailsUpdateState extends State<WorkerDetailsUpdate> {
 
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green,
           title: const Text('Actualizar información.'),
         ),
         body: SingleChildScrollView(

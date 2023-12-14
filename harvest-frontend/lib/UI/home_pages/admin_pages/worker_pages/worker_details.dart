@@ -40,6 +40,7 @@ class _WorkerDetailsState extends State<WorkerDetails> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: const Text('Detalles de trabajador'),
       ),
       body: RefreshIndicator(

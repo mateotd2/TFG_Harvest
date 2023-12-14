@@ -51,21 +51,24 @@ class _ZonasState extends State<Zonas> {
                     itemCount: zonasObtenidas.length,
                     itemBuilder: (context, index) {
                       final zona = zonasObtenidas[index];
-                      return ListTile(
-                        title: Text(zona.name),
-                        trailing: Icon(Icons.arrow_forward_ios_sharp),
-                        onTap: () async {
-                          logger.d("Zona ${zona.name} pulsada");
-                          await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ZoneDetails(zoneId: zona.id)));
-                          setState(() {
-                            zonas =
-                                api.getZones().timeout(Duration(seconds: 10));
-                          });
-                        },
+                      return Container(
+                        color: index % 2 == 0 ? Colors.grey[200] : null,
+                        child: ListTile(
+                          title: Text(zona.name),
+                          trailing: Icon(Icons.arrow_forward_ios_sharp),
+                          onTap: () async {
+                            logger.d("Zona ${zona.name} pulsada");
+                            await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ZoneDetails(zoneId: zona.id)));
+                            setState(() {
+                              zonas =
+                                  api.getZones().timeout(Duration(seconds: 10));
+                            });
+                          },
+                        ),
                       );
                     });
               }

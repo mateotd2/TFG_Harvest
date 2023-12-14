@@ -37,6 +37,7 @@ class _ZoneDetailsState extends State<ZoneDetails> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Text('Detalles Zona $zoneId'),
       ),
       body: RefreshIndicator(
@@ -90,7 +91,7 @@ class _ZoneDetailsState extends State<ZoneDetails> {
                       ElevatedButton(
                           onPressed: () async {
                             logger
-                                .d("Mostrar lineas de zona ${zoneId} pulsado");
+                                .d("Mostrar lineas de zona $zoneId pulsado");
                             await Navigator.push(
                                 context,
                                 MaterialPageRoute(

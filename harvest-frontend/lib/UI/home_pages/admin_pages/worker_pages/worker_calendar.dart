@@ -75,6 +75,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.green,
           title: const Text('Calendario'),
         ),
         body: RefreshIndicator(
@@ -130,12 +131,9 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    // Container(child: Text('Dia',style: TextStyle(fontSize: 30),)),
                                     Container(
                                         width: 180,
-                                        // 80% del ancho de la pantalla
                                         height: 30,
-                                        // 50% de la altura de la pantalla
                                         child: Text('   Entrada  ',
                                             style: TextStyle(fontSize: 30))),
                                     Container(
