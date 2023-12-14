@@ -50,7 +50,7 @@ public class LineasServiceImpl implements LineasService {
         if (zonaOptional.isPresent() && tipoVidOptional.isPresent()) {
 
             Zona zona = zonaOptional.get();
-            if (lineasRepository.existsBylineNumberAndZonaId(linea.getLineNumber(), zona.getId())){
+            if (lineasRepository.existsBylineNumberAndZonaId(linea.getLineNumber(), zona.getId())) {
                 throw new DuplicateInstanceException("Line already exists", linea.getLineNumber());
             }
 
@@ -136,9 +136,9 @@ public class LineasServiceImpl implements LineasService {
     @Override
     public void eliminarLinea(Long id) throws InstanceNotFoundException {
         if (lineasRepository.existsById(id)) {
-            LOGGER.info("Eliminando linea con id: {}",id);
+            LOGGER.info("Eliminando linea con id: {}", id);
             lineasRepository.deleteById(id);
-        }else{
+        } else {
             throw new InstanceNotFoundException();
         }
     }

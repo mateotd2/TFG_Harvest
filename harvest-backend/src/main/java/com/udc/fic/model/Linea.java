@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"lineNumber","zona_id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"lineNumber", "zona_id"})})
 public class Linea {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

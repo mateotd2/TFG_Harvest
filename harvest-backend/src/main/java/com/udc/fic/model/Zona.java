@@ -31,7 +31,7 @@ public class Zona {
     @Enumerated(EnumType.STRING)
     private Formacion formation;
 
-    @Column(nullable = false,length = 20)
+    @Column(nullable = false, length = 20)
     private String reference;
 
     @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
