@@ -45,7 +45,7 @@ class _ZonasState extends State<Zonas> {
               logger.d(zonasObtenidas);
 
               if (zonasObtenidas == null) {
-                return Text("Nada que mostrar :(");
+                return Center(child: Text("Nada que mostrar :("));
               } else {
                 return ListView.builder(
                     itemCount: zonasObtenidas.length,
@@ -76,7 +76,7 @@ class _ZonasState extends State<Zonas> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 snackRed(context, 'Error obteniendo las zonas');
               });
-              return Text("Nada que enseñar :(");
+              return Center(child: Text("Nada que enseñar :("));
             } else {
               return Center(child: CircularProgressIndicator());
             }

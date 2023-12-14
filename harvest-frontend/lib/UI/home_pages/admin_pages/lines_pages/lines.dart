@@ -54,7 +54,7 @@ class _LinesState extends State<Lines> {
               logger.d(lineasObtenidas);
 
               if (lineasObtenidas == null) {
-                return Text("Nada que mostrar :(");
+                return Center(child: Text("Nada que mostrar :("));
               } else {
                 return ListView.builder(
                     itemCount: lineasObtenidas.length,
@@ -87,7 +87,7 @@ class _LinesState extends State<Lines> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 snackRed(context, 'Error obteniendo las zonas');
               });
-              return Text("Nada que enseñar :(");
+              return Center(child: Text("Nada que enseñar :("));
             } else {
               return Center(child: CircularProgressIndicator());
             }

@@ -47,7 +47,7 @@ class _TrabajadoresState extends State<Trabajadores> {
               logger.d(trabajadoresObtenidos);
 
               if (trabajadoresObtenidos == null) {
-                return Text("Nada que mostrar :(");
+                return Center(child: Text("Nada que mostrar :("));
               } else {
                 return ListView.builder(
                   itemCount: trabajadoresObtenidos.length,
@@ -76,7 +76,7 @@ class _TrabajadoresState extends State<Trabajadores> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 snackRed(context, 'Error obteniendo los trabajadores');
               });
-              return Text("Nada que enseñar :(");
+              return Center(child: Text("Nada que enseñar :("));
             } else {
               return Center(child: CircularProgressIndicator());
             }
