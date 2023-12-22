@@ -39,14 +39,23 @@ public class LineasController implements LineasApi {
     }
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _deleteLine(Long id) throws Exception {
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Linea  borrada");
+
+        lineasService.eliminarLinea(id);
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<Void> _disableLine(Long id) throws Exception {
-        lineasService.habilitarLinea(id);
+        lineasService.deshabilitarLinea(id);
         return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<Void> _enableLine(Long id) throws Exception {
-        lineasService.deshabilitarLinea(id);
+        lineasService.habilitarLinea(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ZonasRepository extends JpaRepository<Zona, Long> {
 
-    boolean existsByReference(String reference);
+    boolean existsByName(String name);
 
 }

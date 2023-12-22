@@ -6,6 +6,7 @@ import com.udc.fic.model.Zona;
 import com.udc.fic.repository.LineasRepository;
 import com.udc.fic.repository.TipoVidRepository;
 import com.udc.fic.repository.ZonasRepository;
+import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,16 @@ public class LineasServiceImpl implements LineasService {
     }
 
     @Override
-    public Linea registrarLinea(Linea linea, Long zonaId, Long tipoVidId) throws InstanceNotFoundException {
+    public Linea registrarLinea(Linea linea, Long zonaId, Long tipoVidId) throws InstanceNotFoundException, DuplicateInstanceException {
         Optional<Zona> zonaOptional = zonasRepository.findById(zonaId);
         Optional<TipoVid> tipoVidOptional = tipoVidRepository.findById(tipoVidId);
         if (zonaOptional.isPresent() && tipoVidOptional.isPresent()) {
+
             Zona zona = zonaOptional.get();
+            if (lineasRepository.existsBylineNumberAndZonaId(linea.getLineNumber(), zona.getId())) {
+                throw new DuplicateInstanceException("Line already exists", linea.getLineNumber());
+            }
+
             LOGGER.info("Registrando nueva linea en la zona con id {}", zonaId);
             linea.setZona(zona);
             linea.setTipoVid(tipoVidOptional.get());
@@ -122,6 +128,16 @@ public class LineasServiceImpl implements LineasService {
             LOGGER.info("Deshabilitando recoleccion de la linea con id:{}", id);
             linea.setHarvestEnabled(false);
             lineasRepository.save(linea);
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void eliminarLinea(Long id) throws InstanceNotFoundException {
+        if (lineasRepository.existsById(id)) {
+            LOGGER.info("Eliminando linea con id: {}", id);
+            lineasRepository.deleteById(id);
         } else {
             throw new InstanceNotFoundException();
         }

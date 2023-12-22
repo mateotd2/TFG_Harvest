@@ -5,6 +5,7 @@ import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/signup_worker.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/worker_pages/worker_details.dart';
 import 'package:harvest_frontend/utils/plataform_apis/workers_api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -18,10 +19,6 @@ class Trabajadores extends StatefulWidget {
 class _TrabajadoresState extends State<Trabajadores> {
   var logger = Logger();
   late Future<List<WorkerDTO>?> trabajadores;
-
-  Future<List<WorkerDTO>?> obtenerTrabajadores(TrabajadoresApi api) {
-    return api.getWorkers().timeout(Duration(seconds: 10));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +47,7 @@ class _TrabajadoresState extends State<Trabajadores> {
               logger.d(trabajadoresObtenidos);
 
               if (trabajadoresObtenidos == null) {
-                return Text("Nada que mostrar :(");
+                return Center(child: Text("Nada que mostrar :("));
               } else {
                 return ListView.builder(
                   itemCount: trabajadoresObtenidos.length,
@@ -59,21 +56,7 @@ class _TrabajadoresState extends State<Trabajadores> {
                     return ListTile(
                         title:
                             Text("${trabajador.name} ${trabajador.lastname}"),
-                        trailing: IconButton(
-                          icon: Icon(Icons.arrow_forward_ios_sharp),
-                          onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => WorkerDetails(
-                                        workerId: trabajador.id)));
-                            setState(() {
-                              trabajadores = apiInstance
-                                  .getWorkers()
-                                  .timeout(Duration(seconds: 10));
-                            });
-                          },
-                        ),
+                        trailing: Icon(Icons.arrow_forward_ios_sharp),
                         onTap: () async {
                           await Navigator.push(
                               context,
@@ -90,12 +73,10 @@ class _TrabajadoresState extends State<Trabajadores> {
                 );
               }
             } else if (snapshot.hasError) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  key: Key('snackKey'),
-                  backgroundColor: Colors.red,
-                  content: Text('Error obteniendo los trabajadores')));
-              Navigator.pop(context);
-              return Text("Nada que enseñar :(");
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                snackRed(context, 'Error obteniendo los trabajadores');
+              });
+              return Center(child: Text("Nada que enseñar :("));
             } else {
               return Center(child: CircularProgressIndicator());
             }

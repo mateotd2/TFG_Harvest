@@ -1611,6 +1611,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Eliminar linea
+      operationId: deleteLine
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+      responses:
+        200:
+          description: Linea dada de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Linea dada de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Dia no valido'
+                status: 404
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/tipeVids:
     get:
       tags:
@@ -2153,6 +2220,8 @@ components:
         name:
           type: string
           example: "Zona 1"
+          minimum: 1
+          maximum: 255
         surface:
           type: integer
           format: int32
@@ -2160,6 +2229,8 @@ components:
           example: 100
         description:
           type: string
+          minimum: 0
+          maximum: 1048
           example: "Zona con uva de mesa"
         formation:
           type: string
@@ -2169,14 +2240,14 @@ components:
           example: "ESPALDERA"
         reference:
           type: string
-          minimum: 20
-          maximum: 20
+          pattern: '^[a-zA-Z0-9]{20}$'
           example: "1234567AB1234N0001CD"
     LineDTO:
       type: object
       required:
         - lineNumber
         - plantingDate
+        - distance
         - idTypeVid
       properties:
         id:
@@ -2189,6 +2260,11 @@ components:
           type: integer
           format: int32
           minimum: 1
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
         plantingDate:
           type: string
           format: date
@@ -2219,6 +2295,11 @@ components:
           type: integer
           format: int32
           minimum: 1
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
         plantingDate:
           type: string
           format: date
@@ -2254,6 +2335,8 @@ components:
           example: 15
         description:
           type: string
+          minimum: 0
+          maximum: 2048
           example: Es una planta semileñosa o trepadora que cuando se deja crecer libremente puede alcanzar más de 30 m, pero que, por la acción humana...
 
     Error:

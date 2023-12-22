@@ -42,6 +42,7 @@ class LineasControllerTest {
         LineDTO linea = new LineDTO();
         linea.setHarvestEnabled(true);
         linea.setLineNumber(6);
+        linea.setDistance(50);
         linea.setIdTypeVid(1L);
         linea.setPlantingDate(LocalDate.now().minusYears(10));
         return linea;
@@ -100,6 +101,7 @@ class LineasControllerTest {
     @WithMockUser(roles = "ADMIN")
     void crearZonaDuplicate() throws Exception {
         ZoneDTO zona = crearZona();
+        zona.setName("Zona 1");
         zona.setReference("12345678901234567890"); // Esta ya existe
         ObjectMapper mapper = new ObjectMapper();
 
@@ -147,7 +149,7 @@ class LineasControllerTest {
         ZoneDTO zona = new ZoneDTO();
         zona.setReference("12345678901234567890");
         zona.setSurface(300);
-        zona.setName("Nuevo nombre de zona Test");
+        zona.setName("Zona 2");
         zona.setDescription("Nueva Descripcion de zona Test");
         zona.setFormation(ZoneDTO.FormationEnum.EMPARRADO);
         zona.setReference("12345678901234567891"); // Conflicto de referencia en la zona 2
@@ -230,6 +232,13 @@ class LineasControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
+    void deshabilitarLineaNotFound() throws Exception {
+
+        this.mockMvc.perform(put("/api/lines/55/disable")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
     void habilitarLineaAdmin() throws Exception {
 
         this.mockMvc.perform(put("/api/lines/3/enable")).andExpect(status().isNoContent());
@@ -241,13 +250,14 @@ class LineasControllerTest {
 
         this.mockMvc.perform(put("/api/lines/3/enable")).andExpect(status().isForbidden());
     }
-
     @Test
     @WithMockUser(roles = "ADMIN")
-    void deshabilitarLineaNotFound() throws Exception {
+    void habilitarLineaNotFound() throws Exception {
 
-        this.mockMvc.perform(get("/api/lines/10")).andExpect(status().isNotFound());
+        this.mockMvc.perform(put("/api/lines/55/enable")).andExpect(status().isNotFound());
     }
+
+
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -275,6 +285,35 @@ class LineasControllerTest {
         this.mockMvc.perform(post("/api/zones/33/lines").contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(linea))).andExpect(status().isNotFound());
 
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void agregarLineaDuplicated() throws Exception {
+        LineDTO linea = crearLinea();
+        linea.setLineNumber(1);
+
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        mapper.registerModule(new JavaTimeModule()).setDateFormat(df);
+
+        this.mockMvc.perform(post("/api/zones/1/lines").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsBytes(linea))).andExpect(status().isConflict());
+
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarLinea() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/1")).andExpect(status().isOk());
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void eliminarLineaNotFound() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/400")).andExpect(status().isNotFound());
+    }
+    @Test
+    @WithMockUser(roles = "CAPATAZ")
+    void eliminarLineaCapataz() throws Exception {
+        this.mockMvc.perform(delete("/api/lines/1")).andExpect(status().isForbidden());
     }
 
     @Test

@@ -31,7 +31,7 @@ public class ZonasServiceImpl implements ZonasService {
 
     @Override
     public Zona registrarZona(Zona zona) throws DuplicateInstanceException {
-        if (zonasRepository.existsByReference(zona.getReference())) {
+        if (zonasRepository.existsByName(zona.getName())) {
             throw new DuplicateInstanceException("Reference already exists", zona.getReference());
         }
         LOGGER.info("Añadiendo zona con referencia: {}", zona.getReference());
@@ -56,19 +56,21 @@ public class ZonasServiceImpl implements ZonasService {
         Optional<Zona> zonaOptional = zonasRepository.findById(id);
         if (zonaOptional.isPresent()) {
             Zona zonaObtenida = zonaOptional.get();
-            if (!zona.getReference().equals(zonaObtenida.getReference())) {
+            if (!zona.getName().equals(zonaObtenida.getName())) {
                 LOGGER.info("Actualizando detalles de la zona con id {}", id);
 
                 // Check si nueva referencia coincide con alguna en DB
-                if (zonasRepository.existsByReference(zona.getReference())) {
-                    throw new DuplicateInstanceException("Reference already exists", zona.getReference());
+                if (zonasRepository.existsByName(zona.getName())) {
+                    throw new DuplicateInstanceException("Name already exists", zona.getName());
                 }
-                zonaObtenida.setDescription(zona.getDescription());
-                zonaObtenida.setFormation(zona.getFormation());
-                zonaObtenida.setName(zona.getName());
-                zonaObtenida.setSurface(zona.getSurface());
-                zonaObtenida.setReference(zona.getReference());
             }
+            zonaObtenida.setDescription(zona.getDescription());
+            zonaObtenida.setFormation(zona.getFormation());
+            zonaObtenida.setName(zona.getName());
+            zonaObtenida.setSurface(zona.getSurface());
+            zonaObtenida.setReference(zona.getReference());
+            zonasRepository.save(zonaObtenida);
+
 
         } else {
             throw new InstanceNotFoundException();

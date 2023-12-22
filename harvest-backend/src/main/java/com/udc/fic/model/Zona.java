@@ -11,7 +11,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "reference")})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "name")})
 public class Zona {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,17 +23,18 @@ public class Zona {
     @Column(nullable = false)
     private int surface;
 
-    @Column(nullable = false)
+
+    @Column(nullable = false, length = 1048)
     private String description;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Formacion formation;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String reference;
 
-    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "zona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Linea> lineas;
 
 }

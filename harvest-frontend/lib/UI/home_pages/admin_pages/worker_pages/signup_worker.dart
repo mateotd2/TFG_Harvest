@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../utils/provider/sign_in_model.dart';
+import '../../../../utils/snack_bars.dart';
 import '../../../../utils/validators.dart';
 
 class SignupWorker extends StatefulWidget {
@@ -79,6 +80,7 @@ class _SignupWorkerState extends State<SignupWorker> {
               ),
 
               TextFormField(
+                maxLength: 9,
                 key: Key('dniKey'),
                 controller: _dniController,
                 decoration: InputDecoration(labelText: 'DNI'),
@@ -95,6 +97,7 @@ class _SignupWorkerState extends State<SignupWorker> {
                 },
               ),
               TextFormField(
+                maxLength: 12,
                 key: Key('nssKey'),
                 controller: _nssController,
                 decoration: InputDecoration(labelText: 'NSS'),
@@ -125,6 +128,7 @@ class _SignupWorkerState extends State<SignupWorker> {
                 },
               ),
               TextFormField(
+                maxLength: 9,
                 key: Key('phoneKey'),
                 controller: _phoneController,
                 decoration: InputDecoration(labelText: 'Telefono'),
@@ -185,26 +189,15 @@ class _SignupWorkerState extends State<SignupWorker> {
                         logger.d('Respuesta:');
                         logger.d(response);
                         logger.d('Cambio de datos de usuario Finalizado');
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Trabajador agregado.')));
-                        Navigator.pop(context);
+                        snackGreen(context, 'Trabajador agregado.');
                       } on TimeoutException {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            key: Key('snackKey'),
-                            backgroundColor: Colors.red,
-                            content:
-                                Text('Comunicacion con el servidor fallida')));
-                        Navigator.pop(context);
+                        snackTimeout(context);
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            key: Key('snackKey'),
-                            backgroundColor: Colors.red,
-                            content:
-                                Text('Error al dar de alta al trabajadors.')));
-                        Navigator.pop(context);
+                        snackRed(
+                            context, 'Error al dar de alta al trabajador.');
                       }
                     }
+                    Navigator.pop(context);
                   },
                   child: const Text('Confirmar'))
             ],

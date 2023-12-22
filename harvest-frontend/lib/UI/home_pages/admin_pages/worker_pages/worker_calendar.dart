@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:time_picker_spinner/time_picker_spinner.dart';
@@ -74,6 +75,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
           ),
         ),
         appBar: AppBar(
+          backgroundColor: Colors.green,
           title: const Text('Calendario'),
         ),
         body: RefreshIndicator(
@@ -129,12 +131,9 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    // Container(child: Text('Dia',style: TextStyle(fontSize: 30),)),
                                     Container(
                                         width: 180,
-                                        // 80% del ancho de la pantalla
                                         height: 30,
-                                        // 50% de la altura de la pantalla
                                         child: Text('   Entrada  ',
                                             style: TextStyle(fontSize: 30))),
                                     Container(
@@ -291,35 +290,13 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                                                       nuevoCalendario.clear();
                                                       showButtonUpdate = false;
                                                     });
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(SnackBar(
-                                                            key:
-                                                                Key('snackKey'),
-                                                            backgroundColor:
-                                                                Colors.green,
-                                                            content: Text(
-                                                                'Fecha borrada')));
+                                                    snackGreen(context,
+                                                        'Fecha borrada');
                                                   } on TimeoutException {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(SnackBar(
-                                                            key:
-                                                                Key('snackKey'),
-                                                            backgroundColor:
-                                                                Colors.red,
-                                                            content: Text(
-                                                                'Comunicacion con el servidor fallida')));
+                                                    snackTimeout(context);
                                                   } catch (e) {
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(SnackBar(
-                                                            key:
-                                                                Key('snackKey'),
-                                                            backgroundColor:
-                                                                Colors.red,
-                                                            content: Text(
-                                                                'Error al borrar la fecha.')));
+                                                    snackRed(context,
+                                                        'Error al borrar la fecha.');
                                                   }
                                                 }
                                               },
@@ -347,27 +324,15 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                               await apiInstance
                                   .updateCalendar(workerId!, nuevoCalendario)
                                   .timeout(Duration(seconds: 10));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      key: Key('snackKey'),
-                                      backgroundColor: Colors.green,
-                                      content:
-                                          Text('Calendario Actualizadas')));
+                              snackGreen(context, 'Calendario Actualizadas');
                               setState(() {
                                 showButtonUpdate = false;
                               });
                             } on TimeoutException {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  key: Key('snackKey'),
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                      'Comunicacion con el servidor fallida')));
+                              snackTimeout(context);
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  key: Key('snackKey'),
-                                  backgroundColor: Colors.red,
-                                  content: Text(
-                                      'Error al actualizar el calendario.')));
+                              snackRed(context,
+                                  'Error al actualizar el calendario.');
                             }
                           },
                           child: Text("Actualizar"),
@@ -435,10 +400,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                               id: nuevoCalendario[index].id);
                           showButtonUpdate = true;
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text('Hora no valida')));
+                          snackRed(context, 'Hora no valida');
                         }
 
                       case "salida":
@@ -455,10 +417,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
                               id: nuevoCalendario[index].id);
                           showButtonUpdate = true;
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              key: Key('snackKey'),
-                              backgroundColor: Colors.red,
-                              content: Text('Hora no valida')));
+                          snackRed(context, 'Hora no valida');
                         }
                     }
                   });

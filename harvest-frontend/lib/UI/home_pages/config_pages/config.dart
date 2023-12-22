@@ -69,7 +69,6 @@ class _ConfigState extends State<Config> {
                                         oldPassword: _oldPassword,
                                         newPassword: _newPassword);
                                 logger.d(changePass);
-                                // TODO: Segun el error, mostrar un SnackBar distinto
                                 try {
                                   MessageResponseDTO? response =
                                       await apiInstance
