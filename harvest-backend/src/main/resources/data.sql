@@ -54,3 +54,4 @@ insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_v
 insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_vid_id, zona_id) values (8, '2000-10-25', true, 20, 1, 2)
 
 
+insert into Campanha (inicio, finalizacion, ano, fase_camp) values ('2023-8-1',null, 2023, 'LIMPIEZA')
