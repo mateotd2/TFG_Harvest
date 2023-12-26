@@ -31,6 +31,9 @@ tags:
   - name: Tractorista
     description: Funcionalidades de Tractorista
 
+  - name: Campanha
+    description: Funcionalidades para la gestion de campaña
+
 
 paths:
   # Funcionalidades
@@ -1852,6 +1855,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+################################################# Funcionalidades de campaña #######################################################
+
+  /api/startCampaign:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Da comienzo a la campaña
+      operationId: startCampaign
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: No content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Campaña iniciada!'
+
+        400:
+          description: Campaña anual inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 
 
 
