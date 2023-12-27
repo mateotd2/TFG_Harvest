@@ -250,13 +250,13 @@ class LineasControllerTest {
 
         this.mockMvc.perform(put("/api/lines/3/enable")).andExpect(status().isForbidden());
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void habilitarLineaNotFound() throws Exception {
 
         this.mockMvc.perform(put("/api/lines/55/enable")).andExpect(status().isNotFound());
     }
-
 
 
     @Test
@@ -286,6 +286,7 @@ class LineasControllerTest {
                 .content(mapper.writeValueAsBytes(linea))).andExpect(status().isNotFound());
 
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void agregarLineaDuplicated() throws Exception {
@@ -300,16 +301,19 @@ class LineasControllerTest {
                 .content(mapper.writeValueAsBytes(linea))).andExpect(status().isConflict());
 
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void eliminarLinea() throws Exception {
         this.mockMvc.perform(delete("/api/lines/1")).andExpect(status().isOk());
     }
+
     @Test
     @WithMockUser(roles = "ADMIN")
     void eliminarLineaNotFound() throws Exception {
         this.mockMvc.perform(delete("/api/lines/400")).andExpect(status().isNotFound());
     }
+
     @Test
     @WithMockUser(roles = "CAPATAZ")
     void eliminarLineaCapataz() throws Exception {

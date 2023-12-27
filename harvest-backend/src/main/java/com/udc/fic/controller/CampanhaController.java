@@ -20,6 +20,15 @@ public class CampanhaController implements CampanhaApi {
     CampanhaService campanhaService;
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _endCampaign() throws Exception {
+
+        campanhaService.finalizarCampanha();
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Campaña finalizada");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<MessageResponseDTO> _startCampaign() throws Exception {
 
         campanhaService.comenzarCampanha();
@@ -27,5 +36,23 @@ public class CampanhaController implements CampanhaApi {
         message.message("Campaña iniciada");
         return ResponseEntity.ok().body(message);
 
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _startHarvesting() throws Exception {
+
+        campanhaService.comenzarRecoleccion();
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Recoleccion iniciada");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _startPruning() throws Exception {
+
+        campanhaService.comenzarPoda();
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Poda iniciada");
+        return ResponseEntity.ok().body(message);
     }
 }
