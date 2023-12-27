@@ -1,8 +1,8 @@
 package com.udc.fic.services;
 
-import com.udc.fic.services.exceptions.CampaignAlreadyStartedException;
+import com.udc.fic.services.exceptions.DuplicateInstanceException;
 
 public interface CampanhaService {
 
-    void comenzarCampanha() throws CampaignAlreadyStartedException;
+    void comenzarCampanha() throws DuplicateInstanceException;
 }
