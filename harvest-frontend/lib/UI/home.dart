@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/campaign.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -65,13 +66,27 @@ class _HomeState extends State<Home> {
       pagina++;
       final paginaAdmin = pagina;
       elementosDrawer.add(ListTile(
-        title: Text('Funcion para Administradores'),
+        title: Text('Administración'),
         onTap: () {
           logger.d('Funcion para admins pulsada');
           _controladorPaginas.jumpToPage(paginaAdmin);
           Navigator.pop(context);
         },
         leading: Icon(Icons.admin_panel_settings),
+      ));
+    }
+    if (esAdmin(estado.lastResponse)) {
+      paginas.add(Campaign());
+      pagina++;
+      final paginaAdmin = pagina;
+      elementosDrawer.add(ListTile(
+        title: Text('Gestion de campaña'),
+        onTap: () {
+          logger.d('Gestión de campaña');
+          _controladorPaginas.jumpToPage(paginaAdmin);
+          Navigator.pop(context);
+        },
+        leading: Icon(Icons.flag),
       ));
     }
 
