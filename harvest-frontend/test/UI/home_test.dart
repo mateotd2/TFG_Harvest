@@ -43,7 +43,7 @@ void main() {
     await tester.tap(menu);
     await tester.pumpAndSettle();
 
-    final tile = find.widgetWithText(ListTile, 'Funcion para Administradores');
+    final tile = find.widgetWithText(ListTile, 'Administración');
     expect(tile, findsOneWidget);
 
     await tester.tap(tile);
