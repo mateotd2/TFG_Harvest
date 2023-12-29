@@ -42,7 +42,7 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarCampanha();
         List<Campanha> campanhas = campanhaRepository.findAll();
         // Se crea una campanha
-        assertEquals(1, campanhas.size());
+        assertEquals(2, campanhas.size());
 
         Campanha campanha = campanhas.get(0);
         List<ZonaCampanha> zonaCampanhas = campanha.getZonaCampanhas();
@@ -63,8 +63,8 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarPoda();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(1, campanhas.size());
-        Campanha campanha = campanhas.get(0);
+        assertEquals(2, campanhas.size());
+        Campanha campanha = campanhas.get(1);
 
         assertEquals(Fase.PODA, campanha.getFaseCamp());
 
@@ -79,8 +79,8 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarRecoleccion();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(1, campanhas.size());
-        Campanha campanha = campanhas.get(0);
+        assertEquals(2, campanhas.size());
+        Campanha campanha = campanhas.get(1);
 
         assertEquals(Fase.RECOLECCION_CARGA, campanha.getFaseCamp());
 
@@ -97,8 +97,8 @@ class CampanhaServiceImplTest {
         campanhaService.finalizarCampanha();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(1, campanhas.size());
-        Campanha campanha = campanhas.get(0);
+        assertEquals(2, campanhas.size());
+        Campanha campanha = campanhas.get(1);
 
         assertNotNull(campanha.getFinalizacion());
 

@@ -35,6 +35,9 @@ public class Trabajador {
     @OneToMany(mappedBy = "trabajador", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Disponibilidad> calendario;
 
+    @ManyToMany(mappedBy = "trabajadores")
+    private List<Tarea> tareas;
+
     public Trabajador(Long id, String name, String lastname, String dni, String nss, String phone, LocalDate birthdate, String address, boolean available, List<Disponibilidad> calendario) {
         this.id = id;
         this.name = name;

@@ -54,16 +54,19 @@ insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_v
 insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_vid_id, zona_id) values (8, '2000-10-25', true, 20, 1, 2)
 
 
---insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2022, 'LIMPIEZA')
+insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2022, 'LIMPIEZA')
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2023, 'LIMPIEZA')
---
---insert into Zona_Campanha(campanha_id,zona_id) values (1,1)
---insert into Zona_Campanha(campanha_id,zona_id) values (1,2)
---
---insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,1)
---insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,2)
---insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,4)
---
+
+insert into Zona_Campanha(campanha_id,zona_id) values (1,1)
+insert into Zona_Campanha(campanha_id,zona_id) values (1,2)
+
+insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,1)
+insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,2)
+insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,4)
+
+
+insert into Tarea(hora_entrada, hora_salida, comentarios, tipo_trabajo,linea_campanha_id,empleado_id) values (null,null, 'comentarios','LIMPIEZA',1,1)
+
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)

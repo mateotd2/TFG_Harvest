@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -38,5 +39,8 @@ public class LineaCampanha {
     @ManyToOne
     @JoinColumn(name = "linea_id")
     private Linea linea;
+
+    @OneToMany(mappedBy = "lineaCampanha", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tarea> tareas;
 
 }
