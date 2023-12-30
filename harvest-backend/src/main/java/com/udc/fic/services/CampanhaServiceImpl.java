@@ -2,6 +2,7 @@ package com.udc.fic.services;
 
 import com.udc.fic.model.*;
 import com.udc.fic.repository.CampanhaRepository;
+import com.udc.fic.repository.TareasRepository;
 import com.udc.fic.repository.ZonasRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.slf4j.Logger;
@@ -29,6 +30,24 @@ public class CampanhaServiceImpl implements CampanhaService {
     @Autowired
     ZonasRepository zonasRepository;
 
+    @Autowired
+    TareasRepository tareasRepository;
+
+
+    private void inicializarTaresPorFase(TipoTrabajo tipoTrabajo, List<ZonaCampanha> zonaCampanhas) {
+        zonaCampanhas.forEach(z -> {
+            List<LineaCampanha> lineaCampanhas = z.getLineaCampanhas();
+            lineaCampanhas.forEach(l -> {
+                Tarea tarea = new Tarea();
+                tarea.setLineaCampanha(l);
+                tarea.setTipoTrabajo(tipoTrabajo);
+                tarea.setComentarios("Sin comentarios");
+
+                l.getTareas().add(tarea);
+            });
+        });
+    }
+
 
     private ZonaCampanha crearZonaCampanha(Zona zona, Campanha campanha) {
         ZonaCampanha zonaCampanha = new ZonaCampanha();
@@ -50,6 +69,15 @@ public class CampanhaServiceImpl implements CampanhaService {
                         lineaNueva.setCargaLista(false);
                         lineaNueva.setZonaCampanha(zonaCampanha);
 
+                        // Se inicializa una tarea por cada linea
+
+                        Tarea tarea = new Tarea();
+                        tarea.setLineaCampanha(lineaNueva);
+                        tarea.setTipoTrabajo(TipoTrabajo.LIMPIEZA);
+                        tarea.setComentarios("Sin comentarios");
+                        List<Tarea> tareas = new ArrayList<>();
+                        tareas.add(tarea);
+                        lineaNueva.setTareas(tareas);
                         lineaCampanhas.add(lineaNueva);
                     }
                 }
@@ -61,7 +89,7 @@ public class CampanhaServiceImpl implements CampanhaService {
         return zonaCampanha;
     }
 
-    private void despausarLineasCampanha(Campanha campanha) {
+    private void restaurarLineasCampanha(Campanha campanha) {
         List<ZonaCampanha> zonaCampanhas = campanha.getZonaCampanhas();
 
         zonaCampanhas.forEach(
@@ -74,13 +102,20 @@ public class CampanhaServiceImpl implements CampanhaService {
         );
     }
 
+
+    private void limpiarTareasPendientes() {
+        //Tareas sin comenzar que al pasar de fase se eliminan
+        List<Tarea> tareasALimpiar = tareasRepository.findByHoraEntradaNull();
+
+        tareasRepository.deleteAllInBatch(tareasALimpiar);
+    }
+
     @Override
     public void comenzarCampanha() throws DuplicateInstanceException {
         int ano = LocalDateTime.now().getYear();
         if (!campanhaRepository.existsByAno(ano)) {
             LOGGER.info("Comenzando campaña del año {}", ano);
             Campanha campanha = new Campanha();
-
 
             List<ZonaCampanha> zonasCampanha = new ArrayList<>();
             List<Zona> zonas = zonasRepository.findAll();
@@ -95,9 +130,6 @@ public class CampanhaServiceImpl implements CampanhaService {
             campanha.setAno(ano);
             campanha.setInicio(LocalDate.now());
             campanha.setFaseCamp(Fase.LIMPIEZA);
-
-            // TODO: inicializar las tareas pendientes
-
 
             campanhaRepository.save(campanha);
 
@@ -114,17 +146,18 @@ public class CampanhaServiceImpl implements CampanhaService {
         Optional<Campanha> campanhaOptional = campanhaRepository.findByAno(ano);
 
         if (campanhaOptional.isPresent()) {
+
             Campanha campanha = campanhaOptional.get();
             // Comprobar que se paso por la fase de limpieza
             if (!campanha.getFaseCamp().equals(Fase.LIMPIEZA)) {
                 throw new InstanceNotFoundException();
             }
 
-            despausarLineasCampanha(campanha);
+            restaurarLineasCampanha(campanha);
 
             campanha.setFaseCamp(Fase.PODA);
-            // TODO: Finalizar tareas pendientes y crear las tareas de poda
-
+            limpiarTareasPendientes();
+            inicializarTaresPorFase(TipoTrabajo.PODA, campanha.getZonaCampanhas());
 
             campanhaRepository.save(campanha);
 
@@ -140,16 +173,17 @@ public class CampanhaServiceImpl implements CampanhaService {
         Optional<Campanha> campanhaOptional = campanhaRepository.findByAno(ano);
 
         if (campanhaOptional.isPresent()) {
+
             Campanha campanha = campanhaOptional.get();
             // Comprobar que se paso por la fase de Poda
             if (!campanha.getFaseCamp().equals(Fase.PODA)) {
                 throw new InstanceNotFoundException();
             }
-
-            despausarLineasCampanha(campanha);
-
             campanha.setFaseCamp(Fase.RECOLECCION_CARGA);
-            // TODO: Finalizar tareas pendientes y crear las tareas de recoleccion
+
+            restaurarLineasCampanha(campanha);
+            limpiarTareasPendientes();
+            inicializarTaresPorFase(TipoTrabajo.RECOLECCION, campanha.getZonaCampanhas());
 
 
             campanhaRepository.save(campanha);
@@ -172,13 +206,23 @@ public class CampanhaServiceImpl implements CampanhaService {
                 throw new InstanceNotFoundException();
             }
             campanha.setFinalizacion(LocalDate.now());
-            //TODO: finalizar todas las tareas pendientes
 
-
+            limpiarTareasPendientes();
             campanhaRepository.save(campanha);
 
         } else {
             throw new InstanceNotFoundException();
         }
+    }
+
+    @Override
+    public List<Tarea> mostrarTareasPendientes() {
+
+        return tareasRepository.findByHoraEntradaNull();
+    }
+
+    @Override
+    public List<Tarea> mostrarTareasSinFinalizar() {
+        return tareasRepository.findByHoraSalidaNull();
     }
 }

@@ -1,8 +1,10 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.Tarea;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 
 import javax.management.InstanceNotFoundException;
+import java.util.List;
 
 public interface CampanhaService {
 
@@ -13,6 +15,11 @@ public interface CampanhaService {
     void comenzarRecoleccion() throws InstanceNotFoundException;
 
     void finalizarCampanha() throws InstanceNotFoundException;
+
+
+    List<Tarea> mostrarTareasPendientes();
+
+    List<Tarea> mostrarTareasSinFinalizar();
 
 
 }

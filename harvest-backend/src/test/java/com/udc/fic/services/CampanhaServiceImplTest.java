@@ -1,10 +1,8 @@
 package com.udc.fic.services;
 
-import com.udc.fic.model.Campanha;
-import com.udc.fic.model.Fase;
-import com.udc.fic.model.LineaCampanha;
-import com.udc.fic.model.ZonaCampanha;
+import com.udc.fic.model.*;
 import com.udc.fic.repository.CampanhaRepository;
+import com.udc.fic.repository.TareasRepository;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -31,6 +29,9 @@ class CampanhaServiceImplTest {
     @Autowired
     CampanhaRepository campanhaRepository;
 
+    @Autowired
+    TareasRepository tareasRepository;
+
     @Test
     void comenzarCampanhaTestException() throws DuplicateInstanceException {
         campanhaService.comenzarCampanha();
@@ -42,7 +43,7 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarCampanha();
         List<Campanha> campanhas = campanhaRepository.findAll();
         // Se crea una campanha
-        assertEquals(2, campanhas.size());
+        assertEquals(1, campanhas.size());
 
         Campanha campanha = campanhas.get(0);
         List<ZonaCampanha> zonaCampanhas = campanha.getZonaCampanhas();
@@ -54,6 +55,9 @@ class CampanhaServiceImplTest {
         // Por cada zona se crean 3 lineas que estan habilitadas
         assertEquals(3, lineaCampanhas1.size());
 
+        assertEquals(6, tareasRepository.findAll().size());
+        assertEquals(6, tareasRepository.findByHoraSalidaNull().size());
+
     }
 
     @Test
@@ -63,8 +67,8 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarPoda();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(2, campanhas.size());
-        Campanha campanha = campanhas.get(1);
+        assertEquals(1, campanhas.size());
+        Campanha campanha = campanhas.get(0);
 
         assertEquals(Fase.PODA, campanha.getFaseCamp());
 
@@ -79,8 +83,8 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarRecoleccion();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(2, campanhas.size());
-        Campanha campanha = campanhas.get(1);
+        assertEquals(1, campanhas.size());
+        Campanha campanha = campanhas.get(0);
 
         assertEquals(Fase.RECOLECCION_CARGA, campanha.getFaseCamp());
 
@@ -97,10 +101,36 @@ class CampanhaServiceImplTest {
         campanhaService.finalizarCampanha();
 
         List<Campanha> campanhas = campanhaRepository.findAll();
-        assertEquals(2, campanhas.size());
-        Campanha campanha = campanhas.get(1);
+        assertEquals(1, campanhas.size());
+        Campanha campanha = campanhas.get(0);
 
         assertNotNull(campanha.getFinalizacion());
+
+
+    }
+
+    @Test
+    void transicionDeFasesTest() throws DuplicateInstanceException, InstanceNotFoundException {
+        //Probamos que las transiciones sin tocarse se crean las tareas de cada una de las fases de campaña
+
+        campanhaService.comenzarCampanha();
+        assertEquals(TipoTrabajo.LIMPIEZA, campanhaService.mostrarTareasPendientes().get(1).getTipoTrabajo());
+
+        assertEquals(6,campanhaService.mostrarTareasPendientes().size());
+
+        campanhaService.comenzarPoda();
+
+        assertEquals(6,campanhaService.mostrarTareasPendientes().size());
+        assertEquals(TipoTrabajo.PODA, campanhaService.mostrarTareasPendientes().get(1).getTipoTrabajo());
+
+        campanhaService.comenzarRecoleccion();
+
+        assertEquals(6,campanhaService.mostrarTareasPendientes().size());
+        assertEquals(TipoTrabajo.RECOLECCION, campanhaService.mostrarTareasPendientes().get(1).getTipoTrabajo());
+
+        campanhaService.finalizarCampanha();
+
+        assertEquals(0,campanhaService.mostrarTareasPendientes().size());
 
 
     }
@@ -142,4 +172,7 @@ class CampanhaServiceImplTest {
 
         assertThrows(InstanceNotFoundException.class, () -> campanhaService.comenzarPoda());
     }
+
+
+
 }
