@@ -68,6 +68,7 @@ public class CampanhaServiceImpl implements CampanhaService {
                         lineaNueva.setPorcentajeTrabajado(0);
                         lineaNueva.setCargaLista(false);
                         lineaNueva.setZonaCampanha(zonaCampanha);
+                        lineaNueva.setLinea(e);
 
                         // Se inicializa una tarea por cada linea
 
@@ -217,7 +218,6 @@ public class CampanhaServiceImpl implements CampanhaService {
 
     @Override
     public List<Tarea> mostrarTareasPendientes() {
-
         return tareasRepository.findByHoraEntradaNull();
     }
 

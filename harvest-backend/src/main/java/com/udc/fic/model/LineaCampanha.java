@@ -37,7 +37,7 @@ public class LineaCampanha {
     private ZonaCampanha zonaCampanha;
 
     @ManyToOne
-    @JoinColumn(name = "linea_id")
+    @JoinColumn(name = "linea_id", nullable = false)
     private Linea linea;
 
     @OneToMany(mappedBy = "lineaCampanha", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
