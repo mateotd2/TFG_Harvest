@@ -366,6 +366,58 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/availableWorkers:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener trabajadores disponibles en el momento actual
+      operationId: getAvailableWorkers
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de trabajadores disponibles en el momento actual
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkerDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
   /api/workers:

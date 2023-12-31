@@ -71,6 +71,13 @@ public class TrabajadorController implements TrabajadoresApi {
     }
 
     @Override
+    public ResponseEntity<List<WorkerDTO>> _getAvailableWorkers() {
+        List<WorkerDTO> trabajadores = trabajadorService.obtenerTrabajadoresDisponiblesAhora().stream()
+                .map(trabajador -> mapper.toWorker(trabajador)).toList();
+        return ResponseEntity.ok().body(trabajadores);
+    }
+
+    @Override
     public ResponseEntity<List<CalendarDTO>> _getCalendar(Long id) throws Exception {
 
         List<CalendarDTO> calendario = trabajadorService.obtenerCalendario(id).stream().map(e -> mapper.toCalendarDTO(e)).toList();

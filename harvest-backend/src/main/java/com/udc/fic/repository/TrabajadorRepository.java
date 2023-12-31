@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,8 +20,8 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Long> {
 
     Optional<Trabajador> findByName(String name);
 
-    @Query("SELECT DISTINCT t FROM Trabajador t JOIN t.calendario d WHERE d.daywork = :diaTrabajo and t.available=true")
-    List<Trabajador> findDistinctTrabajadoresByDateAndAvailable(@Param("diaTrabajo") LocalDate diaTrabajo);
+    @Query("SELECT DISTINCT t FROM Trabajador t JOIN t.calendario d WHERE d.daywork = :diaTrabajo and t.available=true and :hora BETWEEN d.checkin AND d.checkout")
+    List<Trabajador> findDistinctTrabajadoresByDateAndAvailable(@Param("diaTrabajo") LocalDate diaTrabajo, LocalTime hora);
 
 
 }

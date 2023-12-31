@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -63,6 +64,11 @@ public class TrabajadorServiceImpl implements TrabajadorService {
     public List<Trabajador> obtenerTrabajadoresDisponibles(int page, int amount) {
         Pageable pagina = PageRequest.of(page, amount);
         return trabajadorRepository.findByAvailable(true, pagina).getContent();
+    }
+
+    @Override
+    public List<Trabajador> obtenerTrabajadoresDisponiblesAhora() {
+        return trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
     }
 
     @Override

@@ -27,7 +27,7 @@ insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,availab
 insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador15','garcia12','17283887A','411029184756','333333333','1990-06-15','Direccion',true)
 
 
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',1,false)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'12:30:00','20:30:00',1,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',1,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',1,true)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',2,true)
