@@ -2,6 +2,7 @@ package com.udc.fic.controller;
 
 import com.udc.fic.harvest.DTOs.MessageResponseDTO;
 import com.udc.fic.harvest.DTOs.PendingTask;
+import com.udc.fic.harvest.DTOs.WorkersTractorDTO;
 import com.udc.fic.harvest.controller.CampanhaApi;
 import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Tarea;
@@ -75,6 +76,20 @@ public class CampanhaController implements CampanhaApi {
         campanhaService.comenzarPoda();
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Poda iniciada");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _startTask(Long id, WorkersTractorDTO workersTractorDTO) throws Exception {
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Tarea iniciada");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<MessageResponseDTO> _stopTask(Long id) throws Exception {
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Tarea finalizada");
         return ResponseEntity.ok().body(message);
     }
 }

@@ -2192,6 +2192,152 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/pendingTasks/{id}/startTask:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Comenzar una tarea pendiente
+      operationId: startTask
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+      requestBody:
+        description: Ids de los trabajadores y tractor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkersTractorDTO'
+
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tarea iniciada!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/pendingTasks/{id}/stopTask:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Comenzar una tarea pendiente
+      operationId: stopTask
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+
+      responses:
+        200:
+          description: Tarea parada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tarea iniciada!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 
 
@@ -2732,6 +2878,24 @@ components:
           description: tipo de trabajo de tarea
           type: string
           example: LIMPIEZA
+    WorkersTractorDTO:
+      type: object
+      required:
+        - idsWorkers
+      properties:
+        idsWorkers:
+          description: ids de los trabajadores asignados a la tarea
+          type: array
+          items:
+            type: integer
+            format: int64
+        idTractor:
+          description: id de tractor asigando a la tarea
+          nullable: true
+          type: integer
+          format: int64
+
+
 
 
   securitySchemes:

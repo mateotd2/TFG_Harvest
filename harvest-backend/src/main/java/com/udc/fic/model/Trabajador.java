@@ -16,6 +16,9 @@ public class Trabajador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private boolean inTask;
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
@@ -40,6 +43,7 @@ public class Trabajador {
 
     public Trabajador(Long id, String name, String lastname, String dni, String nss, String phone, LocalDate birthdate, String address, boolean available, List<Disponibilidad> calendario) {
         this.id = id;
+        this.inTask = false;
         this.name = name;
         this.lastname = lastname;
         this.dni = dni;
