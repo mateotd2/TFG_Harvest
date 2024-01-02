@@ -4,6 +4,7 @@ import com.udc.fic.model.*;
 import com.udc.fic.repository.*;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
 import com.udc.fic.services.exceptions.InvalidChecksException;
+import com.udc.fic.services.exceptions.TaskAlreadyEndedException;
 import com.udc.fic.services.exceptions.TaskAlreadyStartedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -229,18 +230,18 @@ public class CampanhaServiceImpl implements CampanhaService {
 
     @Override
     public List<Tarea> mostrarTareasSinFinalizar() {
-        return tareasRepository.findByHoraSalidaNull();
+        return tareasRepository.findByHoraSalidaNullAndHoraEntradaNotNull();
     }
 
     // TODO: En la siguiente iteracion pasarle el id de Tractor
     @Override
     public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
-
-//        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
+        boolean existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
+        boolean existeEmpleado = empleadoRepository.existsById(idEmpleado);
         if (tareaOptional.isPresent()
-                || trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores) //
-                || empleadoRepository.existsById(idEmpleado)
+                && existenTrabajadores//
+                && existeEmpleado
         ) {
 
             Tarea tarea = tareaOptional.get();
@@ -262,19 +263,22 @@ public class CampanhaServiceImpl implements CampanhaService {
             tarea.setTrabajadores(trabajadores);
             tareasRepository.save(tarea);
 
-//            List<Tra>
         } else {
             throw new InstanceNotFoundException();
         }
     }
 
     @Override
-    public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException {
+    public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException {
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
-
 
         if (tareaOptional.isPresent()) {
             Tarea tarea = tareaOptional.get();
+
+            if (tarea.getHoraSalida() != null) {
+                throw new TaskAlreadyEndedException();
+            }
+
             tarea.setHoraSalida(LocalDateTime.now());
             tarea.setComentarios(comentarios);
 
@@ -287,8 +291,16 @@ public class CampanhaServiceImpl implements CampanhaService {
 
 
             if (porcentaje < 100) {
-                // TODO: Creacion de tarea hasta que llegue al 100%
+                Tarea tareaNueva = new Tarea();
+                tareaNueva.setComentarios("Sin comentarios");
+                tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
+                tareasRepository.save(tareaNueva);
             }
+
+            tarea.getTrabajadores().forEach(trabajador ->
+                trabajador.setInTask(false)
+            );
 
             tareasRepository.save(tarea);
 

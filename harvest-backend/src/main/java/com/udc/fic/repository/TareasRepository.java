@@ -9,7 +9,7 @@ public interface TareasRepository extends JpaRepository<Tarea, Long> {
 
 
     // Tareas sin acabar
-    List<Tarea> findByHoraSalidaNull();
+    List<Tarea> findByHoraSalidaNullAndHoraEntradaNotNull();
 
     //Tareas sin iniciar
     List<Tarea> findByHoraEntradaNull();
