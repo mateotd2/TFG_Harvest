@@ -125,9 +125,7 @@ class CampanhaServiceImplTest {
         //Probamos que las transiciones sin tocarse se crean las tareas de cada una de las fases de campaña
 
         campanhaService.comenzarCampanha();
-        campanhaService.mostrarTareasPendientes().forEach(elemento->{
-            assertEquals(TipoTrabajo.LIMPIEZA, elemento.getTipoTrabajo());
-        });
+        campanhaService.mostrarTareasPendientes().forEach(elemento-> assertEquals(TipoTrabajo.LIMPIEZA, elemento.getTipoTrabajo()));
 
         assertEquals(6,campanhaService.mostrarTareasPendientes().size());
 
@@ -136,16 +134,12 @@ class CampanhaServiceImplTest {
         assertEquals(6,campanhaService.mostrarTareasPendientes().size());
         assertEquals(TipoTrabajo.PODA, campanhaService.mostrarTareasPendientes().get(1).getTipoTrabajo());
 
-        campanhaService.mostrarTareasPendientes().forEach(elemento->{
-            assertEquals(TipoTrabajo.PODA, elemento.getTipoTrabajo());
-        });
+        campanhaService.mostrarTareasPendientes().forEach(elemento-> assertEquals(TipoTrabajo.PODA, elemento.getTipoTrabajo()));
 
         campanhaService.comenzarRecoleccion();
 
         assertEquals(6,campanhaService.mostrarTareasPendientes().size());
-        campanhaService.mostrarTareasPendientes().forEach(elemento->{
-            assertEquals(TipoTrabajo.RECOLECCION, elemento.getTipoTrabajo());
-        });
+        campanhaService.mostrarTareasPendientes().forEach(elemento-> assertEquals(TipoTrabajo.RECOLECCION, elemento.getTipoTrabajo()));
 
         campanhaService.finalizarCampanha();
 
@@ -162,9 +156,7 @@ class CampanhaServiceImplTest {
         List<Trabajador> trabajadores = trabajadorRepository.findAll();
         List<Long> idsTrabajadores = new ArrayList<>();
 
-        trabajadores.forEach(t -> {
-            idsTrabajadores.add(t.getId());
-        });
+        trabajadores.forEach(t -> idsTrabajadores.add(t.getId()));
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
@@ -181,9 +173,7 @@ class CampanhaServiceImplTest {
         List<Trabajador> trabajadores =trabajadorRepository.findAll();
         List<Long> idsTrabajadores = new ArrayList<>();
 
-        trabajadores.forEach(t->{
-            idsTrabajadores.add(t.getId());
-        });
+        trabajadores.forEach(t-> idsTrabajadores.add(t.getId()));
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
@@ -229,9 +219,7 @@ class CampanhaServiceImplTest {
         List<Trabajador> trabajadores =trabajadorRepository.findAll();
         List<Long> idsTrabajadores = new ArrayList<>();
 
-        trabajadores.forEach(t->{
-            idsTrabajadores.add(t.getId());
-        });
+        trabajadores.forEach(t-> idsTrabajadores.add(t.getId()));
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
@@ -252,9 +240,7 @@ class CampanhaServiceImplTest {
         List<Trabajador> trabajadores =trabajadorRepository.findAll();
         List<Long> idsTrabajadores = new ArrayList<>();
 
-        trabajadores.forEach(t->{
-            idsTrabajadores.add(t.getId());
-        });
+        trabajadores.forEach(t-> idsTrabajadores.add(t.getId()));
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
