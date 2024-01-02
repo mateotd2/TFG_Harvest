@@ -24,22 +24,18 @@ import java.util.Optional;
 public class CampanhaServiceImpl implements CampanhaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CampanhaServiceImpl.class);
-
     @Autowired
     CampanhaRepository campanhaRepository;
-
     @Autowired
     ZonasRepository zonasRepository;
-
     @Autowired
     TareasRepository tareasRepository;
-
     @Autowired
     TrabajadorRepository trabajadorRepository;
-
     @Autowired
     EmpleadoRepository empleadoRepository;
-
+    @Autowired
+    private PermissionChecker permissionChecker;
 
     private void inicializarTaresPorFase(TipoTrabajo tipoTrabajo, List<ZonaCampanha> zonaCampanhas) {
         zonaCampanhas.forEach(z -> {
@@ -236,6 +232,8 @@ public class CampanhaServiceImpl implements CampanhaService {
     // TODO: En la siguiente iteracion pasarle el id de Tractor
     @Override
     public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
+        permissionChecker.checkEmpleado(idEmpleado);
+
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
         boolean existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
         boolean existeEmpleado = empleadoRepository.existsById(idEmpleado);
@@ -299,7 +297,7 @@ public class CampanhaServiceImpl implements CampanhaService {
             }
 
             tarea.getTrabajadores().forEach(trabajador ->
-                trabajador.setInTask(false)
+                    trabajador.setInTask(false)
             );
 
             tareasRepository.save(tarea);

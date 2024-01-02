@@ -2291,6 +2291,13 @@ paths:
             minimum: 0
           required: true
           description: Id de la tarea
+      requestBody:
+        description: Comentario de la linea y porcentaje realizado
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopTaskDTO'
 
       responses:
         200:
@@ -2891,9 +2898,23 @@ components:
             format: int64
         idTractor:
           description: id de tractor asigando a la tarea
-          nullable: true
           type: integer
           format: int64
+    StopTaskDTO:
+      type: object
+      required:
+        - comment
+        - percentaje
+      properties:
+        comment:
+          description: Comentario sobre el trabajo realizado en la linea
+          type: string
+          maxLength: 2096
+        percentaje:
+          description: Porcentaje del trabajo realizado sobre la linea
+          type: integer
+          maximum: 100
+          minimum: 1
 
 
 
