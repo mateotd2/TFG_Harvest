@@ -1,9 +1,11 @@
 package com.udc.fic.services;
 
 import com.udc.fic.model.*;
-import com.udc.fic.repository.CampanhaRepository;
-import com.udc.fic.repository.ZonasRepository;
+import com.udc.fic.repository.*;
 import com.udc.fic.services.exceptions.DuplicateInstanceException;
+import com.udc.fic.services.exceptions.InvalidChecksException;
+import com.udc.fic.services.exceptions.TaskAlreadyEndedException;
+import com.udc.fic.services.exceptions.TaskAlreadyStartedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,32 @@ import java.util.Optional;
 public class CampanhaServiceImpl implements CampanhaService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CampanhaServiceImpl.class);
-
     @Autowired
     CampanhaRepository campanhaRepository;
-
     @Autowired
     ZonasRepository zonasRepository;
+    @Autowired
+    TareasRepository tareasRepository;
+    @Autowired
+    TrabajadorRepository trabajadorRepository;
+    @Autowired
+    EmpleadoRepository empleadoRepository;
+    @Autowired
+    private PermissionChecker permissionChecker;
+
+    private void inicializarTaresPorFase(TipoTrabajo tipoTrabajo, List<ZonaCampanha> zonaCampanhas) {
+        zonaCampanhas.forEach(z -> {
+            List<LineaCampanha> lineaCampanhas = z.getLineaCampanhas();
+            lineaCampanhas.forEach(l -> {
+                Tarea tarea = new Tarea();
+                tarea.setLineaCampanha(l);
+                tarea.setTipoTrabajo(tipoTrabajo);
+                tarea.setComentarios("Sin comentarios");
+
+                l.getTareas().add(tarea);
+            });
+        });
+    }
 
 
     private ZonaCampanha crearZonaCampanha(Zona zona, Campanha campanha) {
@@ -49,7 +71,17 @@ public class CampanhaServiceImpl implements CampanhaService {
                         lineaNueva.setPorcentajeTrabajado(0);
                         lineaNueva.setCargaLista(false);
                         lineaNueva.setZonaCampanha(zonaCampanha);
+                        lineaNueva.setLinea(e);
 
+                        // Se inicializa una tarea por cada linea
+
+                        Tarea tarea = new Tarea();
+                        tarea.setLineaCampanha(lineaNueva);
+                        tarea.setTipoTrabajo(TipoTrabajo.LIMPIEZA);
+                        tarea.setComentarios("Sin comentarios");
+                        List<Tarea> tareas = new ArrayList<>();
+                        tareas.add(tarea);
+                        lineaNueva.setTareas(tareas);
                         lineaCampanhas.add(lineaNueva);
                     }
                 }
@@ -61,7 +93,7 @@ public class CampanhaServiceImpl implements CampanhaService {
         return zonaCampanha;
     }
 
-    private void despausarLineasCampanha(Campanha campanha) {
+    private void restaurarLineasCampanha(Campanha campanha) {
         List<ZonaCampanha> zonaCampanhas = campanha.getZonaCampanhas();
 
         zonaCampanhas.forEach(
@@ -74,13 +106,20 @@ public class CampanhaServiceImpl implements CampanhaService {
         );
     }
 
+
+    private void limpiarTareasPendientes() {
+        //Tareas sin comenzar que al pasar de fase se eliminan
+        List<Tarea> tareasALimpiar = tareasRepository.findByHoraEntradaNull();
+
+        tareasRepository.deleteAllInBatch(tareasALimpiar);
+    }
+
     @Override
     public void comenzarCampanha() throws DuplicateInstanceException {
         int ano = LocalDateTime.now().getYear();
         if (!campanhaRepository.existsByAno(ano)) {
             LOGGER.info("Comenzando campaña del año {}", ano);
             Campanha campanha = new Campanha();
-
 
             List<ZonaCampanha> zonasCampanha = new ArrayList<>();
             List<Zona> zonas = zonasRepository.findAll();
@@ -95,9 +134,6 @@ public class CampanhaServiceImpl implements CampanhaService {
             campanha.setAno(ano);
             campanha.setInicio(LocalDate.now());
             campanha.setFaseCamp(Fase.LIMPIEZA);
-
-            // TODO: inicializar las tareas pendientes
-
 
             campanhaRepository.save(campanha);
 
@@ -114,17 +150,18 @@ public class CampanhaServiceImpl implements CampanhaService {
         Optional<Campanha> campanhaOptional = campanhaRepository.findByAno(ano);
 
         if (campanhaOptional.isPresent()) {
+
             Campanha campanha = campanhaOptional.get();
             // Comprobar que se paso por la fase de limpieza
             if (!campanha.getFaseCamp().equals(Fase.LIMPIEZA)) {
                 throw new InstanceNotFoundException();
             }
 
-            despausarLineasCampanha(campanha);
+            restaurarLineasCampanha(campanha);
 
             campanha.setFaseCamp(Fase.PODA);
-            // TODO: Finalizar tareas pendientes y crear las tareas de poda
-
+            limpiarTareasPendientes();
+            inicializarTaresPorFase(TipoTrabajo.PODA, campanha.getZonaCampanhas());
 
             campanhaRepository.save(campanha);
 
@@ -140,16 +177,17 @@ public class CampanhaServiceImpl implements CampanhaService {
         Optional<Campanha> campanhaOptional = campanhaRepository.findByAno(ano);
 
         if (campanhaOptional.isPresent()) {
+
             Campanha campanha = campanhaOptional.get();
             // Comprobar que se paso por la fase de Poda
             if (!campanha.getFaseCamp().equals(Fase.PODA)) {
                 throw new InstanceNotFoundException();
             }
-
-            despausarLineasCampanha(campanha);
-
             campanha.setFaseCamp(Fase.RECOLECCION_CARGA);
-            // TODO: Finalizar tareas pendientes y crear las tareas de recoleccion
+
+            restaurarLineasCampanha(campanha);
+            limpiarTareasPendientes();
+            inicializarTaresPorFase(TipoTrabajo.RECOLECCION, campanha.getZonaCampanhas());
 
 
             campanhaRepository.save(campanha);
@@ -172,13 +210,101 @@ public class CampanhaServiceImpl implements CampanhaService {
                 throw new InstanceNotFoundException();
             }
             campanha.setFinalizacion(LocalDate.now());
-            //TODO: finalizar todas las tareas pendientes
 
-
+            limpiarTareasPendientes();
             campanhaRepository.save(campanha);
 
         } else {
             throw new InstanceNotFoundException();
         }
+    }
+
+    @Override
+    public List<Tarea> mostrarTareasPendientes() {
+        return tareasRepository.findByHoraEntradaNull();
+    }
+
+    @Override
+    public List<Tarea> mostrarTareasSinFinalizar() {
+        return tareasRepository.findByHoraSalidaNullAndHoraEntradaNotNull();
+    }
+
+    // TODO: En la siguiente iteracion pasarle el id de Tractor
+    @Override
+    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
+        permissionChecker.checkEmpleado(idEmpleado);
+
+        Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
+        boolean existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
+        boolean existeEmpleado = empleadoRepository.existsById(idEmpleado);
+        if (tareaOptional.isPresent()
+                && existenTrabajadores//
+                && existeEmpleado
+        ) {
+
+            Tarea tarea = tareaOptional.get();
+            // Validacion por si ya empezo la tarea
+            if (tarea.getHoraEntrada() != null) {
+                throw new TaskAlreadyStartedException();
+            }
+            tarea.setHoraEntrada(LocalDateTime.now());
+            tarea.setEmpleado(empleadoRepository.findById(idEmpleado).get());
+            List<Trabajador> trabajadores = new ArrayList<>();
+            idsTrabajadores.forEach(id -> {
+                        Trabajador trabajador = trabajadorRepository.findById(id).get();
+                        trabajador.setInTask(true);
+                        trabajadores.add(trabajador);
+                        trabajadorRepository.save(trabajador);
+                    }
+            );
+
+            tarea.setTrabajadores(trabajadores);
+            tareasRepository.save(tarea);
+
+        } else {
+            throw new InstanceNotFoundException();
+        }
+    }
+
+    @Override
+    public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException {
+        Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
+
+        if (tareaOptional.isPresent()) {
+            Tarea tarea = tareaOptional.get();
+
+            if (tarea.getHoraSalida() != null) {
+                throw new TaskAlreadyEndedException();
+            }
+
+            tarea.setHoraSalida(LocalDateTime.now());
+            tarea.setComentarios(comentarios);
+
+
+            //Validar que el porcentaje es mayor que en actual porcentaje
+            if (porcentaje <= tarea.getLineaCampanha().getPorcentajeTrabajado()) {
+                throw new InvalidChecksException();
+            }
+            tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
+
+
+            if (porcentaje < 100) {
+                Tarea tareaNueva = new Tarea();
+                tareaNueva.setComentarios("Sin comentarios");
+                tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
+                tareasRepository.save(tareaNueva);
+            }
+
+            tarea.getTrabajadores().forEach(trabajador ->
+                    trabajador.setInTask(false)
+            );
+
+            tareasRepository.save(tarea);
+
+        } else {
+            throw new InstanceNotFoundException();
+        }
+
     }
 }

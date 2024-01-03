@@ -10,24 +10,24 @@ insert into USER_ROLES (role_id,user_id) values (1,1)
 insert into USER_ROLES (role_id,user_id) values (2,1)
 insert into USER_ROLES (role_id,user_id) values (3,1)
 
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador1','garcia1','12145678A','123456789012','111111111','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador2','garcia2','98265432A','210987654321','222222222','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador3','garcia3','19383847A','211029384756','333333333','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador4','garcia4','12845678A','123456784012','111111111','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador5','garcia5','98565432A','210987652321','222222222','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador6','garcia6','19783847A','211029385756','333333333','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador7','garcia7','12845671A','123456786012','111111111','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador8','garcia8','9865432A','210987657321','222222222','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador9','garcia9','10283847A','211029388756','333333333','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador10','garcia10','19343679A','123456989012','111111111','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador11','garcia11','92765432A','210987054321','222222222','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador12','garcia12','11283847A','211029184756','333333333','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador13','garcia10','19341679A','223456989012','111111111','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador14','garcia11','92762462A','310987054321','222222222','1990-06-15','Direccion',true)
-insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available) values ('trabajador15','garcia12','17283887A','411029184756','333333333','1990-06-15','Direccion',true)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador1','garcia1','12145678A','123456789012','111111111','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador2','garcia2','98265432A','210987654321','222222222','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador3','garcia3','19383847A','211029384756','333333333','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador4','garcia4','12845678A','123456784012','111111111','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador5','garcia5','98565432A','210987652321','222222222','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador6','garcia6','19783847A','211029385756','333333333','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador7','garcia7','12845671A','123456786012','111111111','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador8','garcia8','9865432A','210987657321','222222222','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador9','garcia9','10283847A','211029388756','333333333','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador10','garcia10','19343679A','123456989012','111111111','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador11','garcia11','92765432A','210987054321','222222222','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador12','garcia12','11283847A','211029184756','333333333','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador13','garcia10','19341679A','223456989012','111111111','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador14','garcia11','92762462A','310987054321','222222222','1990-06-15','Direccion',true, false)
+insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador15','garcia12','17283887A','411029184756','333333333','1990-06-15','Direccion',true, false)
 
 
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',1,false)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'12:30:00','20:30:00',1,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',1,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',1,true)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',2,true)
@@ -56,14 +56,17 @@ insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_v
 
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2022, 'LIMPIEZA')
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2023, 'LIMPIEZA')
---
+
 --insert into Zona_Campanha(campanha_id,zona_id) values (1,1)
 --insert into Zona_Campanha(campanha_id,zona_id) values (1,2)
---
+
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,1)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id,linea_id) values ('PAUSADO', 0, false, '2022-08-01 00:00:00', '2022-08-15 00:00:00', '2022-09-01 00:00:00', '2022-09-01 00:00:00', 1,4)
---
+
+
+--insert into Tarea(hora_entrada, hora_salida, comentarios, tipo_trabajo,linea_campanha_id,empleado_id) values (null,null, 'comentarios','LIMPIEZA',1,1)
+
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)

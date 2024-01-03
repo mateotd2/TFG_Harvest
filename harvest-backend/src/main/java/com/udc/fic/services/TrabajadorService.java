@@ -18,6 +18,8 @@ public interface TrabajadorService {
 
     List<Trabajador> obtenerTrabajadoresDisponibles(int page, int amount);
 
+    List<Trabajador> obtenerTrabajadoresDisponiblesAhora();
+
     Trabajador obtenerTrabajador(Long id) throws InstanceNotFoundException;
 
     Trabajador registrarTrabajador(Trabajador trabajador) throws DuplicateInstanceException;
