@@ -10,7 +10,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,14 +37,23 @@ class CampanhaControllerTest {
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void pasarFaseSinEmpezarCampaña() throws Exception {
+    void pasarFaseSinEmpezarCampanha() throws Exception {
         this.mockMvc.perform(post("/api/pruning")).andExpect(status().isNotFound());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
-    void pasarFaseSinEmpezarCampaña2() throws Exception {
+    void pasarFaseSinEmpezarCampanha2() throws Exception {
         this.mockMvc.perform(post("/api/startharvest")).andExpect(status().isNotFound());
+    }
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void pasarFaseAdmin() throws Exception {
+        this.mockMvc.perform(post("/api/startCampaign")).andExpect(status().isOk());
+        this.mockMvc.perform(post("/api/pruning")).andExpect(status().isOk());
+        this.mockMvc.perform(post("/api/startharvest")).andExpect(status().isOk());
+        this.mockMvc.perform(post("/api/endCampaign")).andExpect(status().isOk());
+
     }
 
     @Test
@@ -50,7 +61,14 @@ class CampanhaControllerTest {
     void obtenerTareas() throws Exception {
         this.mockMvc.perform(post("/api/startCampaign")).andExpect(status().isOk());
 
-        this.mockMvc.perform(get("/api/pendingTasks")).andExpect(status().isOk());
+        this.mockMvc.perform(get("/api/pendingTasks"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$[0].idTarea").exists())
+                .andExpect(jsonPath("$[0].zoneName").exists())
+                .andExpect(jsonPath("$[0].numeroLinea").exists())
+                .andExpect(jsonPath("$[0].tipoTrabajo").exists());
 
     }
 
