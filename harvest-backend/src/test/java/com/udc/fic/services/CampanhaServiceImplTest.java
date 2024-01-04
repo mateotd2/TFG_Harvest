@@ -4,10 +4,7 @@ import com.udc.fic.model.*;
 import com.udc.fic.repository.CampanhaRepository;
 import com.udc.fic.repository.TareasRepository;
 import com.udc.fic.repository.TrabajadorRepository;
-import com.udc.fic.services.exceptions.DuplicateInstanceException;
-import com.udc.fic.services.exceptions.InvalidChecksException;
-import com.udc.fic.services.exceptions.TaskAlreadyEndedException;
-import com.udc.fic.services.exceptions.TaskAlreadyStartedException;
+import com.udc.fic.services.exceptions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,7 +199,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void finalizarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException {
+    void finalizarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
         List<Trabajador> trabajadores = trabajadorRepository.findAll();
@@ -216,6 +213,33 @@ class CampanhaServiceImplTest {
         campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), trabajadorsEnBd.get(0).getId());
 
         campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
+
+
+        assertEquals(7, tareasRepository.findAll().size());
+        assertEquals(6, tareasRepository.findByHoraEntradaNull().size());
+        assertEquals(0, tareasRepository.findByHoraSalidaNullAndHoraEntradaNotNull().size());
+
+    }
+
+    @Test
+    void finalizarTareaTest2() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
+        campanhaService.comenzarCampanha();
+
+        List<Trabajador> trabajadores = trabajadorRepository.findAll();
+        List<Long> idsTrabajadores = new ArrayList<>();
+
+        trabajadores.forEach(t -> idsTrabajadores.add(t.getId()));
+
+        List<Tarea> tareasEnBd = tareasRepository.findAll();
+        List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
+
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), trabajadorsEnBd.get(0).getId());
+
+        campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
+
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadas();
+
+        assertEquals(1, tareasFinalizadas.size());
 
 
         assertEquals(7, tareasRepository.findAll().size());
@@ -244,7 +268,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void finalizarPararTareaAcabadaExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException {
+    void finalizarPararTareaAcabadaExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
         List<Trabajador> trabajadores = trabajadorRepository.findAll();
@@ -266,7 +290,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void finalizarTareaWrongPercentajeExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException {
+    void finalizarTareaWrongPercentajeExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
         List<Trabajador> trabajadores = trabajadorRepository.findAll();
