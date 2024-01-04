@@ -2154,7 +2154,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/PendingTask'
+                  $ref: '#/components/schemas/ListedTaskDTO'
 
         400:
           description: Ninguna campaña
@@ -2183,6 +2183,63 @@ paths:
                 $ref: '#/components/schemas/Error'
               example:
                 path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/endedTasks:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas finalizadas de la campaña actual
+      operationId: endedTasks
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: Tareas finalizadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
                 error: Unauthorized
                 message: To many requests
                 status: 429
@@ -2269,13 +2326,81 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/task/{id}:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Detalles de tarea
+      operationId: taskDetails
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+
+      responses:
+        200:
+          description: Detalle de tarea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /api/pendingTasks/{id}/stopTask:
     post:
       tags:
         - Campanha
       security:
         - bearerAuth: [ ]
-      summary: Comenzar una tarea pendiente
+      summary: Parar una tarea iniciada
       operationId: stopTask
       x-custom-role:
         - ADMIN
@@ -2861,11 +2986,67 @@ components:
           example: 401
       additionalProperties: false
 
-    PendingTask:
+
+    TaskDTO:
+      type: object
+      properties:
+
+        idTarea:
+          description: id de la tarea pendiente
+          type: integer
+          format: int64
+          nullable: false
+          example: 1
+        estado:
+          description: Estado de la tarea
+          type: string
+          enum:
+            - NO_INICIADA
+            - INICIADA
+            - FINALIZADA
+        zoneName:
+          description: nombre de la zona
+          type: string
+          example: "Zona 1"
+          minimum: 1
+          maximum: 255
+        numeroLinea:
+          description: numero de linea
+          type: integer
+          nullable: false
+          example: 5
+        horaInicio:
+          description: hora de inicio de la tarea
+          type: string
+          format: time
+        horaFinalizacion:
+          description: hora de inicio de la tarea
+          type: string
+          format: time
+
+        commentarios:
+          description: Comentarios de una linea
+          type: string
+          example: "Sin comentarios"
+        tipoTarea:
+          description: tipo de trabajo de tarea
+          type: string
+          example: LIMPIEZA
+        workers:
+          description: array de trabajadores
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkerDTO'
+
+
+
+
+
+    ListedTaskDTO:
       type: object
       properties:
         idTarea:
-          description: id de la tarea pendiente
+          description: id de la tarea
           type: integer
           format: int64
           nullable: false

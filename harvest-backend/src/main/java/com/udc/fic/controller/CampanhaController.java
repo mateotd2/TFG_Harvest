@@ -1,9 +1,6 @@
 package com.udc.fic.controller;
 
-import com.udc.fic.harvest.DTOs.MessageResponseDTO;
-import com.udc.fic.harvest.DTOs.PendingTask;
-import com.udc.fic.harvest.DTOs.StopTaskDTO;
-import com.udc.fic.harvest.DTOs.WorkersTractorDTO;
+import com.udc.fic.harvest.DTOs.*;
 import com.udc.fic.harvest.controller.CampanhaApi;
 import com.udc.fic.mapper.SourceTargetMapper;
 import com.udc.fic.model.Tarea;
@@ -18,6 +15,7 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,11 +39,27 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<List<PendingTask>> _pendingTasks() {
+    public ResponseEntity<List<ListedTaskDTO>> _endedTasks() {
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadas();
+        List<ListedTaskDTO> endedTasks = new ArrayList<>();
+        tareasFinalizadas.forEach(t -> {
+                    ListedTaskDTO tarea = new ListedTaskDTO();
+                    tarea.setIdTarea(t.getId());
+                    tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
+                    tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
+                    tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    endedTasks.add(tarea);
+                }
+        );
+        return ResponseEntity.ok().body(endedTasks);
+    }
+
+    @Override
+    public ResponseEntity<List<ListedTaskDTO>> _pendingTasks() {
         List<Tarea> tareasPendientes = campanhaService.mostrarTareasPendientes();
-        List<PendingTask> pendingTasks = new ArrayList<>();
+        List<ListedTaskDTO> pendingTasks = new ArrayList<>();
         tareasPendientes.forEach(t -> {
-                    PendingTask tarea = new PendingTask();
+                    ListedTaskDTO tarea = new ListedTaskDTO();
                     tarea.setIdTarea(t.getId());
                     tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
                     tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
@@ -106,6 +120,38 @@ public class CampanhaController implements CampanhaApi {
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Tarea iniciada");
         return ResponseEntity.ok().body(message);
+    }
+
+    @Override
+    public ResponseEntity<TaskDTO> _taskDetails(Long id) throws Exception {
+        Tarea tarea = campanhaService.mostrarDetallesTarea(id);
+        TaskDTO taskDTO = new TaskDTO();
+        taskDTO.setCommentarios(tarea.getComentarios());
+        taskDTO.setNumeroLinea(tarea.getLineaCampanha().getLinea().getLineNumber());
+        taskDTO.setIdTarea(tarea.getId());
+        taskDTO.setEstado(TaskDTO.EstadoEnum.NO_INICIADA);
+        if (tarea.getHoraEntrada() != null) {
+            taskDTO.setHoraInicio(LocalTime.from(tarea.getHoraEntrada()));
+            taskDTO.setEstado(TaskDTO.EstadoEnum.INICIADA);
+        }
+        if (tarea.getHoraSalida() != null) {
+            taskDTO.setHoraInicio(LocalTime.from(tarea.getHoraEntrada()));
+            taskDTO.setHoraFinalizacion(LocalTime.from(tarea.getHoraSalida()));
+            taskDTO.setEstado(TaskDTO.EstadoEnum.FINALIZADA);
+        }
+
+        taskDTO.setZoneName(tarea.getLineaCampanha().getZonaCampanha().getZona().getName());
+        taskDTO.setTipoTarea(tarea.getTipoTrabajo().toString());
+
+
+        if (tarea.getTrabajadores() != null) {
+            List<WorkerDTO> workerDTOS = new ArrayList<>();
+            tarea.getTrabajadores().forEach(trabajador ->
+                    workerDTOS.add(mapper.toWorker(trabajador))
+            );
+            taskDTO.setWorkers(workerDTOS);
+        }
+        return ResponseEntity.ok().body(taskDTO);
     }
 
 }

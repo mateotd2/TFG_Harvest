@@ -27,7 +27,6 @@ public class CustomExceptionHandler {
         error.setPath(uri);
         error.setStatus(409);
         return error;
-
     }
 
     @ExceptionHandler(InvalidChecksException.class)
@@ -38,6 +37,48 @@ public class CustomExceptionHandler {
         Error error = new Error();
         error.setError(BAD_REQUEST);
         error.setMessage("CheckIn o Checkout Invalido");
+        error.setPath(uri);
+        error.setStatus(400);
+        return error;
+
+    }
+
+    @ExceptionHandler(TaskAlreadyEndedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleTaskAlreadyEndedExceptionInstance(TaskAlreadyEndedException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError(BAD_REQUEST);
+        error.setMessage("La tarea finalizada anteriormente");
+        error.setPath(uri);
+        error.setStatus(400);
+        return error;
+
+    }
+
+    @ExceptionHandler(TaskAlreadyStartedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleTaskAlreadyStartedExceptionInstance(TaskAlreadyStartedException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError(BAD_REQUEST);
+        error.setMessage("La tarea iniciada anteriormente");
+        error.setPath(uri);
+        error.setStatus(400);
+        return error;
+
+    }
+
+    @ExceptionHandler(TaskNotStartedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Error handleTaskNotStartedExceptionInstance(TaskNotStartedException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError(BAD_REQUEST);
+        error.setMessage("Tarea sin iniciar");
         error.setPath(uri);
         error.setStatus(400);
         return error;
@@ -61,7 +102,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(WorkerNotAvailableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public Error handleDuplicateInstance(WorkerNotAvailableException exception, HttpServletRequest request) {
+    public Error handleWorkerNotAvailableExceptionInstance(WorkerNotAvailableException exception, HttpServletRequest request) {
         String uri = request.getRequestURI();
         Error error = new Error();
         error.setError(BAD_REQUEST);

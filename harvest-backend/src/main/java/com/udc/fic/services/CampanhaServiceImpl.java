@@ -2,10 +2,7 @@ package com.udc.fic.services;
 
 import com.udc.fic.model.*;
 import com.udc.fic.repository.*;
-import com.udc.fic.services.exceptions.DuplicateInstanceException;
-import com.udc.fic.services.exceptions.InvalidChecksException;
-import com.udc.fic.services.exceptions.TaskAlreadyEndedException;
-import com.udc.fic.services.exceptions.TaskAlreadyStartedException;
+import com.udc.fic.services.exceptions.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -229,6 +226,13 @@ public class CampanhaServiceImpl implements CampanhaService {
         return tareasRepository.findByHoraSalidaNullAndHoraEntradaNotNull();
     }
 
+    @Override
+    public List<Tarea> mostrarTareasFinalizadas() {
+        int ano = LocalDateTime.now().getYear();
+
+        return tareasRepository.findTareasFinalizadasDeCampanha(ano);
+    }
+
     // TODO: En la siguiente iteracion pasarle el id de Tractor
     @Override
     public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
@@ -267,15 +271,15 @@ public class CampanhaServiceImpl implements CampanhaService {
     }
 
     @Override
-    public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException {
+    public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException, TaskNotStartedException {
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
 
         if (tareaOptional.isPresent()) {
             Tarea tarea = tareaOptional.get();
 
-            if (tarea.getHoraSalida() != null) {
-                throw new TaskAlreadyEndedException();
-            }
+            if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
+
+            if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
 
             tarea.setHoraSalida(LocalDateTime.now());
             tarea.setComentarios(comentarios);
@@ -302,6 +306,17 @@ public class CampanhaServiceImpl implements CampanhaService {
 
             tareasRepository.save(tarea);
 
+        } else {
+            throw new InstanceNotFoundException();
+        }
+
+    }
+
+    @Override
+    public Tarea mostrarDetallesTarea(Long id) throws InstanceNotFoundException {
+        Optional<Tarea> tareaOptional = tareasRepository.findById(id);
+        if (tareaOptional.isPresent()) {
+            return tareaOptional.get();
         } else {
             throw new InstanceNotFoundException();
         }
