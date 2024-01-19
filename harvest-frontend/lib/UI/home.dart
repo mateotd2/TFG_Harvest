@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/campaign.dart';
+import 'package:harvest_frontend/UI/home_pages/capataz_pages/capataz.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -78,12 +79,12 @@ class _HomeState extends State<Home> {
     if (esAdmin(estado.lastResponse)) {
       paginas.add(Campaign());
       pagina++;
-      final paginaAdmin = pagina;
+      final paginaCamp = pagina;
       elementosDrawer.add(ListTile(
         title: Text('Gestion de campaña'),
         onTap: () {
           logger.d('Gestión de campaña');
-          _controladorPaginas.jumpToPage(paginaAdmin);
+          _controladorPaginas.jumpToPage(paginaCamp);
           Navigator.pop(context);
         },
         leading: Icon(Icons.flag),
@@ -93,7 +94,7 @@ class _HomeState extends State<Home> {
     // Pagina Capataces
 
     if (esCapataz(estado.lastResponse)) {
-      paginas.add(Text('PAGINA CAPATACES'));
+      paginas.add(Capataz());
       pagina++;
       final paginaCapataces = pagina;
       elementosDrawer.add(ListTile(

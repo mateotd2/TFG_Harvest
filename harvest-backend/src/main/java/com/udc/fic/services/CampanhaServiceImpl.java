@@ -239,7 +239,13 @@ public class CampanhaServiceImpl implements CampanhaService {
         permissionChecker.checkEmpleado(idEmpleado);
 
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
-        boolean existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
+        boolean existenTrabajadores;
+        if (idsTrabajadores.isEmpty() || idsTrabajadores==null){
+            existenTrabajadores=true;
+        }
+        else{
+            existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
+        }
         boolean existeEmpleado = empleadoRepository.existsById(idEmpleado);
         if (tareaOptional.isPresent()
                 && existenTrabajadores//
