@@ -20,10 +20,10 @@ public interface TrabajadorRepository extends JpaRepository<Trabajador, Long> {
 
     Optional<Trabajador> findByName(String name);
 
-    @Query("SELECT DISTINCT t FROM Trabajador t JOIN t.calendario d WHERE t.inTask=false AND d.daywork = :diaTrabajo AND t.available=true AND :hora BETWEEN d.checkin AND d.checkout")
+    @Query("SELECT DISTINCT t FROM Trabajador t JOIN t.calendario d WHERE t.inTask=false AND d.daywork = :diaTrabajo AND t.available=true AND :hora BETWEEN d.checkin AND d.checkout AND d.attendance=true")
     List<Trabajador> findDistinctTrabajadoresByDateAndAvailable(@Param("diaTrabajo") LocalDate diaTrabajo, LocalTime hora);
 
 
-    // Checka si los ids de los trabajadores existen y estan disponibles
     boolean existsByIdInAndInTaskFalse(List<Long> ids);
+
 }

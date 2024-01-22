@@ -156,7 +156,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                               "${tareaObtenida?.horaFinalizacion?.substring(0, 8)}"),
                         )),
                     Visibility(
-                        visible: tareaObtenida?.commentarios != null,
+                        visible: tareaObtenida?.commentarios != null ,
                         child: ListTile(
                           title: Text("Comentarios:"),
                           subtitle: Text("${tareaObtenida?.commentarios}"),
