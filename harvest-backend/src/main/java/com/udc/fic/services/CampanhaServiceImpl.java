@@ -251,7 +251,7 @@ public class CampanhaServiceImpl implements CampanhaService {
         }
 
 
-        if (!(idsTrabajadores.isEmpty() || idsTrabajadores == null)) {
+        if (!idsTrabajadores.isEmpty() ) {
             List<Trabajador> trabajadoresDisponiblesAhora = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
             if (!trabajadoresDisponiblesAhora.stream().map(Trabajador::getId).toList().containsAll(idsTrabajadores)) {
                 throw new InstanceNotFoundException();
