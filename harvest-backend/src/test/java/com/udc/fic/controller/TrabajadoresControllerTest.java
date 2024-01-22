@@ -192,7 +192,7 @@ class TrabajadoresControllerTest {
     void obtenerAsistenciasAdmin() throws Exception {
         this.mockMvc.perform(get("/api/callroll")).andExpect(status().isOk()).andExpect(content().contentType("application/json"))
 
-                .andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()").value(3));
+                .andExpect(jsonPath("$").isArray()).andExpect(jsonPath("$.length()").value(4));
     }
 
     @Test
@@ -259,7 +259,7 @@ class TrabajadoresControllerTest {
         calls.add(call2);
 
         CallDTO call3 = new CallDTO();
-        call3.setId(10L); // NO EXISTE NINGUNA DISPONIBLIDAD CON ID 10
+        call3.setId(100L); // NO EXISTE NINGUNA DISPONIBLIDAD CON ID 100
         call3.setCheckin(LocalTime.of(8, 0, 0));
         call3.setCheckout(LocalTime.of(16, 0, 0));
         call3.setAttendance(true);

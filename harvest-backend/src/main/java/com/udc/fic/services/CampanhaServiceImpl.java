@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +20,8 @@ import java.util.Optional;
 @Service
 @Transactional
 public class CampanhaServiceImpl implements CampanhaService {
+
+    private static final String NO_COMENTS = "Sin comentarios";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CampanhaServiceImpl.class);
     @Autowired
@@ -41,7 +44,7 @@ public class CampanhaServiceImpl implements CampanhaService {
                 Tarea tarea = new Tarea();
                 tarea.setLineaCampanha(l);
                 tarea.setTipoTrabajo(tipoTrabajo);
-                tarea.setComentarios("Sin comentarios");
+                tarea.setComentarios(NO_COMENTS);
 
                 l.getTareas().add(tarea);
             });
@@ -75,7 +78,7 @@ public class CampanhaServiceImpl implements CampanhaService {
                         Tarea tarea = new Tarea();
                         tarea.setLineaCampanha(lineaNueva);
                         tarea.setTipoTrabajo(TipoTrabajo.LIMPIEZA);
-                        tarea.setComentarios("Sin comentarios");
+                        tarea.setComentarios(NO_COMENTS);
                         List<Tarea> tareas = new ArrayList<>();
                         tareas.add(tarea);
                         lineaNueva.setTareas(tareas);
@@ -237,38 +240,46 @@ public class CampanhaServiceImpl implements CampanhaService {
     @Override
     public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
         permissionChecker.checkEmpleado(idEmpleado);
-
-        Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
-        boolean existenTrabajadores = trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores);
-        boolean existeEmpleado = empleadoRepository.existsById(idEmpleado);
-        if (tareaOptional.isPresent()
-                && existenTrabajadores//
-                && existeEmpleado
-        ) {
-
-            Tarea tarea = tareaOptional.get();
-            // Validacion por si ya empezo la tarea
-            if (tarea.getHoraEntrada() != null) {
-                throw new TaskAlreadyStartedException();
-            }
-            tarea.setHoraEntrada(LocalDateTime.now());
-            tarea.setEmpleado(empleadoRepository.findById(idEmpleado).get());
-            List<Trabajador> trabajadores = new ArrayList<>();
-            idsTrabajadores.forEach(id -> {
-                        Trabajador trabajador = trabajadorRepository.findById(id).get();
-                        trabajador.setInTask(true);
-                        trabajadores.add(trabajador);
-                        trabajadorRepository.save(trabajador);
-                    }
-            );
-
-            tarea.setTrabajadores(trabajadores);
-            tareasRepository.save(tarea);
-
-        } else {
+        Optional<Empleado> empleadoOptional = empleadoRepository.findById(idEmpleado);
+        if (empleadoOptional.isEmpty()) {
             throw new InstanceNotFoundException();
         }
+
+        Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
+        if (tareaOptional.isEmpty()) {
+            throw new InstanceNotFoundException();
+        }
+
+
+        if (!idsTrabajadores.isEmpty() ) {
+            List<Trabajador> trabajadoresDisponiblesAhora = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
+            if (!trabajadoresDisponiblesAhora.stream().map(Trabajador::getId).toList().containsAll(idsTrabajadores)) {
+                throw new InstanceNotFoundException();
+            }
+        }
+
+
+        Tarea tarea = tareaOptional.get();
+        // Validacion por si ya empezo la tarea
+        if (tarea.getHoraEntrada() != null) {
+            throw new TaskAlreadyStartedException();
+        }
+        tarea.setHoraEntrada(LocalDateTime.now());
+        tarea.setEmpleado(empleadoOptional.get());
+        List<Trabajador> trabajadores = new ArrayList<>();
+        idsTrabajadores.forEach(id -> {
+                    Trabajador trabajador = trabajadorRepository.findById(id).get();
+                    trabajador.setInTask(true);
+                    trabajadores.add(trabajador);
+                    trabajadorRepository.save(trabajador);
+                }
+        );
+
+        tarea.setTrabajadores(trabajadores);
+        tareasRepository.save(tarea);
+
     }
+
 
     @Override
     public void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException, TaskNotStartedException {
@@ -294,7 +305,7 @@ public class CampanhaServiceImpl implements CampanhaService {
 
             if (porcentaje < 100) {
                 Tarea tareaNueva = new Tarea();
-                tareaNueva.setComentarios("Sin comentarios");
+                tareaNueva.setComentarios(NO_COMENTS);
                 tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
                 tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
                 tareasRepository.save(tareaNueva);

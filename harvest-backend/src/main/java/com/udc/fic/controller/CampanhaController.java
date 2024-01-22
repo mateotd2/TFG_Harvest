@@ -55,6 +55,22 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
+    public ResponseEntity<List<ListedTaskDTO>> _inProgressTasks()  {
+        List<Tarea> tareasEnProgreso = campanhaService.mostrarTareasSinFinalizar();
+        List<ListedTaskDTO> tareasInProgress = new ArrayList<>();
+        tareasEnProgreso.forEach(t -> {
+                    ListedTaskDTO tarea = new ListedTaskDTO();
+                    tarea.setIdTarea(t.getId());
+                    tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
+                    tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
+                    tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    tareasInProgress.add(tarea);
+                }
+        );
+        return ResponseEntity.ok().body(tareasInProgress);
+    }
+
+    @Override
     public ResponseEntity<List<ListedTaskDTO>> _pendingTasks() {
         List<Tarea> tareasPendientes = campanhaService.mostrarTareasPendientes();
         List<ListedTaskDTO> pendingTasks = new ArrayList<>();
