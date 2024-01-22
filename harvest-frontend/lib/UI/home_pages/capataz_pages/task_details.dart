@@ -7,8 +7,10 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/plataform_apis/campanha_api.dart';
+import '../../../utils/plataform_apis/workers_api.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
+import 'worker_selector.dart';
 
 enum Estado { sinEmpezar, enProgreso, finalizada }
 
@@ -30,11 +32,14 @@ class _TaskDetailsState extends State<TaskDetails> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final apiCampanha = campanhaApiPlataform(auth);
+    final apiTrabajadores = trabajadoresApiPlataform(auth);
     TaskDTO? tareaObtenida;
 
     setState(() {
-      tarea = api.taskDetails(widget.taskId!).timeout(Duration(seconds: 10));
+      tarea = apiCampanha
+          .taskDetails(widget.taskId!)
+          .timeout(Duration(seconds: 10));
     });
 
     return Scaffold(
@@ -45,8 +50,9 @@ class _TaskDetailsState extends State<TaskDetails> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            tarea =
-                api.taskDetails(widget.taskId!).timeout(Duration(seconds: 10));
+            tarea = apiCampanha
+                .taskDetails(widget.taskId!)
+                .timeout(Duration(seconds: 10));
           });
         },
         child: SingleChildScrollView(
@@ -64,16 +70,24 @@ class _TaskDetailsState extends State<TaskDetails> {
                     boton = ElevatedButton(
                       onPressed: () async {
                         logger.d("Boton comenzar pulsado");
-                        WorkersTractorDTO trabajadores =
-                            WorkersTractorDTO(idsWorkers: [], idTractor: null);
-                        // TODO: Redirigir a eleccion de trabajadores y llamar al api con los ids de trabajadores
+                        List<WorkerDTO>? trabajadoresDisponibles =
+                            await apiTrabajadores.getAvailableWorkers();
+                        List<int> idsTrabajadores = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => WorkersSelector(
+                                    workers: trabajadoresDisponibles)));
+                        WorkersTractorDTO trabajadores = WorkersTractorDTO(
+                            idsWorkers: idsTrabajadores, idTractor: null);
+
                         try {
-                          await api
+                          await apiCampanha
                               .startTask(tareaObtenida!.idTarea!, trabajadores)
                               .timeout(Duration(seconds: 10));
-                          Navigator.pop(context, true);
+
                           snackGreen(context,
                               "Tarea en ${tareaObtenida?.zoneName} linea:${tareaObtenida?.numeroLinea} iniciada");
+                          Navigator.pop(context, true);
                         } on TimeoutException {
                           snackTimeout(context);
                           Navigator.pop(context, false);
@@ -102,6 +116,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                   default:
                     boton = SizedBox();
                     break;
+                }
+                String trabajadores="";
+                bool hayTrabajadores=false;
+                if(tareaObtenida!.workers.isNotEmpty){
+                  trabajadores = "";
+                  hayTrabajadores = true;
+                  tareaObtenida?.workers.forEach((element) {
+                    trabajadores= ("$trabajadores ${element.name}  ${element.lastname} \n");
+                  });
                 }
 
                 return Column(
@@ -138,6 +161,10 @@ class _TaskDetailsState extends State<TaskDetails> {
                           title: Text("Comentarios:"),
                           subtitle: Text("${tareaObtenida?.commentarios}"),
                         )),
+                    Visibility(
+                      visible: hayTrabajadores,
+                      child: ListTile(title: Text("Trabajadores asignados:"),subtitle: Text(trabajadores)),
+                    ),
                     // TODO: Falta mostrar a los trabajadores asignados a la tarea
                     SizedBox(
                       height: 100,
@@ -167,15 +194,16 @@ class FinalizarTareaForm extends AlertDialog {
 
   FinalizarTareaForm({required this.taskId});
 
+  @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final api = campanhaApiPlataform(auth);
     var logger = Logger();
 
-    final _form = GlobalKey<FormState>();
-    final TextEditingController _comentarioController = TextEditingController();
-    final TextEditingController _porcentajeController = TextEditingController();
+    final form = GlobalKey<FormState>();
+    final TextEditingController comentarioController = TextEditingController();
+    final TextEditingController porcentajeController = TextEditingController();
 
     return AlertDialog(
       title: Text("Finalizar Tarea"),
@@ -188,16 +216,16 @@ class FinalizarTareaForm extends AlertDialog {
             child: Text('Cancelar')),
         ElevatedButton(
             onPressed: () async {
-              if (_form.currentState!.validate()) {
-                _form.currentState?.save();
+              if (form.currentState!.validate()) {
+                form.currentState?.save();
                 logger.d('Finalizacion de tarea');
                 StopTaskDTO stopTaskDto = StopTaskDTO(
-                    comment: _comentarioController.text,
-                    percentaje: int.parse(_porcentajeController.text));
+                    comment: comentarioController.text,
+                    percentaje: int.parse(porcentajeController.text));
                 logger.d(stopTaskDto);
                 try {
                   api
-                      .stopTask(this.taskId, stopTaskDto)
+                      .stopTask(taskId, stopTaskDto)
                       .timeout(Duration(seconds: 10));
                   snackGreen(context, "Tarea finalizada");
                 } on TimeoutException {
@@ -212,23 +240,28 @@ class FinalizarTareaForm extends AlertDialog {
             child: Text("Aceptar"))
       ],
       content: Form(
-        key: _form,
+        key: form,
         child: Column(
           children: [
             TextField(
               scrollPadding: EdgeInsets.all(100),
+              showCursor: true,
               maxLines: 7,
-              minLines: 5,
-              controller: _comentarioController,
+              minLines: 7,
+              controller: comentarioController,
               decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                ),
                 label: Text('Comentarios de trabajo:'),
               ),
+              autofocus: true,
               key: Key('commentarios'),
               keyboardType: TextInputType.multiline,
               maxLength: 2096,
             ),
             TextFormField(
-              controller: _porcentajeController,
+              controller: porcentajeController,
               decoration: InputDecoration(
                   label: Text('Porcentaje de trabajo realizado:')),
               key: Key('porcentaje'),
@@ -243,8 +276,8 @@ class FinalizarTareaForm extends AlertDialog {
                 }
                 valor = valor.trim();
                 if (valor.length > 6 ||
-                    (int.tryParse(_porcentajeController.text)! <= 0) ||
-                    (int.tryParse(_porcentajeController.text)! > 100)) {
+                    (int.tryParse(porcentajeController.text)! <= 0) ||
+                    (int.tryParse(porcentajeController.text)! > 100)) {
                   return 'Ingresar porcentaje valido';
                 }
                 return null;

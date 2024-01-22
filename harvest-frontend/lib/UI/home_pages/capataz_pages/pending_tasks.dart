@@ -121,10 +121,10 @@ class _PendingTasks extends State<PendingTasks> {
 
               if (snapshot.connectionState == ConnectionState.done) {
                 snapshot.connectionState == ConnectionState.done;
-                List<ListedTaskDTO> tasksObtenidas = snapshot.data;
+                List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
                 logger.d(tasksObtenidas);
 
-                if (tasksObtenidas.isEmpty) {
+                if (!(tasksObtenidas != null && tasksObtenidas.isNotEmpty)) {
                   if (widget.typePhase != TypePhase.none) {
                     if (widget.typePhase == TypePhase.harvest) {
                       pantalla

@@ -133,17 +133,13 @@ class _PasarLista extends State<PasarLista> {
                                         ))
                                   ],
                                 ),
-                                trailing: Column(
-                                  children: [
-                                    Checkbox(
-                                        value:
-                                            listaAsistencias[index].attendance,
-                                        onChanged: (bool? value) async {
-                                          await _cambiarCheckBox(
-                                              context, index);
-                                        }),
-                                  ],
-                                ),
+                                trailing: Checkbox(
+                                    value:
+                                        listaAsistencias[index].attendance,
+                                    onChanged: (bool? value) async {
+                                      await _cambiarCheckBox(
+                                          context, index);
+                                    }),
                               );
                             }),
                       ),
