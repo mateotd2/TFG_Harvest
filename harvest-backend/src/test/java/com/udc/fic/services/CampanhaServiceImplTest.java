@@ -31,7 +31,6 @@ class CampanhaServiceImplTest {
     @Autowired
     CampanhaService campanhaService;
 
-
     @Autowired
     CampanhaRepository campanhaRepository;
 
@@ -162,7 +161,7 @@ class CampanhaServiceImplTest {
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), 1L);
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), 1L, null);
 
         assertEquals(tareasEnBd.get(0).getId(), campanhaService.mostrarTareasSinFinalizar().get(0).getId());
     }
@@ -177,15 +176,15 @@ class CampanhaServiceImplTest {
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
 
-        List<Trabajador> trabajadorsEnBd = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadorsEnBd = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
 
         idsTrabajadores.add(trabajadorsEnBd.get(0).getId());
 
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), 1L);
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), 1L, null);
 
         idsTrabajadores2.add(trabajadorsEnBd.get(1).getId());
-        assertThrows(TaskAlreadyStartedException.class, () -> campanhaService.comenzarTarea(idsTrabajadores2, tareasEnBd.get(0).getId(), 1L));
+        assertThrows(TaskAlreadyStartedException.class, () -> campanhaService.comenzarTarea(idsTrabajadores2, tareasEnBd.get(0).getId(), 1L, null));
     }
 
     @Test
@@ -198,7 +197,7 @@ class CampanhaServiceImplTest {
         trabajadores.forEach(t -> idsTrabajadores.add(t.getId()));
 
 
-        assertThrows(InstanceNotFoundException.class, () -> campanhaService.comenzarTarea(idsTrabajadores, 355L, 1L));
+        assertThrows(InstanceNotFoundException.class, () -> campanhaService.comenzarTarea(idsTrabajadores, 355L, 1L, null));
 
     }
 
@@ -206,7 +205,7 @@ class CampanhaServiceImplTest {
     void finalizarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
-        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
         List<Long> idsTrabajadores = new ArrayList<>();
 
         trabajadores.forEach(t -> idsTrabajadores.add(t.getId()));
@@ -214,7 +213,7 @@ class CampanhaServiceImplTest {
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), trabajadorsEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), trabajadorsEnBd.get(0).getId(), null);
 
         campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
 
@@ -229,7 +228,7 @@ class CampanhaServiceImplTest {
     void finalizarTareaTest2() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
-        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
         List<Long> idsTrabajadores = new ArrayList<>();
 
         trabajadores.forEach(t -> idsTrabajadores.add(t.getId()));
@@ -237,7 +236,7 @@ class CampanhaServiceImplTest {
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Empleado> empleadosEnBd = empleadoRepository.findAll();
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId(), null);
 
         campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
 
@@ -256,7 +255,7 @@ class CampanhaServiceImplTest {
     void finalizarTareaInstanceNotFoundException() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException {
         campanhaService.comenzarCampanha();
 
-        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
 
         List<Long> idsTrabajadores = new ArrayList<>();
 
@@ -266,7 +265,7 @@ class CampanhaServiceImplTest {
         List<Empleado> empleadosEnBd = empleadoRepository.findAll();
 
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId(), null);
 
         assertThrows(InstanceNotFoundException.class, () -> campanhaService.pararTarea(400L, "Nuevo comentario", 40));
 
@@ -277,7 +276,7 @@ class CampanhaServiceImplTest {
     void finalizarPararTareaAcabadaExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
-        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
 
         List<Long> idsTrabajadores = new ArrayList<>();
 
@@ -285,7 +284,7 @@ class CampanhaServiceImplTest {
 
         List<Tarea> tareasEnBd = tareasRepository.findAll();
         List<Empleado> empleadosEnBd = empleadoRepository.findAll();
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId(), null);
 
         campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
 
@@ -300,7 +299,7 @@ class CampanhaServiceImplTest {
     void finalizarTareaWrongPercentajeExceptionTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
-        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(),LocalTime.now());
+        List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
 
         List<Long> idsTrabajadores = new ArrayList<>();
 
@@ -310,13 +309,13 @@ class CampanhaServiceImplTest {
         List<Trabajador> trabajadorsEnBd = trabajadorRepository.findAll();
         List<Empleado> empleadosEnBd = empleadoRepository.findAll();
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd.get(0).getId(), empleadosEnBd.get(0).getId(), null);
 
         campanhaService.pararTarea(tareasEnBd.get(0).getId(), "Nuevo comentario", 40);
 
         List<Tarea> tareasEnBd2 = tareasRepository.findAll();
 
-        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd2.get(tareasEnBd2.size() - 1).getId(), trabajadorsEnBd.get(0).getId());
+        campanhaService.comenzarTarea(idsTrabajadores, tareasEnBd2.get(tareasEnBd2.size() - 1).getId(), trabajadorsEnBd.get(0).getId(), null);
 
         assertThrows(InvalidChecksException.class, () ->
                 campanhaService.pararTarea(tareasEnBd2.get(6).getId(), "Nuevo comentario", 20)

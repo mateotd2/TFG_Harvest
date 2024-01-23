@@ -55,7 +55,7 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _inProgressTasks()  {
+    public ResponseEntity<List<ListedTaskDTO>> _inProgressTasks() {
         List<Tarea> tareasEnProgreso = campanhaService.mostrarTareasSinFinalizar();
         List<ListedTaskDTO> tareasInProgress = new ArrayList<>();
         tareasEnProgreso.forEach(t -> {
@@ -122,7 +122,7 @@ public class CampanhaController implements CampanhaApi {
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         Long userId = (Long) request.getAttribute("userId");
 
-        campanhaService.comenzarTarea(workersTractorDTO.getIdsWorkers(), id, userId);
+        campanhaService.comenzarTarea(workersTractorDTO.getIdsWorkers(), id, userId, workersTractorDTO.getIdTractor());
 
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Tarea iniciada");

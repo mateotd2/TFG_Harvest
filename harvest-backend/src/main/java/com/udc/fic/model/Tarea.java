@@ -46,4 +46,13 @@ public class Tarea {
     private List<Trabajador> trabajadores;
 
 
+    @ManyToOne
+    @JoinTable(
+            name = "tractorTarea",
+            joinColumns = @JoinColumn(name = "tarea_id"),
+            inverseJoinColumns = @JoinColumn(name = "tractor_id")
+    )
+    private Tractor tractor;
+
+
 }

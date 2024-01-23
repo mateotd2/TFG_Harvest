@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -236,11 +237,13 @@ public class CampanhaServiceImpl implements CampanhaService {
         return tareasRepository.findTareasFinalizadasDeCampanha(ano);
     }
 
-    // TODO: En la siguiente iteracion pasarle el id de Tractor
     @Override
-    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
+    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException {
         permissionChecker.checkEmpleado(idEmpleado);
         Optional<Empleado> empleadoOptional = empleadoRepository.findById(idEmpleado);
+
+        // TODO: si tengo id de tractor necesito conocer si el que empieza la tarea es tractorista y si el tractor existe
+
         if (empleadoOptional.isEmpty()) {
             throw new InstanceNotFoundException();
         }
@@ -251,9 +254,9 @@ public class CampanhaServiceImpl implements CampanhaService {
         }
 
 
-        if (!idsTrabajadores.isEmpty() ) {
+        if (!idsTrabajadores.isEmpty()) {
             List<Trabajador> trabajadoresDisponiblesAhora = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
-            if (!trabajadoresDisponiblesAhora.stream().map(Trabajador::getId).toList().containsAll(idsTrabajadores)) {
+            if (!new HashSet<>(trabajadoresDisponiblesAhora.stream().map(Trabajador::getId).toList()).containsAll(idsTrabajadores)) {
                 throw new InstanceNotFoundException();
             }
         }
@@ -286,36 +289,74 @@ public class CampanhaServiceImpl implements CampanhaService {
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
 
         if (tareaOptional.isPresent()) {
-            Tarea tarea = tareaOptional.get();
-
-            if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
-
-            if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
-
-            tarea.setHoraSalida(LocalDateTime.now());
-            tarea.setComentarios(comentarios);
+            {
 
 
-            //Validar que el porcentaje es mayor que en actual porcentaje
-            if (porcentaje <= tarea.getLineaCampanha().getPorcentajeTrabajado()) {
-                throw new InvalidChecksException();
+                Tarea tarea = tareaOptional.get();
+
+
+                // Validacion de que son tareas validas
+                if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
+                if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
+
+                tarea.setHoraSalida(LocalDateTime.now());
+                tarea.setComentarios(comentarios);
+
+
+                //Validar que el porcentaje es mayor que en porcentaje actual
+                if (porcentaje <= tarea.getLineaCampanha().getPorcentajeTrabajado()) {
+                    throw new InvalidChecksException();
+                }
+                tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
+
+                // Para tipo de tarea que no sea CARGA
+                if (tarea.getTipoTrabajo() != TipoTrabajo.CARGA) {
+                    if (porcentaje < 100) {
+                        Tarea tareaNueva = new Tarea();
+                        tareaNueva.setComentarios(NO_COMENTS);
+                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                        tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
+                        tareasRepository.save(tareaNueva);
+                    }
+                    // Caso en el que la recoleccion finaliza en una linea
+                    else {
+                        if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION) {
+                            Tarea tareaNueva = new Tarea();
+                            tareaNueva.setComentarios(NO_COMENTS);
+                            tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                            tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
+                            tareasRepository.save(tareaNueva);
+
+                        }
+                    }
+
+                    // El true cambiarlo luego por el boolean que le pasare a la funcion
+                    if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION) {
+                        Tarea tareaNueva = new Tarea();
+                        tareaNueva.setComentarios(NO_COMENTS);
+                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                        tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
+                        tareasRepository.save(tareaNueva);
+                    }
+                }
+                // Para las tareas de tipo CARGA las finalizo directamente si llegan al 100, si no, vuelve a crearse una tarea de RECOLECCION
+                else {
+                    if (tarea.getLineaCampanha().getPorcentajeTrabajado() < 100) {
+                        Tarea tareaNueva = new Tarea();
+                        tareaNueva.setComentarios(NO_COMENTS);
+                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+                        tareaNueva.setTipoTrabajo(TipoTrabajo.RECOLECCION);
+                        tareasRepository.save(tareaNueva);
+                    }
+                }
+
+
+                tarea.getTrabajadores().forEach(trabajador ->
+                        trabajador.setInTask(false)
+                );
+
+                tareasRepository.save(tarea);
             }
-            tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
-
-
-            if (porcentaje < 100) {
-                Tarea tareaNueva = new Tarea();
-                tareaNueva.setComentarios(NO_COMENTS);
-                tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
-                tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
-                tareasRepository.save(tareaNueva);
-            }
-
-            tarea.getTrabajadores().forEach(trabajador ->
-                    trabajador.setInTask(false)
-            );
-
-            tareasRepository.save(tarea);
 
         } else {
             throw new InstanceNotFoundException();

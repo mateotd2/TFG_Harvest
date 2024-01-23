@@ -23,8 +23,7 @@ public interface CampanhaService {
 
     List<Tarea> mostrarTareasFinalizadas();
 
-    // TODO: En la siguiente iteracion pasarle el id de Tractor
-    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException;
+    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException;
 
     void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException;
 
