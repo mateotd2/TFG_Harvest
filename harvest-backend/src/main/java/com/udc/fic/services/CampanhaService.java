@@ -30,7 +30,7 @@ public interface CampanhaService {
 
     List<Tarea> mostrarTareasFinalizadasDeCarga();
 
-    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException;
+    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException, TractorNotAvailableException, InvalidChecksException;
 
     void pararTarea(Long idTarea, String comentarios, int porcentaje, boolean carga) throws InstanceNotFoundException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException;
 

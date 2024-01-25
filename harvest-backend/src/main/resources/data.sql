@@ -58,8 +58,8 @@ insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_v
 insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_vid_id, zona_id) values (8, '2000-10-25', true, 20, 1, 2)
 
 
-insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity ) values ('R 0000 XYZ','ALGAZA','RL-14', 400, 80)
-insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity ) values ('R 0001 XYZ','ALGAZA','RL-14', 400, 80)
+insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity,en_Tarea ) values ('R 0000 XYZ','ALGAZA','RL-14', 400, 80,false)
+insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity,en_Tarea ) values ('R 0001 XYZ','ALGAZA','RL-14', 400, 80,false)
 
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2022, 'LIMPIEZA')
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2023, 'LIMPIEZA')

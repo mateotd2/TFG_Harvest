@@ -227,7 +227,7 @@ class FinalizarTareaForm extends AlertDialog {
                     percentaje: int.parse(porcentajeController.text));
                 logger.d(stopTaskDto);
                 try {
-                  api
+                  await api
                       .stopTask(taskId, stopTaskDto)
                       .timeout(Duration(seconds: 10));
                   snackGreen(context, "Tarea finalizada");

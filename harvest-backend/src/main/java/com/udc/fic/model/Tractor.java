@@ -32,5 +32,8 @@ public class Tractor {
     @OneToMany(mappedBy = "tractor")
     private List<Tarea> tareas;
 
+    @Column(nullable = false)
+    private Boolean enTarea;
+
 
 }

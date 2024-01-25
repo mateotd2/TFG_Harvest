@@ -257,7 +257,7 @@ public class CampanhaServiceImpl implements CampanhaService {
     }
 
     @Override
-    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException {
+    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException, TractorNotAvailableException, InvalidChecksException {
 
         Empleado empleado;
         if (idTractor == null) {
@@ -278,9 +278,16 @@ public class CampanhaServiceImpl implements CampanhaService {
         if (idTractor == null && tarea.getTipoTrabajo() == TipoTrabajo.CARGA) throw new InstanceNotFoundException();
         else {
             if (idTractor != null) {
+                if(tarea.getTipoTrabajo()!=TipoTrabajo.CARGA) throw new InvalidChecksException();
                 Optional<Tractor> tractorOptional = tractorRepository.findById(idTractor);
                 if (tractorOptional.isPresent()) {
-                    tarea.setTractor(tractorOptional.get());
+                    Tractor tractor = tractorOptional.get();
+
+                    if (Boolean.FALSE.equals(tractor.getEnTarea())) {
+                        tractor.setEnTarea(true);
+                        tarea.setTractor(tractorOptional.get());
+                    }
+                    else throw new TractorNotAvailableException();
                 } else {
                     throw new InstanceNotFoundException();
                 }
@@ -322,15 +329,19 @@ public class CampanhaServiceImpl implements CampanhaService {
                 if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
                 if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
 
+
+
+                // Validar que el porcentaje es mayor que en porcentaje actual
+                if (tarea.getTipoTrabajo()!=TipoTrabajo.CARGA){
+                    int porcentajeTrabajado =  tarea.getLineaCampanha().getPorcentajeTrabajado();
+                    if (porcentaje <=porcentajeTrabajado) {
+                        throw new InvalidChecksException();
+                    }
+                    tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
+                }
+
                 tarea.setHoraSalida(LocalDateTime.now());
                 tarea.setComentarios(comentarios);
-
-
-                //Validar que el porcentaje es mayor que en porcentaje actual
-                if (porcentaje <= tarea.getLineaCampanha().getPorcentajeTrabajado()) {
-                    throw new InvalidChecksException();
-                }
-                tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
 
                 // Para tipo de tarea que no sea CARGA
                 if (tarea.getTipoTrabajo() != TipoTrabajo.CARGA) {
@@ -361,17 +372,12 @@ public class CampanhaServiceImpl implements CampanhaService {
                         tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
                         tareasRepository.save(tareaNueva);
                     }
+                }else {
+                    Tractor tractor = tarea.getTractor();
+                    tractor.setEnTarea(false);
                 }
-                // Para las tareas de tipo CARGA las finalizo directamente si llegan al 100, si no, vuelve a crearse una tarea de RECOLECCION
-//                else {
-//                    if (tarea.getLineaCampanha().getPorcentajeTrabajado() < 100) {
-//                        Tarea tareaNueva = new Tarea();
-//                        tareaNueva.setComentarios(NO_COMENTS);
-//                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
-//                        tareaNueva.setTipoTrabajo(TipoTrabajo.RECOLECCION);
-//                        tareasRepository.save(tareaNueva);
-//                    }
-//                }
+
+
 
 
                 tarea.getTrabajadores().forEach(trabajador ->
