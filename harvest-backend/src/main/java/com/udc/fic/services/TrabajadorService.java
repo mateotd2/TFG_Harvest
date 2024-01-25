@@ -10,6 +10,7 @@ import com.udc.fic.services.exceptions.InvalidDateException;
 
 import javax.management.InstanceNotFoundException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface TrabajadorService {
@@ -38,4 +39,6 @@ public interface TrabajadorService {
     void eliminarDiaCalendario(Long trabajadorId, Long disponibilidadId) throws InstanceNotFoundException;
 
     void actualizarCalendario(Long trabajadorId, List<Disponibilidad> calendario) throws InstanceNotFoundException, InvalidChecksException, InvalidDateException;
+
+    LocalTime obtenerSalidaJornada(Long id);
 }

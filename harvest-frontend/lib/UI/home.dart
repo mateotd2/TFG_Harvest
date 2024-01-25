@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/campaign.dart';
 import 'package:harvest_frontend/UI/home_pages/capataz_pages/capataz.dart';
@@ -6,7 +9,9 @@ import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/plataform_apis/campanha_api.dart';
 import '../utils/provider/sign_in_model.dart';
+import '../utils/snack_bars.dart';
 import 'home_pages/config_pages/config.dart';
 
 class Home extends StatefulWidget {
@@ -35,6 +40,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
+    OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
+    final api = campanhaApiPlataform(auth);
 
     final List<Widget> elementosDrawer = [
       Container(
@@ -78,12 +85,24 @@ class _HomeState extends State<Home> {
     }
     if (esAdmin(estado.lastResponse)) {
       paginas.add(Campaign());
+      PhaseCampaign? phaseCampaign = PhaseCampaign.CAMPAIGN_NOT_STARTED;
       pagina++;
       final paginaCamp = pagina;
       elementosDrawer.add(ListTile(
         title: Text('Gestion de campaña'),
-        onTap: () {
+        onTap: () async {
           logger.d('Gestión de campaña');
+          try {
+            phaseCampaign =
+                await api.getPhaseCampaign().timeout(Duration(seconds: 10));
+            logger.d("FASE : $phaseCampaign");
+            // snackGreen(context, 'Comenzando recolección');
+          } on TimeoutException {
+            snackTimeout(context);
+          } catch (e) {
+            snackRed(context, 'Error obteniendo la fase de campaña.');
+          }
+
           _controladorPaginas.jumpToPage(paginaCamp);
           Navigator.pop(context);
         },

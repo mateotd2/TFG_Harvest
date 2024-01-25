@@ -65,6 +65,8 @@ class _WorkersSelectorState extends State<WorkersSelector> {
                     child: ListTile(
                       title: Text(
                           "${filtrado[index].name} ${filtrado[index].lastname}"),
+                      subtitle: Text(
+                          "Finaliza su jornada a las ${filtrado[index].horaFinJornada}"),
                       trailing: Checkbox(
                         value: idsSeleccion.contains(filtrado[index].id!),
                         onChanged: (value) {

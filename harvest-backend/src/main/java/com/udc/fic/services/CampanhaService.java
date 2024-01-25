@@ -1,5 +1,6 @@
 package com.udc.fic.services;
 
+import com.udc.fic.model.Fase;
 import com.udc.fic.model.Tarea;
 import com.udc.fic.services.exceptions.*;
 
@@ -19,13 +20,21 @@ public interface CampanhaService {
 
     List<Tarea> mostrarTareasPendientes();
 
+    List<Tarea> mostrarTareasPendientesDeCarga();
+
     List<Tarea> mostrarTareasSinFinalizar();
+
+    List<Tarea> mostrarTareasSinFinalizarDeCarga();
 
     List<Tarea> mostrarTareasFinalizadas();
 
-    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException;
+    List<Tarea> mostrarTareasFinalizadasDeCarga();
 
-    void pararTarea(Long idTarea, String comentarios, int porcentaje) throws InstanceNotFoundException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException;
+    void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException;
+
+    void pararTarea(Long idTarea, String comentarios, int porcentaje, boolean carga) throws InstanceNotFoundException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException;
 
     Tarea mostrarDetallesTarea(Long id) throws InstanceNotFoundException;
+
+    Fase mostrarFaseCampanha();
 }

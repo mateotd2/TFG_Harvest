@@ -230,5 +230,12 @@ public class TrabajadorServiceImpl implements TrabajadorService {
 
     }
 
+    @Override
+    public LocalTime obtenerSalidaJornada(Long id) {
+
+        Disponibilidad disponibilidad = disponibilidadRepository.findByTrabajadorIdAndDayworkIsAndCheckinLessThanAndCheckoutGreaterThan(id, LocalDate.now(), LocalTime.now(), LocalTime.now());
+        return disponibilidad.getCheckout();
+    }
+
 
 }

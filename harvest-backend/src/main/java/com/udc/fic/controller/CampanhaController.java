@@ -3,6 +3,7 @@ package com.udc.fic.controller;
 import com.udc.fic.harvest.DTOs.*;
 import com.udc.fic.harvest.controller.CampanhaApi;
 import com.udc.fic.mapper.SourceTargetMapper;
+import com.udc.fic.model.Fase;
 import com.udc.fic.model.Tarea;
 import com.udc.fic.services.CampanhaService;
 import com.udc.fic.services.exceptions.PermissionException;
@@ -38,20 +39,23 @@ public class CampanhaController implements CampanhaApi {
         return ResponseEntity.ok().body(message);
     }
 
+
+    // LISTADOS DE TAREAS DE FASES
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _endedTasks() {
-        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadas();
-        List<ListedTaskDTO> endedTasks = new ArrayList<>();
-        tareasFinalizadas.forEach(t -> {
+    public ResponseEntity<List<ListedTaskDTO>> _pendingTasks() {
+        List<Tarea> tareasPendientes = campanhaService.mostrarTareasPendientes();
+        List<ListedTaskDTO> pendingTasks = new ArrayList<>();
+        tareasPendientes.forEach(t -> {
                     ListedTaskDTO tarea = new ListedTaskDTO();
                     tarea.setIdTarea(t.getId());
                     tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
                     tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
                     tarea.setTipoTrabajo(t.getTipoTrabajo().name());
-                    endedTasks.add(tarea);
+                    pendingTasks.add(tarea);
                 }
         );
-        return ResponseEntity.ok().body(endedTasks);
+        return ResponseEntity.ok().body(pendingTasks);
+
     }
 
     @Override
@@ -71,20 +75,86 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _pendingTasks() {
-        List<Tarea> tareasPendientes = campanhaService.mostrarTareasPendientes();
-        List<ListedTaskDTO> pendingTasks = new ArrayList<>();
-        tareasPendientes.forEach(t -> {
+    public ResponseEntity<List<ListedTaskDTO>> _endedTasks() {
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadas();
+        List<ListedTaskDTO> endedTasks = new ArrayList<>();
+        tareasFinalizadas.forEach(t -> {
                     ListedTaskDTO tarea = new ListedTaskDTO();
                     tarea.setIdTarea(t.getId());
                     tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
                     tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
                     tarea.setTipoTrabajo(t.getTipoTrabajo().name());
-                    pendingTasks.add(tarea);
+                    endedTasks.add(tarea);
                 }
         );
-        return ResponseEntity.ok().body(pendingTasks);
+        return ResponseEntity.ok().body(endedTasks);
+    }
 
+    @Override
+    public ResponseEntity<PhaseCampaign> _getPhaseCampaign() {
+        Fase fase = campanhaService.mostrarFaseCampanha();
+        if (fase == null) return ResponseEntity.ok().body(PhaseCampaign.CAMPAIGN_NOT_STARTED);
+        PhaseCampaign phaseCampaign;
+
+        switch (fase) {
+            case LIMPIEZA -> phaseCampaign = PhaseCampaign.LIMPIEZA;
+            case PODA -> phaseCampaign = PhaseCampaign.PODA;
+            case RECOLECCION_CARGA -> phaseCampaign = PhaseCampaign.RECOLECCION_CARGA;
+            case FINALIZADA -> phaseCampaign = PhaseCampaign.CAMPAIGN_ENDED;
+            default -> phaseCampaign = PhaseCampaign.CAMPAIGN_NOT_STARTED;
+        }
+        return ResponseEntity.ok().body(phaseCampaign);
+
+    }
+
+
+    // TAREAS DE FASE DE CARGA
+    @Override
+    public ResponseEntity<List<ListedTaskDTO>> _loadTasks()  {
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasPendientesDeCarga();
+        List<ListedTaskDTO> endedTasks = new ArrayList<>();
+        tareasFinalizadas.forEach(t -> {
+                    ListedTaskDTO tarea = new ListedTaskDTO();
+                    tarea.setIdTarea(t.getId());
+                    tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
+                    tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
+                    tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    endedTasks.add(tarea);
+                }
+        );
+        return ResponseEntity.ok().body(endedTasks);
+    }
+
+    @Override
+    public ResponseEntity<List<ListedTaskDTO>> _inProgressLoadTasks()  {
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasSinFinalizarDeCarga();
+        List<ListedTaskDTO> endedTasks = new ArrayList<>();
+        tareasFinalizadas.forEach(t -> {
+                    ListedTaskDTO tarea = new ListedTaskDTO();
+                    tarea.setIdTarea(t.getId());
+                    tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
+                    tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
+                    tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    endedTasks.add(tarea);
+                }
+        );
+        return ResponseEntity.ok().body(endedTasks);
+    }
+
+    @Override
+    public ResponseEntity<List<ListedTaskDTO>> _endedLoadTasks()  {
+        List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadasDeCarga();
+        List<ListedTaskDTO> endedTasks = new ArrayList<>();
+        tareasFinalizadas.forEach(t -> {
+                    ListedTaskDTO tarea = new ListedTaskDTO();
+                    tarea.setIdTarea(t.getId());
+                    tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
+                    tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
+                    tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    endedTasks.add(tarea);
+                }
+        );
+        return ResponseEntity.ok().body(endedTasks);
     }
 
     @Override
@@ -132,7 +202,7 @@ public class CampanhaController implements CampanhaApi {
     @Override
     public ResponseEntity<MessageResponseDTO> _stopTask(Long id, StopTaskDTO stopTaskDTO) throws Exception {
 
-        campanhaService.pararTarea(id, stopTaskDTO.getComment(), stopTaskDTO.getPercentaje());
+        campanhaService.pararTarea(id, stopTaskDTO.getComment(), stopTaskDTO.getPercentaje(), stopTaskDTO.getLoad());
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Tarea iniciada");
         return ResponseEntity.ok().body(message);

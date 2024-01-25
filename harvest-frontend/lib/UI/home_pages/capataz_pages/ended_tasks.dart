@@ -41,12 +41,12 @@ class _EndedTasks extends State<EndedTasks> {
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 snapshot.connectionState == ConnectionState.done;
-                List<ListedTaskDTO> tasksObtenidas = snapshot.data;
+                List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
                 logger.d(tasksObtenidas);
 
                 List<Widget> pantalla = [];
                 List<Widget> filaBotones = [];
-                if (tasksObtenidas.isEmpty) {
+                if (!(tasksObtenidas != null && tasksObtenidas.isNotEmpty)) {
                   return Center(child: Text("Nada que mostrar :("));
                 } else {
                   pantalla.add(Expanded(
@@ -85,9 +85,9 @@ class _EndedTasks extends State<EndedTasks> {
                 }
               } else if (snapshot.hasError) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  snackRed(context, 'Error obteniendo las zonas');
+                  snackRed(context, 'Error obteniendo las tareas');
                 });
-                return Center(child: Text("Nada que enseñar :("));
+                return Center(child: Text("Nada que mostrar :("));
               } else {
                 return Center(child: CircularProgressIndicator());
               }

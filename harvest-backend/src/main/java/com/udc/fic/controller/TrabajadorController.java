@@ -73,7 +73,7 @@ public class TrabajadorController implements TrabajadoresApi {
     @Override
     public ResponseEntity<List<WorkerDTO>> _getAvailableWorkers() {
         List<WorkerDTO> trabajadores = trabajadorService.obtenerTrabajadoresDisponiblesAhora().stream()
-                .map(trabajador -> mapper.toWorker(trabajador)).toList();
+                .map(trabajador -> mapper.toWorker(trabajador).horaFinJornada(trabajadorService.obtenerSalidaJornada(trabajador.getId()))).toList();
         return ResponseEntity.ok().body(trabajadores);
     }
 

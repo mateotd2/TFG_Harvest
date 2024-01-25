@@ -214,13 +214,13 @@ class _PendingTasks extends State<PendingTasks> {
                 // return Text("data");
               } else if (snapshot.hasError) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  snackRed(context, 'Error obteniendo las zonas');
+                  snackRed(context, 'Error obteniendo las tareas');
                 });
 
                 if (widget.typePhase != TypePhase.none) {
                   return Row(children: filaBotones);
                 } else {
-                  return Center(child: Text("Nada que enseñar :("));
+                  return Center(child: Text("Nada que mostrar :("));
                 }
               } else {
                 return Center(child: CircularProgressIndicator());

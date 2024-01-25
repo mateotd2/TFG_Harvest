@@ -1966,6 +1966,62 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /api/phaseCampaign:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Devuelve la fase actual de la campaña
+      operationId: getPhaseCampaign
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Fase de la campaña actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhaseCampaign'
+
+        400:
+          description: Fase de poda inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /api/pruning:
     post:
       tags:
@@ -2192,6 +2248,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/pendingLoadTasks:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener tareas pendientes de carga
+      operationId: loadTasks
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas pendientes de la fase actual de la campaña
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /api/inProgressTasks:
     get:
@@ -2203,9 +2315,69 @@ paths:
       operationId: inProgressTasks
       x-custom-role:
         - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
       responses:
         200:
           description: Tareas en progreso de la fase actual de la campaña
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/inProgressLoadTasks:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas de carga en progreso
+      operationId: inProgressLoadTasks
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas de carga progreso
           content:
             application/json:
               schema:
@@ -2263,6 +2435,63 @@ paths:
       responses:
         200:
           description: Tareas finalizadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/endedLoadTasks:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas de carga finalizadas
+      operationId: endedLoadTasks
+      x-custom-role:
+        - ADMIN
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas de carga finalizadas
           content:
             application/json:
               schema:
@@ -2534,6 +2763,16 @@ paths:
 
 components:
   schemas:
+    PhaseCampaign:
+      type: string
+      enum:
+        - CAMPAIGN_NOT_STARTED
+        - LIMPIEZA
+        - PODA
+        - RECOLECCION_CARGA
+        - CAMPAIGN_ENDED
+      example: "LIMPIEZA"
+
     UpdateUserDTO:
       type: object
       required:
@@ -2728,6 +2967,10 @@ components:
           type: string
           maxLength: 1024
           example: Ronda de Outeiro, nº 26 5ºA
+        horaFinJornada:
+          type: string
+          format: time
+
       additionalProperties: false
 
 
@@ -3153,9 +3396,10 @@ components:
           type: integer
           maximum: 100
           minimum: 1
-
-
-
+        load:
+          description: Decision para la realizacion de la carga
+          type: boolean
+          default: false
 
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme

@@ -195,7 +195,6 @@ class CampanhaControllerTest {
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
@@ -301,7 +300,6 @@ class CampanhaControllerTest {
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
@@ -313,7 +311,6 @@ class CampanhaControllerTest {
         idsTrabajadores2.add(3L);
         idsTrabajadores2.add(4L);
         workersTractorDTO2.setIdsWorkers(idsTrabajadores2);
-        workersTractorDTO2.setIdTractor(1L);
 
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
                 .contentType(MediaType.APPLICATION_JSON)

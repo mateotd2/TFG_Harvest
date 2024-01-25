@@ -117,13 +117,14 @@ class _TaskDetailsState extends State<TaskDetails> {
                     boton = SizedBox();
                     break;
                 }
-                String trabajadores="";
-                bool hayTrabajadores=false;
-                if(tareaObtenida!.workers.isNotEmpty){
+                String trabajadores = "";
+                bool hayTrabajadores = false;
+                if (tareaObtenida!.workers.isNotEmpty) {
                   trabajadores = "";
                   hayTrabajadores = true;
                   tareaObtenida?.workers.forEach((element) {
-                    trabajadores= ("$trabajadores ${element.name}  ${element.lastname} \n");
+                    trabajadores =
+                        ("$trabajadores ${element.name}  ${element.lastname} \n");
                   });
                 }
 
@@ -156,14 +157,16 @@ class _TaskDetailsState extends State<TaskDetails> {
                               "${tareaObtenida?.horaFinalizacion?.substring(0, 8)}"),
                         )),
                     Visibility(
-                        visible: tareaObtenida?.commentarios != null ,
+                        visible: tareaObtenida?.commentarios != null,
                         child: ListTile(
                           title: Text("Comentarios:"),
                           subtitle: Text("${tareaObtenida?.commentarios}"),
                         )),
                     Visibility(
                       visible: hayTrabajadores,
-                      child: ListTile(title: Text("Trabajadores asignados:"),subtitle: Text(trabajadores)),
+                      child: ListTile(
+                          title: Text("Trabajadores asignados:"),
+                          subtitle: Text(trabajadores)),
                     ),
                     // TODO: Falta mostrar a los trabajadores asignados a la tarea
                     SizedBox(
