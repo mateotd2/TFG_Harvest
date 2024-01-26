@@ -77,8 +77,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                             MaterialPageRoute(
                                 builder: (context) => WorkersSelector(
                                     workers: trabajadoresDisponibles)));
-                        WorkersTractorDTO trabajadores = WorkersTractorDTO(
-                            idsWorkers: idsTrabajadores, idTractor: null);
+                        WorkersDTO trabajadores = WorkersDTO(
+                            idsWorkers: idsTrabajadores);
 
                         try {
                           await apiCampanha
