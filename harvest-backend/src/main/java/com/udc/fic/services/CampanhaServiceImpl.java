@@ -256,43 +256,20 @@ public class CampanhaServiceImpl implements CampanhaService {
         return tareasRepository.tareasFinalizadasDeCarga();
     }
 
+
     @Override
-    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado, Long idTractor) throws InstanceNotFoundException, TaskAlreadyStartedException, PermissionException, TractorNotAvailableException, InvalidChecksException {
+    public void comenzarTarea(List<Long> idsTrabajadores, Long idTarea, Long idEmpleado) throws InstanceNotFoundException, TaskAlreadyStartedException {
 
-        Empleado empleado;
-        if (idTractor == null) {
-            empleado = permissionChecker.checkEmpleado(idEmpleado);
-        } else {
-            empleado = permissionChecker.checkTractorista(idEmpleado);
-        }
+        Empleado empleado = permissionChecker.checkEmpleado(idEmpleado);
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
-
         if (tareaOptional.isEmpty()) throw new InstanceNotFoundException();
+
+
         Tarea tarea = tareaOptional.get();
+        if (tarea.getTipoTrabajo() == TipoTrabajo.CARGA) throw new InstanceNotFoundException();
 
         // Validacion por si ya empezo la tarea
-        if (tarea.getHoraEntrada() != null) {
-            throw new TaskAlreadyStartedException();
-        }
-        // Si la tarea es de Carga y no tengo tractor entonces no permito iniciar la tarea
-        if (idTractor == null && tarea.getTipoTrabajo() == TipoTrabajo.CARGA) throw new InstanceNotFoundException();
-        else {
-            if (idTractor != null) {
-                if(tarea.getTipoTrabajo()!=TipoTrabajo.CARGA) throw new InvalidChecksException();
-                Optional<Tractor> tractorOptional = tractorRepository.findById(idTractor);
-                if (tractorOptional.isPresent()) {
-                    Tractor tractor = tractorOptional.get();
-
-                    if (Boolean.FALSE.equals(tractor.getEnTarea())) {
-                        tractor.setEnTarea(true);
-                        tarea.setTractor(tractorOptional.get());
-                    }
-                    else throw new TractorNotAvailableException();
-                } else {
-                    throw new InstanceNotFoundException();
-                }
-            }
-        }
+        if (tarea.getHoraEntrada() != null) throw new TaskAlreadyStartedException();
 
         // Comprueba que los distintos trabajadores de idTrabajadores esten disponibles para la realizacion de tareas
         List<Trabajador> trabajadoresDisponiblesAhora = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());
@@ -318,80 +295,50 @@ public class CampanhaServiceImpl implements CampanhaService {
 
 
     @Override
-    public void pararTarea(Long idTarea, String comentarios, int porcentaje, boolean carga) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException, TaskNotStartedException {
+    public void pararTarea(Long idTarea, String comentarios, int porcentaje, boolean solicitudCarga) throws InstanceNotFoundException, InvalidChecksException, TaskAlreadyEndedException, TaskNotStartedException {
         Optional<Tarea> tareaOptional = tareasRepository.findById(idTarea);
+        if (tareaOptional.isEmpty()) throw new InstanceNotFoundException();
+        Tarea tarea = tareaOptional.get();
+        if (tarea.getTipoTrabajo() == TipoTrabajo.CARGA) throw new InstanceNotFoundException();
 
-        if (tareaOptional.isPresent()) {
-            {
-                Tarea tarea = tareaOptional.get();
+        // Validacion de que son tareas de carga validas
+        if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
+        if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
 
-                // Validacion de que son tareas validas
-                if (tarea.getHoraEntrada() == null) throw new TaskNotStartedException();
-                if (tarea.getHoraSalida() != null) throw new TaskAlreadyEndedException();
+        // Validacion deun porcentaje valido
+        if (porcentaje < tarea.getLineaCampanha().getPorcentajeTrabajado()) throw new InvalidChecksException();
 
-
-
-                // Validar que el porcentaje es mayor que en porcentaje actual
-                if (tarea.getTipoTrabajo()!=TipoTrabajo.CARGA){
-                    int porcentajeTrabajado =  tarea.getLineaCampanha().getPorcentajeTrabajado();
-                    if (porcentaje <=porcentajeTrabajado) {
-                        throw new InvalidChecksException();
-                    }
-                    tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
-                }
-
-                tarea.setHoraSalida(LocalDateTime.now());
-                tarea.setComentarios(comentarios);
-
-                // Para tipo de tarea que no sea CARGA
-                if (tarea.getTipoTrabajo() != TipoTrabajo.CARGA) {
-                    if (porcentaje < 100) {
-                        Tarea tareaNueva = new Tarea();
-                        tareaNueva.setComentarios(NO_COMENTS);
-                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
-                        tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
-                        tareasRepository.save(tareaNueva);
-                    }
-                    // Caso en el que la recoleccion finaliza en una linea se crea inmediatamente una tarea de carga
-                    else {
-                        if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION) {
-                            Tarea tareaNueva = new Tarea();
-                            tareaNueva.setComentarios(NO_COMENTS);
-                            tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
-                            tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
-                            tareasRepository.save(tareaNueva);
-
-                        }
-                    }
-
-                    // El true cambiarlo luego por el boolean que le pasare a la funcion
-                    if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION && carga) {
-                        Tarea tareaNueva = new Tarea();
-                        tareaNueva.setComentarios(NO_COMENTS);
-                        tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
-                        tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
-                        tareasRepository.save(tareaNueva);
-                    }
-                }else {
-                    Tractor tractor = tarea.getTractor();
-                    tractor.setEnTarea(false);
-                }
-
-
-
-
-                tarea.getTrabajadores().forEach(trabajador ->
-                        trabajador.setInTask(false)
-                );
-
-                tareasRepository.save(tarea);
-            }
-
-        } else {
-            throw new InstanceNotFoundException();
+        // Tareas de recoleccion
+        if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION && (solicitudCarga || porcentaje == 100)) {
+            // Carga solicitada o porcentaje 100 para crear la tarea de carga de la linea
+            Tarea tareaNueva = new Tarea();
+            tareaNueva.setComentarios(NO_COMENTS);
+            tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+            tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
+            tareasRepository.save(tareaNueva);
+        }
+        // Para cualquier tipo de tarea si no lleva al 100% se crea otra tarea
+        if (porcentaje < 100) {
+            Tarea tareaNueva = new Tarea();
+            tareaNueva.setComentarios(NO_COMENTS);
+            tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
+            tareaNueva.setTipoTrabajo(tarea.getTipoTrabajo());
+            tareasRepository.save(tareaNueva);
         }
 
+        tarea.getLineaCampanha().setPorcentajeTrabajado(porcentaje);
+        tarea.setHoraSalida(LocalDateTime.now());
+        tarea.setComentarios(comentarios);
+
+        tarea.getTrabajadores().forEach(trabajador ->
+                trabajador.setInTask(false)
+        );
+
+        tareasRepository.save(tarea);
+
+
     }
+
 
     @Override
     public Tarea mostrarDetallesTarea(Long id) throws InstanceNotFoundException {
@@ -415,5 +362,74 @@ public class CampanhaServiceImpl implements CampanhaService {
             return null;
         }
 
+    }
+
+    @Override
+    public void comenzarTareasCarga(List<Long> idTareas, Long idEmpleado, Long idTractor, List<Long> idsTrabajadores) throws InstanceNotFoundException, PermissionException {
+        // Empleado existe
+        Empleado tractorista = permissionChecker.checkTractorista(idEmpleado);
+        //
+        if (idTractor == null) throw new InstanceNotFoundException();
+
+        // Tareas son de tipo CARGA
+        List<Tarea> tareas = tareasRepository.findByIdInAndHoraEntradaNullAndTipoTrabajo(idTareas, TipoTrabajo.CARGA);
+        if (!new HashSet<>(tareas.stream().map(Tarea::getId).toList()).containsAll(idTareas))
+            throw new InstanceNotFoundException();
+
+        // Trabajadores disponibles
+        if (!trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores)) throw new InstanceNotFoundException();
+        List<Trabajador> trabajadores = trabajadorRepository.findAllById(idsTrabajadores);
+
+        //Tractor existe
+        Optional<Tractor> tractorOptional = tractorRepository.findById(idTractor);
+        if (tractorOptional.isEmpty()) throw new InstanceNotFoundException();
+        Tractor tractor = tractorOptional.get();
+        // Comprueba que los ids esten en el conjunto de tareas de carga obtenidas del repositorio
+        tareas.forEach(tarea -> {
+            tarea.setTractor(tractor);
+            tarea.setTrabajadores(trabajadores);
+            tarea.setHoraEntrada(LocalDateTime.now());
+            tarea.setEmpleado(tractorista);
+        });
+
+        tractor.setEnTarea(true);
+        trabajadores.forEach(trabajador -> trabajador.setInTask(true));
+
+        tareasRepository.saveAll(tareas);
+
+    }
+
+    @Override
+    public void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException {
+
+        // Las tares de ids forman parte de las tareas en progreso
+        List<Tarea> tareas = tareasRepository.findAllById(idTareas);
+        List<Tarea> tareasEnProgresoDeCarga = tareasRepository.tareasEnProgresoDeCarga();
+        if (!new HashSet<>(tareasEnProgresoDeCarga).containsAll(tareas)) throw new InstanceNotFoundException();
+
+        // Tractor y tareas en tarea
+        Tractor tractor = tareas.get(0).getTractor();
+        if (tareas.size() == tareasEnProgresoDeCarga.size()) {
+            tractor.setEnTarea(false);
+            List<Trabajador> trabajadores = tareas.get(0).getTrabajadores();
+            trabajadores.forEach(trabajador -> trabajador.setInTask(false));
+        }
+
+        // Asigno el tractor y los trabajadores a las tareas
+        tareas.forEach(tarea -> {
+            tarea.setTractor(tractor);
+            tarea.setHoraSalida(LocalDateTime.now());
+            tarea.setComentarios(comentario);
+        });
+
+        tareasRepository.saveAll(tareas);
+        tractorRepository.save(tractor);
+
+
+    }
+
+    @Override
+    public List<Tractor> tractoresDisponibles() {
+        return tractorRepository.findByEnTareaFalse();
     }
 }

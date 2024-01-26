@@ -231,13 +231,17 @@ class FinalizarTareaForm extends AlertDialog {
                       .stopTask(taskId, stopTaskDto)
                       .timeout(Duration(seconds: 10));
                   snackGreen(context, "Tarea finalizada");
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 } on TimeoutException {
                   snackTimeout(context);
+                  Navigator.of(context).pop();
                 } catch (e) {
                   snackRed(context, "No se pudo finalizar la tarea");
+                  Navigator.of(context).pop();
+
                 }
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(true);
+
               }
             },
             child: Text("Aceptar"))

@@ -39,6 +39,14 @@ public class CampanhaController implements CampanhaApi {
         return ResponseEntity.ok().body(message);
     }
 
+    @Override
+    public ResponseEntity<MessageResponseDTO> _endLoadTasks(EndLoadTasksDTO endLoadTasksDTO) throws Exception {
+        campanhaService.pararTareasCarga(endLoadTasksDTO.getIdLoadTasks(), endLoadTasksDTO.getComment());
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Tareas FINALIZADAS");
+        return ResponseEntity.ok().body(message);
+    }
+
 
     // LISTADOS DE TAREAS DE FASES
     @Override
@@ -110,7 +118,7 @@ public class CampanhaController implements CampanhaApi {
 
     // TAREAS DE FASE DE CARGA
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _loadTasks()  {
+    public ResponseEntity<List<ListedTaskDTO>> _loadTasks() {
         List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasPendientesDeCarga();
         List<ListedTaskDTO> endedTasks = new ArrayList<>();
         tareasFinalizadas.forEach(t -> {
@@ -126,7 +134,7 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _inProgressLoadTasks()  {
+    public ResponseEntity<List<ListedTaskDTO>> _inProgressLoadTasks() {
         List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasSinFinalizarDeCarga();
         List<ListedTaskDTO> endedTasks = new ArrayList<>();
         tareasFinalizadas.forEach(t -> {
@@ -142,7 +150,7 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<List<ListedTaskDTO>> _endedLoadTasks()  {
+    public ResponseEntity<List<ListedTaskDTO>> _endedLoadTasks() {
         List<Tarea> tareasFinalizadas = campanhaService.mostrarTareasFinalizadasDeCarga();
         List<ListedTaskDTO> endedTasks = new ArrayList<>();
         tareasFinalizadas.forEach(t -> {
@@ -176,6 +184,22 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
+    public ResponseEntity<MessageResponseDTO> _startLoadTasks(StartLoadTasksDTO startLoadTasksDTO) throws Exception {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new PermissionException();
+        }
+        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        Long userId = (Long) request.getAttribute("userId");
+
+        campanhaService.comenzarTareasCarga(startLoadTasksDTO.getIdLoadTasks(), userId, startLoadTasksDTO.getIdTractor(), startLoadTasksDTO.getIdsWorkers());
+
+        MessageResponseDTO message = new MessageResponseDTO();
+        message.message("Tareas iniciadas");
+        return ResponseEntity.ok().body(message);
+    }
+
+    @Override
     public ResponseEntity<MessageResponseDTO> _startPruning() throws Exception {
         campanhaService.comenzarPoda();
         MessageResponseDTO message = new MessageResponseDTO();
@@ -184,7 +208,7 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
-    public ResponseEntity<MessageResponseDTO> _startTask(Long id, WorkersTractorDTO workersTractorDTO) throws Exception {
+    public ResponseEntity<MessageResponseDTO> _startTask(Long id, WorkersDTO workersTractorDTO) throws Exception {
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
         if (requestAttributes == null) {
             throw new PermissionException();
@@ -192,7 +216,7 @@ public class CampanhaController implements CampanhaApi {
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         Long userId = (Long) request.getAttribute("userId");
 
-        campanhaService.comenzarTarea(workersTractorDTO.getIdsWorkers(), id, userId, workersTractorDTO.getIdTractor());
+        campanhaService.comenzarTarea(workersTractorDTO.getIdsWorkers(), id, userId);
 
         MessageResponseDTO message = new MessageResponseDTO();
         message.message("Tarea iniciada");

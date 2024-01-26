@@ -2563,7 +2563,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WorkersTractorDTO'
+              $ref: '#/components/schemas/WorkersDTO'
 
       responses:
         200:
@@ -2602,6 +2602,132 @@ paths:
                 $ref: '#/components/schemas/Error'
               example:
                 path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/startLoadTasks:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Comenzar tareas pendientes de carga
+      operationId: startLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      requestBody:
+        description: Ids de los trabajadores y tractor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartLoadTasksDTO'
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tareas iniciadas!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/startLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/startLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/endLoadTasks:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Finalizar tareas de carga
+      operationId: endLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      requestBody:
+        description: Ids de las tareas y comentario sobre las tareas
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndLoadTasksDTO'
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tareas finalizadas!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path:  /api/endLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path:  /api/endLoadTasks
                 error: Unauthorized
                 message: To many requests
                 status: 429
@@ -3366,7 +3492,7 @@ components:
           description: tipo de trabajo de tarea
           type: string
           example: LIMPIEZA
-    WorkersTractorDTO:
+    WorkersDTO:
       type: object
       required:
         - idsWorkers
@@ -3377,10 +3503,43 @@ components:
           items:
             type: integer
             format: int64
+    StartLoadTasksDTO:
+      type: object
+      required:
+        - idLoadTasks
+        - idTractor
+      properties:
+        idsWorkers:
+          description: ids de los trabajadores asignados a la tarea
+          type: array
+          items:
+            type: integer
+            format: int64
+        idLoadTasks:
+          description: ids de trabajos de carga
+          type: array
+          items:
+            type: integer
+            format: int64
         idTractor:
-          description: id de tractor asigando a la tarea
+          description: id de tractor
           type: integer
           format: int64
+    EndLoadTasksDTO:
+      type: object
+      required:
+        - idLoadTasks
+      properties:
+        idLoadTasks:
+          description: ids de trabajos de carga
+          type: array
+          items:
+            type: integer
+            format: int64
+        comment:
+          description: comentario
+          type: string
+
     StopTaskDTO:
       type: object
       required:

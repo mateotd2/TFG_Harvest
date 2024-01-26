@@ -57,4 +57,6 @@ public interface TareasRepository extends JpaRepository<Tarea, Long> {
     @Query("SELECT t FROM Tarea t  WHERE  t.horaSalida is not NULL AND t.lineaCampanha.zonaCampanha.campanha.ano = :ano ")
     List<Tarea> findTareasFinalizadasDeCampanha(int ano);
 
+    List<Tarea> findByIdInAndHoraEntradaNullAndTipoTrabajo(List<Long> idsTareas, TipoTrabajo tipoCarga);
+
 }
