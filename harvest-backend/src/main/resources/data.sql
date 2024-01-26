@@ -27,18 +27,18 @@ insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,availab
 insert into Trabajador( name,lastname, dni, nss, phone,birthdate,address,available, in_task) values ('trabajador15','garcia12','17283887A','411029184756','333333333','1990-06-15','Direccion',true, false)
 
 
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'12:30:00','20:30:00',1,true)
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',1,false)
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',1,true)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:01:00','23:59:00',1,true)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','23:59:00',1,false)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','23:59:00',1,true)
 --insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',2,true)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',2,true)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',2,false)
 --insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE+1,'08:30:00','14:30:00',3,false)
 insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values ('2023-10-25','08:30:00','14:30:00',3,false)
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:30:00','23:59:00',2,true)
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:30:00','23:30:00',3,true)
-insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:30:00','23:59:00',4,true)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:01:00','23:59:00',2,true)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:01:00','23:30:00',3,true)
+insert into Disponibilidad (daywork, checkin, checkout,trabajador_id,attendance) values (CURRENT_DATE,'00:01:00','23:59:00',4,true)
 
 
 insert into Zona (name, surface, description, formation, reference) values ('Zona 1', 200, 'Descripcion de zona 1', 'ESPALDERA', '12345678901234567890')
@@ -57,6 +57,9 @@ insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_v
 insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_vid_id, zona_id) values (7, '2020-10-25', false,20, 2, 2)
 insert into Linea (line_Number, planting_Date, harvest_Enabled, distance, tipo_vid_id, zona_id) values (8, '2000-10-25', true, 20, 1, 2)
 
+
+insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity,en_Tarea ) values ('R 0000 XYZ','ALGAZA','RL-14', 400, 80,false)
+insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity,en_Tarea ) values ('R 0001 XYZ','ALGAZA','RL-14', 400, 80,false)
 
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2022, 'LIMPIEZA')
 --insert into Campanha (inicio, finalizacion, ano, fase_Camp) values ('2022-8-1',null, 2023, 'LIMPIEZA')

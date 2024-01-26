@@ -3,7 +3,7 @@ package com.udc.fic.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.udc.fic.harvest.DTOs.StopTaskDTO;
-import com.udc.fic.harvest.DTOs.WorkersTractorDTO;
+import com.udc.fic.harvest.DTOs.WorkersDTO;
 import com.udc.fic.model.Empleado;
 import com.udc.fic.security.UserDetailsImpl;
 import com.udc.fic.security.jwt.JwtGeneratorInfo;
@@ -190,12 +190,11 @@ class CampanhaControllerTest {
         Integer respuestaId = JsonPath.read(jsonId, "$[0].idTarea");
 
         // Preparo datos para empezar la tarea
-        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+        WorkersDTO workersTractorDTO = new WorkersDTO();
         List<Long> idsTrabajadores = new ArrayList<>();
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
@@ -243,12 +242,11 @@ class CampanhaControllerTest {
         Integer respuestaId = JsonPath.read(jsonId, "$[0].idTarea");
 
         // Preparo datos para empezar la tarea
-        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+        WorkersDTO workersTractorDTO = new WorkersDTO();
         List<Long> idsTrabajadores = new ArrayList<>();
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
@@ -296,24 +294,22 @@ class CampanhaControllerTest {
         Integer respuestaId = JsonPath.read(jsonId, "$[0].idTarea");
 
         // Preparo datos para empezar la tarea
-        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+        WorkersDTO workersTractorDTO = new WorkersDTO();
         List<Long> idsTrabajadores = new ArrayList<>();
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsBytes(workersTractorDTO)));
         // Excepcion
-        WorkersTractorDTO workersTractorDTO2 = new WorkersTractorDTO();
+        WorkersDTO workersTractorDTO2 = new WorkersDTO();
         List<Long> idsTrabajadores2 = new ArrayList<>();
         idsTrabajadores2.add(3L);
         idsTrabajadores2.add(4L);
         workersTractorDTO2.setIdsWorkers(idsTrabajadores2);
-        workersTractorDTO2.setIdTractor(1L);
 
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -346,12 +342,11 @@ class CampanhaControllerTest {
         Integer respuestaId = JsonPath.read(jsonId, "$[0].idTarea");
 
         // Preparo datos para empezar la tarea
-        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+        WorkersDTO workersTractorDTO = new WorkersDTO();
         List<Long> idsTrabajadores = new ArrayList<>();
         idsTrabajadores.add(1L);
         idsTrabajadores.add(2L);
         workersTractorDTO.setIdsWorkers(idsTrabajadores);
-        workersTractorDTO.setIdTractor(1L);
 
         // Inicio tarea
         this.mockMvc.perform(post("/api/pendingTasks/" + respuestaId + "/startTask").header("Authorization", "Bearer " + jwt)
@@ -421,7 +416,7 @@ class CampanhaControllerTest {
 //        this.mockMvc.perform(post("/api/startCampaign")).andExpect(status().isOk());
 //
 //
-//        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+//        WorkersDTO workersTractorDTO = new WorkersDTO();
 //        List<Long> idsTrabajadores = new ArrayList<>();
 //        idsTrabajadores.add(1l);
 //        idsTrabajadores.add(2l);
@@ -448,7 +443,7 @@ class CampanhaControllerTest {
 //        this.mockMvc.perform(post("/api/startCampaign")).andExpect(status().isOk());
 //
 //
-//        WorkersTractorDTO workersTractorDTO = new WorkersTractorDTO();
+//        WorkersDTO workersTractorDTO = new WorkersDTO();
 //        List<Long> idsTrabajadores = new ArrayList<>();
 //        idsTrabajadores.add(1l);
 //        idsTrabajadores.add(2l);

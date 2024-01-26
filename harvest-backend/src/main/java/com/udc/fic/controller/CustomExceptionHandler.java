@@ -166,7 +166,6 @@ public class CustomExceptionHandler {
         error.setPath(uri);
         error.setStatus(400);
         return error;
-
     }
 
 
