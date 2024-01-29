@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/capataz_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +35,8 @@ class _TaskDetailsState extends State<TaskDetails> {
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final apiCampanha = campanhaApiPlataform(auth);
     final apiTrabajadores = trabajadoresApiPlataform(auth);
+    final apiCapataz = capatazApiPlataform(auth);
+
     TaskDTO? tareaObtenida;
 
     setState(() {
@@ -81,7 +84,7 @@ class _TaskDetailsState extends State<TaskDetails> {
                             WorkersDTO(idsWorkers: idsTrabajadores);
 
                         try {
-                          await apiCampanha
+                          await apiCapataz
                               .startTask(tareaObtenida!.idTarea!, trabajadores)
                               .timeout(Duration(seconds: 10));
 
@@ -219,6 +222,8 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm> {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final api = campanhaApiPlataform(auth);
+    final apiCapataz = capatazApiPlataform(auth);
+
     var logger = Logger();
 
     // porcentajeController.text="0";
@@ -246,7 +251,7 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm> {
                       ));
                   logger.d(stopTaskDto);
                   try {
-                    await api
+                    await apiCapataz
                         .stopTask(widget.taskId, stopTaskDto)
                         .timeout(Duration(seconds: 10));
                     snackGreen(context, "Tarea finalizada");

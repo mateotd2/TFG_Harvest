@@ -289,7 +289,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void comenzarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException{
+    void comenzarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException {
         campanhaService.comenzarCampanha();
 
 //        List<Trabajador> trabajadores =trabajadorService.obtenerTrabajadoresDisponiblesAhora();
@@ -306,7 +306,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void comenzarTareaTaskAlreadyStarted() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException{
+    void comenzarTareaTaskAlreadyStarted() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException {
         campanhaService.comenzarCampanha();
 
         List<Long> idsTrabajadores = new ArrayList<>();
@@ -341,7 +341,7 @@ class CampanhaServiceImplTest {
     }
 
     @Test
-    void finalizarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException{
+    void finalizarTareaTest() throws DuplicateInstanceException, InstanceNotFoundException, TaskAlreadyStartedException, TaskAlreadyEndedException, InvalidChecksException, TaskNotStartedException {
         campanhaService.comenzarCampanha();
 
         List<Trabajador> trabajadores = trabajadorRepository.findDistinctTrabajadoresByDateAndAvailable(LocalDate.now(), LocalTime.now());

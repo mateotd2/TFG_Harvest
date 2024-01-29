@@ -77,3 +77,4 @@ insert into Tractor (license_Plate,brand, model, max_Load, box_Capacity,en_Tarea
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
 --insert into Linea_Campanha(estado, porcentaje_trabajado, carga_lista, fin_limpieza, fin_poda, fin_recoleccion, fin_carga, zona_campanha_id) values ('PAUSADO', 0, false, null, null, null, null, 2)
+

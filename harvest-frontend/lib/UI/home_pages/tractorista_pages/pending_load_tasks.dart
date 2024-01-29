@@ -8,6 +8,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
 import '../../../utils/plataform_apis/campanha_api.dart';
+import '../../../utils/plataform_apis/tractor_api.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
 
@@ -43,7 +44,7 @@ class _PendingLoadTasks extends State<PendingLoadTasks> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final api = tractorApiPlataform(auth);
 
     setState(() {
       tasks = api.loadTasks().timeout(Duration(seconds: 10));
@@ -114,7 +115,7 @@ class _TaskChecked extends State<TaksChecked> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final api = tractorApiPlataform(auth);
     final apiWorkers = trabajadoresApiPlataform(auth);
 
     List<ListedTaskDTO> tasksObtenidas = widget.taskObtenidas;

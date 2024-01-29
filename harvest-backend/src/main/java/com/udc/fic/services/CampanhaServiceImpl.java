@@ -22,6 +22,9 @@ import java.util.Optional;
 @Transactional
 public class CampanhaServiceImpl implements CampanhaService {
 
+    // Valor boolean para notificar de la existencia de nuevas tareas de Carga
+    private boolean notificacionMasTareas = false;
+
     private static final String NO_COMENTS = "Sin comentarios";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CampanhaServiceImpl.class);
@@ -116,6 +119,14 @@ public class CampanhaServiceImpl implements CampanhaService {
         List<Tarea> tareasALimpiar = tareasRepository.tareasSinIniciar();
 
         tareasRepository.deleteAllInBatch(tareasALimpiar);
+    }
+
+    @Override
+    public boolean notificacionTareasCarga() {
+        boolean nuevaNotificaciones = this.notificacionMasTareas;
+        this.notificacionMasTareas = false;
+
+        return nuevaNotificaciones;
     }
 
     @Override
@@ -316,6 +327,7 @@ public class CampanhaServiceImpl implements CampanhaService {
             tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
             tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
             tareasRepository.save(tareaNueva);
+            this.notificacionMasTareas = true;
         }
         // Para cualquier tipo de tarea si no lleva al 100% se crea otra tarea
         if (porcentaje < 100) {
@@ -338,6 +350,8 @@ public class CampanhaServiceImpl implements CampanhaService {
 
 
     }
+
+
 
 
     @Override

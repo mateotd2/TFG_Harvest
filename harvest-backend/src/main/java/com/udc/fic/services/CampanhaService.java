@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface CampanhaService {
 
+    boolean notificacionTareasCarga();
+
     void comenzarCampanha() throws DuplicateInstanceException;
 
     void comenzarPoda() throws InstanceNotFoundException;

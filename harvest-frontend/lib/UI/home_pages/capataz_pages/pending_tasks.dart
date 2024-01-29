@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/capataz_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -34,10 +35,11 @@ class _PendingTasks extends State<PendingTasks> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final campanhaApi = campanhaApiPlataform(auth);
+    final capatazApi = capatazApiPlataform(auth);
 
     setState(() {
-      tasks = api.pendingTasks().timeout(Duration(seconds: 10));
+      tasks = capatazApi.pendingTasks().timeout(Duration(seconds: 10));
     });
 
     // Con esto muestro el AppBar o no
@@ -53,7 +55,7 @@ class _PendingTasks extends State<PendingTasks> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            tasks = api.pendingTasks().timeout(Duration(seconds: 10));
+            tasks = capatazApi.pendingTasks().timeout(Duration(seconds: 10));
           });
         },
         child: FutureBuilder(
@@ -70,7 +72,7 @@ class _PendingTasks extends State<PendingTasks> {
                       onPressed: () async {
                         try {
                           // PendingTasks(TypePhase.cleaning);
-                          await api
+                          await campanhaApi
                               .startPruning()
                               .timeout(Duration(seconds: 10));
                           snackGreen(context, 'Pasando a fase de poda.');
@@ -87,7 +89,7 @@ class _PendingTasks extends State<PendingTasks> {
                   filaBotones.add(ElevatedButton(
                       onPressed: () async {
                         try {
-                          await api
+                          await campanhaApi
                               .startHarvesting()
                               .timeout(Duration(seconds: 10));
                           snackGreen(context, 'Pasando a fase de recolección.');
@@ -104,7 +106,7 @@ class _PendingTasks extends State<PendingTasks> {
                   filaBotones.add(ElevatedButton(
                       onPressed: () async {
                         try {
-                          await api
+                          await campanhaApi
                               .endCampaign()
                               .timeout(Duration(seconds: 10));
                           snackGreen(context, 'Finalizando la campaña.');
@@ -167,7 +169,7 @@ class _PendingTasks extends State<PendingTasks> {
                                           )));
                               if (actualizar) {
                                 setState(() {
-                                  tasks = api
+                                  tasks = capatazApi
                                       .pendingTasks()
                                       .timeout(Duration(seconds: 10));
                                 });

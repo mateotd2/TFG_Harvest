@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/tractor_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,7 @@ class _SelectorsLoadTasks extends State<SelectorsLoadTasks> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final api = tractorApiPlataform(auth);
 
     logger.d(widget.idTareas);
     logger.d(widget.trabajadoresDisponibles);

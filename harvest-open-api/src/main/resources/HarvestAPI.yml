@@ -2194,7 +2194,7 @@ paths:
   /api/pendingTasks:
     get:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas pendientes
@@ -2250,7 +2250,7 @@ paths:
   /api/pendingLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener tareas pendientes de carga
@@ -2365,7 +2365,7 @@ paths:
   /api/inProgressLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas de carga en progreso
@@ -2424,7 +2424,7 @@ paths:
   /api/endedTasks:
     get:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas finalizadas de la campaña actual
@@ -2480,7 +2480,7 @@ paths:
   /api/endedLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas de carga finalizadas
@@ -2537,7 +2537,7 @@ paths:
   /api/pendingTasks/{id}/startTask:
     post:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Comenzar una tarea pendiente
@@ -2613,7 +2613,7 @@ paths:
   /api/startLoadTasks:
     post:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Comenzar tareas pendientes de carga
@@ -2673,10 +2673,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/notificationLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Comprueba si hay nuevas tareas de carga
+      operationId: checkNewLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Boolean indicando que hay nuevas tareas
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
   /api/endLoadTasks:
     post:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Finalizar tareas de carga
@@ -2808,7 +2863,7 @@ paths:
   /api/pendingTasks/{id}/stopTask:
     post:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Parar una tarea iniciada
@@ -2885,7 +2940,7 @@ paths:
   /api/availableTractors:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener Tractores disponibles en el momento actual
