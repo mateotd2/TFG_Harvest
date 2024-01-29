@@ -54,7 +54,9 @@ class _WorkersSelectorState extends State<WorkersSelector> {
                   onChanged: (nombre) {
                     filtroPorNombre(nombre);
                   },
-                  decoration: InputDecoration(label: Text("Nombre")),
+                  decoration: InputDecoration(
+                      label: Text("Nombre y/o apellidos"),
+                      prefixIcon: Icon(Icons.search)),
                 )),
             Expanded(
               child: ListView.builder(

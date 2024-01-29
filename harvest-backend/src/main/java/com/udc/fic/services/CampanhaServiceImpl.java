@@ -377,7 +377,9 @@ public class CampanhaServiceImpl implements CampanhaService {
             throw new InstanceNotFoundException();
 
         // Trabajadores disponibles
-        if (!trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores)) throw new InstanceNotFoundException();
+        if (!idsTrabajadores.isEmpty() && (!trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores))) {
+            throw new InstanceNotFoundException();
+        }
         List<Trabajador> trabajadores = trabajadorRepository.findAllById(idsTrabajadores);
 
         //Tractor existe
@@ -400,27 +402,37 @@ public class CampanhaServiceImpl implements CampanhaService {
     }
 
     @Override
-    public void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException {
+    public void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException, InvalidChecksException {
+
 
         // Las tares de ids forman parte de las tareas en progreso
         List<Tarea> tareas = tareasRepository.findAllById(idTareas);
-        List<Tarea> tareasEnProgresoDeCarga = tareasRepository.tareasEnProgresoDeCarga();
-        if (!new HashSet<>(tareasEnProgresoDeCarga).containsAll(tareas)) throw new InstanceNotFoundException();
+        Tractor tractor = tareas.get(0).getTractor();
+
+        // Todas las tareas son del mismo tractor
+        for (Tarea tarea : tareas) {
+            if (tarea.getTractor() != tractor) throw new InvalidChecksException();
+        }
+
+//        List<Tarea> tareasEnProgresoDeCarga = tareasRepository.tareasEnProgresoDeCarga();
+//        List<Tarea> tareasDeTractor = tractor.getTareas();
+        List<Tarea> tareasDeTractor = tareasRepository.findByTractorAndEnProgreso(tractor.getId());
+
+        if (!new HashSet<>(tareasDeTractor).containsAll(tareas)) throw new InstanceNotFoundException();
 
         // Tractor y tareas en tarea
-        Tractor tractor = tareas.get(0).getTractor();
-        if (tareas.size() == tareasEnProgresoDeCarga.size()) {
+        if (tareas.size() == tareasDeTractor.size()) {
             tractor.setEnTarea(false);
             List<Trabajador> trabajadores = tareas.get(0).getTrabajadores();
             trabajadores.forEach(trabajador -> trabajador.setInTask(false));
         }
 
-        // Asigno el tractor y los trabajadores a las tareas
         tareas.forEach(tarea -> {
-            tarea.setTractor(tractor);
+//            tarea.setTractor(tractor);
             tarea.setHoraSalida(LocalDateTime.now());
             tarea.setComentarios(comentario);
         });
+
 
         tareasRepository.saveAll(tareas);
         tractorRepository.save(tractor);

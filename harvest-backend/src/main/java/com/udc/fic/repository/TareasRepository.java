@@ -59,4 +59,7 @@ public interface TareasRepository extends JpaRepository<Tarea, Long> {
 
     List<Tarea> findByIdInAndHoraEntradaNullAndTipoTrabajo(List<Long> idsTareas, TipoTrabajo tipoCarga);
 
+    @Query("SELECT t FROM Tarea t WHERE t.tractor.id = :idTractor AND t.horaSalida is NULL AND t.horaEntrada is not NULL")
+    List<Tarea> findByTractorAndEnProgreso(Long idTractor);
+
 }

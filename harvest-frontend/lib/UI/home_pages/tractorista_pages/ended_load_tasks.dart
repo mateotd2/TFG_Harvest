@@ -10,12 +10,12 @@ import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
 import '../capataz_pages/task_details.dart';
 
-class InProgressTasks extends StatefulWidget {
+class EndedLoadTasks extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _InProgressTasks();
+  State<StatefulWidget> createState() => _EndedLoadTasks();
 }
 
-class _InProgressTasks extends State<InProgressTasks> {
+class _EndedLoadTasks extends State<EndedLoadTasks> {
   var logger = Logger();
   late Future<List<ListedTaskDTO>?> tasks;
 
@@ -26,14 +26,14 @@ class _InProgressTasks extends State<InProgressTasks> {
     final api = campanhaApiPlataform(auth);
 
     setState(() {
-      tasks = api.inProgressTasks().timeout(Duration(seconds: 10));
+      tasks = api.endedLoadTasks().timeout(Duration(seconds: 10));
     });
 
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            tasks = api.inProgressTasks().timeout(Duration(seconds: 10));
+            tasks = api.endedLoadTasks().timeout(Duration(seconds: 10));
           });
         },
         child: FutureBuilder(
@@ -43,6 +43,7 @@ class _InProgressTasks extends State<InProgressTasks> {
                 snapshot.connectionState == ConnectionState.done;
                 List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
                 logger.d(tasksObtenidas);
+
                 List<Widget> pantalla = [];
                 List<Widget> filaBotones = [];
                 if (!(tasksObtenidas != null && tasksObtenidas.isNotEmpty)) {
@@ -57,20 +58,11 @@ class _InProgressTasks extends State<InProgressTasks> {
                           color: index % 2 == 0 ? Colors.grey[200] : null,
                           child: ListTile(
                             onTap: () async {
-                              bool actualizar = await Navigator.push(
+                              await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => TaskDetails(
-                                            taskId: task.idTarea,
-                                            estado: Estado.enProgreso,
-                                          )));
-                              if (actualizar) {
-                                setState(() {
-                                  tasks = api
-                                      .inProgressTasks()
-                                      .timeout(Duration(seconds: 10));
-                                });
-                              }
+                                      builder: (context) =>
+                                          TaskDetails(taskId: task.idTarea)));
                             },
                             trailing: Icon(Icons.arrow_forward_ios_sharp),
                             title: Text("Zona: ${task.zoneName}"),

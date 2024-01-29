@@ -33,10 +33,10 @@ class _CampaignState extends State<Campaign> {
     return FutureBuilder(
         future: fase,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          PhaseCampaign faseObtenida = snapshot.data;
           String textoFase = "";
-
+          PhaseCampaign faseObtenida = PhaseCampaign.CAMPAIGN_NOT_STARTED;
           if (snapshot.connectionState == ConnectionState.done) {
+            faseObtenida = snapshot.data;
             snapshot.connectionState == ConnectionState.done;
             switch (faseObtenida) {
               case PhaseCampaign.LIMPIEZA:

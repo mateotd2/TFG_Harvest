@@ -43,7 +43,7 @@ public interface CampanhaService {
 
     void comenzarTareasCarga(List<Long> idTareas, Long idEmpleado, Long idTractor, List<Long> idsTrabajadores) throws InstanceNotFoundException, PermissionException;
 
-    void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException;
+    void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException, InvalidChecksException;
 
     List<Tractor> tractoresDisponibles();
 }

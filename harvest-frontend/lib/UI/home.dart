@@ -5,6 +5,7 @@ import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/campaign.dart';
 import 'package:harvest_frontend/UI/home_pages/capataz_pages/capataz.dart';
+import 'package:harvest_frontend/UI/home_pages/tractorista_pages/tractorista.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -129,7 +130,7 @@ class _HomeState extends State<Home> {
     // Pagina Tractoristas
 
     if (esTractorista(estado.lastResponse)) {
-      paginas.add(Text('PAGINA TRACTORISTAS'));
+      paginas.add(Tractorista());
       pagina++;
       final paginaTractoristas = pagina;
       elementosDrawer.add(ListTile(

@@ -99,6 +99,12 @@ public class CampanhaController implements CampanhaApi {
     }
 
     @Override
+    public ResponseEntity<List<TractorDTO>> _getAvailableTractors() throws Exception {
+
+        return ResponseEntity.ok().body(campanhaService.tractoresDisponibles().stream().map(tractor -> mapper.toTractorDTO(tractor)).toList());
+    }
+
+    @Override
     public ResponseEntity<PhaseCampaign> _getPhaseCampaign() {
         Fase fase = campanhaService.mostrarFaseCampanha();
         if (fase == null) return ResponseEntity.ok().body(PhaseCampaign.CAMPAIGN_NOT_STARTED);
@@ -143,6 +149,8 @@ public class CampanhaController implements CampanhaApi {
                     tarea.setNumeroLinea(t.getLineaCampanha().getLinea().getLineNumber());
                     tarea.setZoneName(t.getLineaCampanha().getZonaCampanha().getZona().getName());
                     tarea.setTipoTrabajo(t.getTipoTrabajo().name());
+                    tarea.setIdTractor(t.getTractor().getId());
+
                     endedTasks.add(tarea);
                 }
         );

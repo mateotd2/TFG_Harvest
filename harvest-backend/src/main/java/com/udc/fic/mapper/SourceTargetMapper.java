@@ -48,4 +48,6 @@ public interface SourceTargetMapper {
 
     @Mapping(target = "idTypeVid", source = "tipoVid.id")
     LineDetailsDTO toLineDetailsDTO(Linea linea);
+
+    TractorDTO toTractorDTO(Tractor tractor);
 }

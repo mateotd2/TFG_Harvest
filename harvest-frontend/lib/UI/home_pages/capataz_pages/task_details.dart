@@ -77,8 +77,8 @@ class _TaskDetailsState extends State<TaskDetails> {
                             MaterialPageRoute(
                                 builder: (context) => WorkersSelector(
                                     workers: trabajadoresDisponibles)));
-                        WorkersDTO trabajadores = WorkersDTO(
-                            idsWorkers: idsTrabajadores);
+                        WorkersDTO trabajadores =
+                            WorkersDTO(idsWorkers: idsTrabajadores);
 
                         try {
                           await apiCampanha
@@ -103,12 +103,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                   case Estado.enProgreso:
                     boton = ElevatedButton(
                       onPressed: () async {
-                        PhaseCampaign? fase = await apiCampanha.getPhaseCampaign().timeout(Duration(seconds: 10));
+                        PhaseCampaign? fase = await apiCampanha
+                            .getPhaseCampaign()
+                            .timeout(Duration(seconds: 10));
 
                         await showDialog(
                             context: context,
                             builder: (BuildContext context) {
-                              return FinalizarTareaForm( phase: fase!,
+                              return FinalizarTareaForm(
+                                  phase: fase!,
                                   taskId: tareaObtenida!.idTarea!);
                             });
                       },
@@ -194,24 +197,22 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 }
 
-class FinalizarTareaForm extends StatefulWidget{
+class FinalizarTareaForm extends StatefulWidget {
   final int taskId;
   final PhaseCampaign? phase;
-  FinalizarTareaForm({required this.taskId,this.phase});
-  @override
-  State<StatefulWidget> createState() =>_FinalizarTareaForm();
 
+  FinalizarTareaForm({required this.taskId, this.phase});
+
+  @override
+  State<StatefulWidget> createState() => _FinalizarTareaForm();
 }
 
-class _FinalizarTareaForm extends State<FinalizarTareaForm>{
-
+class _FinalizarTareaForm extends State<FinalizarTareaForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   bool solicitarCarga = false;
 
   TextEditingController comentarioController = TextEditingController();
   TextEditingController porcentajeController = TextEditingController();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -220,8 +221,7 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm>{
     final api = campanhaApiPlataform(auth);
     var logger = Logger();
 
-
-    porcentajeController.text="0";
+    // porcentajeController.text="0";
 
     return SingleChildScrollView(
       child: AlertDialog(
@@ -241,7 +241,9 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm>{
                   StopTaskDTO stopTaskDto = StopTaskDTO(
                       load: solicitarCarga,
                       comment: comentarioController.text,
-                      percentaje: int.parse(porcentajeController.text,));
+                      percentaje: int.parse(
+                        porcentajeController.text,
+                      ));
                   logger.d(stopTaskDto);
                   try {
                     await api
@@ -256,9 +258,7 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm>{
                   } catch (e) {
                     snackRed(context, "No se pudo finalizar la tarea");
                     Navigator.of(context).pop();
-
                   }
-
                 }
               },
               child: Text("Aceptar"))
@@ -308,13 +308,13 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm>{
                 },
               ),
               Visibility(
-                visible: widget.phase==PhaseCampaign.RECOLECCION_CARGA,
+                visible: widget.phase == PhaseCampaign.RECOLECCION_CARGA,
                 child: CheckboxListTile(
                   title: Text("¿Solicitar Carga?"),
                   value: solicitarCarga,
                   onChanged: (bool? value) {
                     setState(() {
-                      solicitarCarga=value!;
+                      solicitarCarga = value!;
                     });
                   },
                 ),
