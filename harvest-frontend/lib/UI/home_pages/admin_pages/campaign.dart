@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/capataz_pages/pending_tasks.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/not_completed_tasks.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -135,7 +135,7 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.cleaning)));
                         setState(() {
                           restart = !restart;
@@ -169,7 +169,7 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.pruning)));
                         setState(() {
                           restart = !restart;
@@ -201,7 +201,7 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.harvest)));
                         setState(() {
                           restart = !restart;

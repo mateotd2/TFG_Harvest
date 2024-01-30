@@ -48,7 +48,6 @@ class _MainViewState extends State<MainView> {
   final flutterSecureStorage = const FlutterSecureStorage();
   var signin = true;
 
-
   Future<void> _cargarStorage() async {
     final valor = await flutterSecureStorage.read(key: 'jwt');
     if (!context.mounted) return;
@@ -77,12 +76,11 @@ class _MainViewState extends State<MainView> {
   Future<void> _isAndroidPermissionGranted() async {
     if (PlatformDetector.platform.name == PlatformName.android) {
       // final bool granted =
-          await flutterLocalNotificationsPlugin
+      await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
                   AndroidFlutterLocalNotificationsPlugin>()
               ?.areNotificationsEnabled() ??
           false;
-
     }
   }
 
@@ -110,7 +108,7 @@ class _MainViewState extends State<MainView> {
               AndroidFlutterLocalNotificationsPlugin>();
 
       // final bool? grantedNotificationPermission =
-          await androidImplementation?.requestNotificationsPermission();
+      await androidImplementation?.requestNotificationsPermission();
     }
   }
 
@@ -154,7 +152,7 @@ class _MainViewState extends State<MainView> {
           // Notificacion
           await _showNotification();
         } else {
-          logger.d("Aun no hay nuevas tareas");
+          // logger.d("Aun no hay nuevas tareas");
         }
       } on TimeoutException {
         snackTimeout(context);
@@ -167,8 +165,8 @@ class _MainViewState extends State<MainView> {
 
   Future<void> _showNotification() async {
     const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('your channel id', 'your channel name',
-            channelDescription: 'your channel description',
+        AndroidNotificationDetails('tractor', 'Tractorista',
+            channelDescription: 'Canal para notificaciones de tractorista',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker',

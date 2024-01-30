@@ -183,11 +183,6 @@ class _TaskChecked extends State<TaksChecked> {
                             )));
 
                 if (actualizar) widget.onUpdate();
-                // if (actualizar) {
-                //   setState(() {
-                //     actualizar = !actualizar;
-                //   });
-                // }
               }
             },
             child: Text("Iniciar Tareas"),

@@ -4,6 +4,8 @@ import 'package:harvest_frontend/UI/home_pages/capataz_pages/in_progress_tasks.d
 import 'package:harvest_frontend/UI/home_pages/capataz_pages/pending_tasks.dart';
 import 'package:logger/logger.dart';
 
+import '../admin_pages/not_completed_tasks.dart';
+
 class Capataz extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _CapatazState();
