@@ -221,7 +221,6 @@ class _FinalizarTareaForm extends State<FinalizarTareaForm> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
     final apiCapataz = capatazApiPlataform(auth);
 
     var logger = Logger();

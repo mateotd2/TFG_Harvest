@@ -36,6 +36,8 @@ dependencies:
     path: ../harvest-open-api/target/dart
   time_picker_spinner: any
   date_time_picker: "^2.1.0"
+
+  # https://github.com/MaikuB/flutter_local_notifications/tree/master/flutter_local_notifications
   flutter_local_notifications: ^16.3.2
 
 

@@ -106,7 +106,8 @@ public class TractoristaController implements TractoristaApi {
 
     @Override
     public ResponseEntity<Boolean> _checkNewLoadTasks() throws Exception {
-        return ResponseEntity.ok(campanhaService.notificacionTareasCarga());
+        ResponseEntity<Boolean> ok = ResponseEntity.ok(campanhaService.notificacionTareasCarga());
+        return ok;
     }
 
     @Override

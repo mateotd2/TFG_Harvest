@@ -5,7 +5,6 @@ import 'package:harvest_api/api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
-import '../../../utils/plataform_apis/campanha_api.dart';
 import '../../../utils/plataform_apis/tractor_api.dart';
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
