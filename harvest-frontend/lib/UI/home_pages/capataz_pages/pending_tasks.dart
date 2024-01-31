@@ -146,10 +146,6 @@ class _TaskSelector extends State<TaskSelector> {
                     showCursor: true,
                     maxLines: 1,
                     minLines: 1,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly
-                    ],
                     controller: zonaController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),

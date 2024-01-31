@@ -49,7 +49,10 @@ dependencies:
   platform_detector: ^0.1.1
   linter: ^1.30.0
   form_validator: ^2.1.1
-
+  qr_flutter: ^4.1.0
+  image_gallery_saver: '^2.0.3'
+  permission_handler: ^10.4.5
+  media_store_plus: ^0.0.7
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -9,6 +9,8 @@ import 'package:harvest_frontend/utils/plataform_apis/tractor_api.dart';
 import 'package:harvest_frontend/utils/provider/sign_in_model.dart';
 import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
+import 'package:media_store_plus/media_store_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_detector/enums.dart';
 import 'package:platform_detector/platform_detector.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +21,25 @@ import 'UI/sign_in.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-void main() {
+final mediaStorePlugin = MediaStore();
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  List<Permission> permissions = [
+    Permission.storage,
+  ];
+
+  if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
+    permissions.add(Permission.photos);
+    permissions.add(Permission.audio);
+    permissions.add(Permission.videos);
+  }
+
+  MediaStore.appFolder = "MediaStorePlugin";
+
+  await permissions.request();
+
   runApp(ChangeNotifierProvider(
       create: (context) => SignInResponseModel(), // ESTADO
       child: const MyApp()));
@@ -69,6 +89,7 @@ class _MainViewState extends State<MainView> {
     // LocalNotificationService.initialize();
     _isAndroidPermissionGranted();
     _requestPermissions();
+    // PermissionUtil.requestAll();
 
     _cargarStorage();
   }
@@ -85,6 +106,9 @@ class _MainViewState extends State<MainView> {
   }
 
   Future<void> _requestPermissions() async {
+
+    // Permisos de notificaciones
+
     if (PlatformDetector.platform.name == PlatformName.macOs) {
       await flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -109,6 +133,8 @@ class _MainViewState extends State<MainView> {
 
       // final bool? grantedNotificationPermission =
       await androidImplementation?.requestNotificationsPermission();
+
+
     }
   }
 
@@ -177,4 +203,19 @@ class _MainViewState extends State<MainView> {
         1, 'Nueva tarea ', 'Nueva tarea para la carga', notificationDetails,
         payload: 'item x');
   }
+
+  // static List<Permission> androidPermissions = <Permission>[
+  //   Permission.storage
+  // ];
+  //
+  // static List<Permission> iosPermissions = <Permission>[
+  //   Permission.storage
+  // ];
+  //
+  // static Future<Map<Permission, PermissionStatus>> requestAll() async {
+  //   if (PlatformDetector.platform.name == PlatformName.android) {
+  //     return await iosPermissions.request();
+  //   }
+  //   return await androidPermissions.request();
+  // }
 }

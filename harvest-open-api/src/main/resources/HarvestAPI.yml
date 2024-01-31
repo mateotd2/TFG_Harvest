@@ -3445,6 +3445,8 @@ components:
           type: integer
           format: int32
           minimum: 1
+        zoneName:
+          type: string
         distance:
           type: integer
           format: int32

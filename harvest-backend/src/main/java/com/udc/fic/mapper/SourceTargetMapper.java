@@ -47,6 +47,7 @@ public interface SourceTargetMapper {
     TypeVidDTO toTypeVidDTO(TipoVid tipoVid);
 
     @Mapping(target = "idTypeVid", source = "tipoVid.id")
+    @Mapping(target = "zoneName",source = "zona.name")
     LineDetailsDTO toLineDetailsDTO(Linea linea);
 
     TractorDTO toTractorDTO(Tractor tractor);
