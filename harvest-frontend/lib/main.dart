@@ -32,8 +32,6 @@ void main() async{
 
   if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
     permissions.add(Permission.photos);
-    permissions.add(Permission.audio);
-    permissions.add(Permission.videos);
   }
 
   MediaStore.appFolder = "MediaStorePlugin";

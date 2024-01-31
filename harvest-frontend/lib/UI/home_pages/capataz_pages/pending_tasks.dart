@@ -12,6 +12,8 @@ import '../../../utils/snack_bars.dart';
 import '../admin_pages/not_completed_tasks.dart';
 import 'task_details.dart';
 
+import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
+
 class PendingTasks extends StatefulWidget {
   final TypePhase typePhase;
 
@@ -102,6 +104,11 @@ class _TaskSelector extends State<TaskSelector> {
   List<ListedTaskDTO> tasksObtenidas = [];
   List<ListedTaskDTO> tasksFiltrados = [];
 
+  // QR Reader
+  final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
+  String? code;
+
+
   void filtroPorZonaLinea() {
     logger.d(
         "Filtrar con zona: ${zonaController.text} y linea: ${lineaController.text}");
@@ -182,7 +189,22 @@ class _TaskSelector extends State<TaskSelector> {
                 height: 88,
                 margin: EdgeInsets.only(right: 0),
                 child: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
+                          context: context,
+                          onCode: (code) {
+
+                            logger.d(code);
+                            final zonaLinea= code?.split(",");
+                            setState(() {
+                              // this.code = code;
+                              zonaController.text=zonaLinea![0];
+                              lineaController.text=zonaLinea[1];
+                              filtroPorZonaLinea();
+                            });
+                          });
+
+                    },
                     icon: Center(
                         child:
                             Icon(Icons.qr_code_scanner, size: 50, weight: 10))),

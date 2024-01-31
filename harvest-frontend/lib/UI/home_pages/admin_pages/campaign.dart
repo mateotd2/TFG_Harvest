@@ -34,7 +34,7 @@ class _CampaignState extends State<Campaign> {
         future: fase,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           String textoFase = "";
-          PhaseCampaign faseObtenida = PhaseCampaign.CAMPAIGN_NOT_STARTED;
+          PhaseCampaign? faseObtenida = PhaseCampaign.CAMPAIGN_NOT_STARTED;
           if (snapshot.connectionState == ConnectionState.done) {
             faseObtenida = snapshot.data;
             snapshot.connectionState == ConnectionState.done;
@@ -142,18 +142,6 @@ class _CampaignState extends State<Campaign> {
                         });
                       },
 
-                      // onPressed: () async {
-                      //   try {
-                      //     // PendingTasks(TypePhase.cleaning);
-                      //     await api.startPruning().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Pasando a fase de poda.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(
-                      //         context, 'Error al intentar pasar a la fase de poda.');
-                      //   }
-                      // },
                       child: Text("Comenzar fase de poda")),
                 ),
                 SizedBox(height: 64.0),
@@ -175,17 +163,6 @@ class _CampaignState extends State<Campaign> {
                           restart = !restart;
                         });
                       },
-                      // onPressed: () async {
-                      //   try {
-                      //     await api.startHarvesting().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Pasando a fase de recolección.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(context,
-                      //         'Error al intentar pasar a la fase de recolección');
-                      //   }
-                      // },
                       child: Text("Comenzar fase de recoleccion")),
                 ),
                 SizedBox(height: 64.0),
@@ -207,17 +184,6 @@ class _CampaignState extends State<Campaign> {
                           restart = !restart;
                         });
                       },
-
-                      // onPressed: () async {
-                      //   try {
-                      //     await api.endCampaign().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Finalizando la campaña.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(context, 'Error al intentar finalizar la campaña.');
-                      //   }
-                      // },
                       child: Text("Finalizar campaña")),
                 ),
               ],

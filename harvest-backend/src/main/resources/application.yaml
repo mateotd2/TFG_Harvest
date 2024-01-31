@@ -6,7 +6,7 @@ management:
   endpoints:
     web:
       cors:
-        allow-origins: "http://localhost:8080"
+        allow-origins: "*"
 spring:
   datasource:
     initialization-mode: always
