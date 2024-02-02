@@ -8,26 +8,31 @@ management:
       cors:
         allow-origins: "*"
 spring:
+  sql:
+    init:
+      plataform: mysql
+      mode: always     # Siempre inicializa la base de datos
+#      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
+
   datasource:
-    initialization-mode: always
+#    initialization-mode: always
     url: @dataSource.url@
-    driverClassName: org.h2.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: @dataSource.user@
     password: @dataSource.password@
-  h2:
-    console:
-      path: /h2-console
-      enabled: true
+
 
   jpa:
     defer-datasource-initialization: true
     hibernate:
-#      show_sql: true
-#      format_sql: true
+      show_sql: true
+      format_sql: true
+#      ddl-auto: update
+      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
 
       properties:
         hibernate:
-          dialect: org.hibernate.dialect.H2Dialect  # Selecciona el dialecto específico de la base de datos
+          dialect: org.hibernate.dialect.MySQL8Dialect  # Selecciona el dialecto específico de la base de datos
 
 app:
   jwtcookie: Bu:GW8bgPlEw

@@ -1,7 +1,23 @@
 spring:
   datasource:
     url: @testDataSource.url@
-    driverClassName: org.h2.Driver
+    driver-class-name: org.h2.Driver
     username: @dataSource.user@
     password: @dataSource.password@
 
+  sql:
+    init:
+      plataform: mysql
+      mode: always     # Siempre inicializa la base de datos
+
+
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      show_sql: true
+      format_sql: true
+      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
+
+      properties:
+        hibernate:
+      dialect: org.hibernate.dialect.H2Dialect  # Selecciona el dialecto específico de la base de datos

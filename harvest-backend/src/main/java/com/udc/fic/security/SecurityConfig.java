@@ -3,7 +3,6 @@ package com.udc.fic.security;
 import com.udc.fic.security.jwt.AuthEntryPointJwt;
 import com.udc.fic.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,8 +30,6 @@ public class SecurityConfig {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
-    @Value("${spring.h2.console.path}")
-    private String h2ConsolePath;
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
@@ -80,7 +77,7 @@ public class SecurityConfig {
                                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui/index.html")).permitAll()
-                                .requestMatchers(antMatcher(h2ConsolePath + "/**")).permitAll()
+//                                .requestMatchers(antMatcher(h2ConsolePath + "/**")).permitAll()
                                 .anyRequest().authenticated()
 
                 )

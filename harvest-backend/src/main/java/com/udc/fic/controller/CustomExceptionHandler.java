@@ -4,6 +4,7 @@ import com.udc.fic.harvest.DTOs.Error;
 import com.udc.fic.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -117,6 +118,19 @@ public class CustomExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public Error handleInstanceNotFound(InstanceNotFoundException exception, HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        Error error = new Error();
+        error.setError("Not Found");
+        error.setMessage("Instancia no encontrada");
+        error.setPath(uri);
+        error.setStatus(404);
+        return error;
+
+    }
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public Error handleUsernameNotFound(UsernameNotFoundException exception, HttpServletRequest request) {
         String uri = request.getRequestURI();
         Error error = new Error();
         error.setError("Not Found");
