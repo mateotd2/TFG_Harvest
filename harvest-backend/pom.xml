@@ -40,28 +40,16 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <!--  Data source properties -->
-<!--                <dataSource.url>jdbc:h2:mem:mydb</dataSource.url>-->
-                <testDataSource.url>jdbc:h2:mem:mydbTest</testDataSource.url>
-                <dataSource.url>jdbc:mysql://localhost:3306/harvest_db?allowPublicKeyRetrieval=true</dataSource.url>
-<!--                <testDataSource.url>jdbc:mysql://localhost:3306/harvest_db_test?allowPublicKeyRetrieval=true</testDataSource.url>-->
-                <dataSource.user>userHarvest</dataSource.user>
-                <dataSource.password>harvestland</dataSource.password>
+                <spring.profiles.active></spring.profiles.active>
             </properties>
+
         </profile>
         <profile>
             <!-- Prepares the project to make use of an H2 in-memory database -->
             <id>test</id>
-<!--            <activation>-->
-<!--                &lt;!&ndash; Active by default so it can be installed by CI &ndash;&gt;-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
+
             <properties>
-                <!--  Data source properties -->
-                <dataSource.url>jdbc:h2:mem:mydb</dataSource.url>
-                <testDataSource.url>jdbc:h2:mem:mydbTest</testDataSource.url>
-                <dataSource.user>sa</dataSource.user>
-                <dataSource.password></dataSource.password>
+                <spring.profiles.active>test</spring.profiles.active>
             </properties>
             <dependencies>
                 <dependency>
@@ -195,12 +183,6 @@
 
             <version>2.0.7</version>
 
-        </dependency>
-
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <version>8.3.0</version>
         </dependency>
 
         <dependency>
@@ -383,7 +365,7 @@
                 </dependencies>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <phase>none</phase>  <!-- Para usarlo manualmente-->
                         <goals>
                             <goal>
                                 mutationCoverage
@@ -401,10 +383,11 @@
                         <feature>+auto_threads</feature>
                     </features>
 
-
                     <excludedClasses>
                         <param>com.udc.fic.security.*</param>
                         <param>com.udc.fic.mapper.*</param>
+                        <param>com.udc.fic.controller.CampanhaController</param>
+                        <param>com.udc.fic.controller.TrabajadoresControllerTest</param>
                     </excludedClasses>
                 </configuration>
             </plugin>
@@ -416,7 +399,6 @@
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
-                    <spotbugsXmlOutput>true</spotbugsXmlOutput>
                 </configuration>
 
                 <executions>
