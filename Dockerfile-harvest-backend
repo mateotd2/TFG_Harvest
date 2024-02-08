@@ -1,0 +1,41 @@
+#https://medium.com/@astontechnologies/how-to-build-a-multi-container-spring-boot-app-a8b97f81e5e2
+#LABEL authors="mateo"
+
+## Forma en la que pasa por una imagen pero falla igualmente
+#FROM eclipse-temurin:17-jdk-alpine
+#
+#
+#
+#COPY harvest-backend/target/harvest-backend-1.0-SNAPSHOT.jar app.jar
+#
+#ENV MYSQLDB_USER=userHarvest
+#ENV MYSQLDB_ROOT_PASSWORD=harvestland
+#ENV MYSQLDB_DATABASE=harvest_db
+#ENV MYSQLDB_LOCAL_PORT=3307
+#ENV MYSQLDB_DOCKER_PORT=3306
+#
+#EXPOSE 8080
+#
+#ENTRYPOINT ["java", "-jar", "app.jar"]
+
+
+
+# REFERENCIA https://github.com/Steven-Nagie/multi-module-spring-docker/blob/master/pom.xml
+FROM maven:3.9.3-eclipse-temurin-17-alpine AS MAVEN_TOOL_CHAIN
+COPY pom.xml /tmp/
+COPY harvest-backend /tmp/harvest-backend/
+COPY harvest-open-api /tmp/harvest-open-api/
+
+WORKDIR /tmp/
+
+RUN mvn clean install -Pdocker
+
+FROM eclipse-temurin:17-jdk-alpine
+
+COPY --from=MAVEN_TOOL_CHAIN /tmp/harvest-backend/target/harvest-backend-1.0-SNAPSHOT.jar app.jar
+
+RUN sh -c 'touch /app.jar'
+
+ENTRYPOINT ["java","-jar","/app.jar"]
+#ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+#ENTRYPOINT ["java","-jar","-Dspring.profiles.active=docker","/app.jar"]

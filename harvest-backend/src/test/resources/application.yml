@@ -1,8 +1,3 @@
-app:
-  jwtcookie: Bu:GW8bgPlEw
-  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
-  jwtExpirationMs: 86400
-  jwtRefreshExpirationMs: 86400000
 
 spring:
   datasource:
@@ -10,21 +5,16 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: sa
-#  datasource:
-#    url: @testDataSource.url@
-#    driver-class-name: org.h2.Driver
-#    username: @dataSource.user@
-#    password: @dataSource.password@
 
   sql:
     init:
-      data-locations: classpath:data-test.sql
+      data-locations: classpath:data-test.sql # Fichero que puebla la base de datos para los test
       platform: h2
       mode: always     # Siempre inicializa la base de datos
 
 
   jpa:
-#    defer-datasource-initialization: true
+#    defer-datasource-initialization: true  # Inserta los elementos usados en data.sql despues de crear la tabla
     hibernate:
       show_sql: true
       format_sql: true

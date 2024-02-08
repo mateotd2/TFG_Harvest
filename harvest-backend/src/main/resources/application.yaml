@@ -1,39 +1,38 @@
+# https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.files
 server:
   port: 8080
 #  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
-management:
-  endpoints:
-    web:
-      cors:
-        allow-origins: "*"
+
+
 spring:
   sql:
     init:
-      plataform: mysql
-      mode: always     # Siempre inicializa la base de datos
-#      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
+      data-locations: classpath:data.sql # Fichero que puebla la base de datos para los test
+      platform: mysql
+#      mode: always     # Siempre inicializa la base de datos
+
+
 
   datasource:
-#    initialization-mode: always
-    url: jdbc:mysql://localhost:3306/harvest_db?allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/harvest_db?useSSL=false
+#    url: jdbc:mysql://localhost:3306/harvest_db?allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: userHarvest
     password: harvestland
-#    url: @dataSource.url@
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    username: @dataSource.user@
-#    password: @dataSource.password@
+
 
 
   jpa:
     defer-datasource-initialization: true
     hibernate:
+
       show_sql: true
       format_sql: true
-#      ddl-auto: update
-      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
-
+#      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
+#      ddl-auto: create # Crea tablas a partir de las entidades... USAR LA PRIMERA VEZ
+      ddl-auto: update
+#      ddl-auto: none # MUCHOS FALLOS AQUI
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQL8Dialect  # Selecciona el dialecto específico de la base de datos
@@ -56,6 +55,8 @@ springdoc:
     use-root-path: true
     disable-swagger-default-url: true
     tryItOutEnabled: true
+
+
 
 #logging:
 #  level:

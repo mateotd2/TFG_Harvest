@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  sql:
+    init:
+      mode: always     # Siempre inicializa la base de datos
+#      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
+
+  datasource:
+    url: jdbc:mysql://localhost:3304/harvest_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: harvestland
+
+
+

@@ -6,7 +6,8 @@
         <groupId>com.udc.fic</groupId>
         <artifactId>harvest-proyect</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
+<!--        <relativePath/> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
+<!--        <relativePath>../pom.xml</relativePath> &lt;!&ndash; lookup parent from repository &ndash;&gt;-->
     </parent>
 
     <artifactId>harvest-backend</artifactId>
@@ -29,38 +30,38 @@
     <!-- ********************************************** -->
     <!-- ****************** PROFILES ****************** -->
     <!-- ********************************************** -->
-    <profiles>
-        <!-- ============================================== -->
-        <!-- ============= DATABASE PROFILES ============== -->
-        <!-- ============================================== -->
-        <profile>
-            <id>mysql</id>
-            <activation>
-                <!-- Active by default so it can be installed by CI -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <spring.profiles.active></spring.profiles.active>
-            </properties>
+<!--    <profiles>-->
+<!--        &lt;!&ndash; ============================================== &ndash;&gt;-->
+<!--        &lt;!&ndash; ============= DATABASE PROFILES ============== &ndash;&gt;-->
+<!--        &lt;!&ndash; ============================================== &ndash;&gt;-->
+<!--        <profile>-->
+<!--            <id>mysql</id>-->
+<!--            <activation>-->
+<!--                &lt;!&ndash; Active by default so it can be installed by CI &ndash;&gt;-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <properties>-->
+<!--                <spring.profiles.active></spring.profiles.active>-->
+<!--            </properties>-->
 
-        </profile>
-        <profile>
-            <!-- Prepares the project to make use of an H2 in-memory database -->
-            <id>test</id>
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            &lt;!&ndash; Prepares the project to make use of an H2 in-memory database &ndash;&gt;-->
+<!--            <id>test</id>-->
 
-            <properties>
-                <spring.profiles.active>test</spring.profiles.active>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <!-- H2 database -->
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
+<!--            <properties>-->
+<!--                <spring.profiles.active>test</spring.profiles.active>-->
+<!--            </properties>-->
+<!--            <dependencies>-->
+<!--                <dependency>-->
+<!--                    &lt;!&ndash; H2 database &ndash;&gt;-->
+<!--                    <groupId>com.h2database</groupId>-->
+<!--                    <artifactId>h2</artifactId>-->
+<!--                </dependency>-->
+<!--            </dependencies>-->
+<!--        </profile>-->
 
-    </profiles>
+<!--    </profiles>-->
 
 
     <description>Harvest wine project</description>
