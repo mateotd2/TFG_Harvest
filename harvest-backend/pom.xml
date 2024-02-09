@@ -64,6 +64,34 @@
 <!--    </profiles>-->
 
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <!-- H2 database -->
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+
+        </profile>
+    </profiles>
+
+
     <description>Harvest wine project</description>
 
     <dependencies>

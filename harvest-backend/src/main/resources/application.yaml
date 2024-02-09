@@ -1,4 +1,7 @@
 # https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.files
+
+
+
 server:
   port: 8080
 #  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -6,6 +9,8 @@ server:
 
 
 spring:
+  profiles:
+    active: @activatedProperties@
   sql:
     init:
       data-locations: classpath:data.sql # Fichero que puebla la base de datos para los test
