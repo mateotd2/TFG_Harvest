@@ -1,61 +1,58 @@
-version: '3.8'
+version: '3.7'
 
 services:
-  mysqldb:
-    container_name: database
-    image: mysql:8.0.36
-    restart: no
-#    env_file: .env
 
-    environment:
-#      MYSQL_DATABASE: harvestdb
-      MYSQL_DATABASE: basics
-      MYSQL_USER:  userHarvest
-      MYSQL_PASSWORD: harvestLand
-      MYSQL_ROOT_PASSWORD: root
+#  mysqldb:
+#
+#    image: "mysql:8.0"
+#    restart: no
+#    ports:
+#      - 3303:3306
+#    environment:
+#      MYSQL_DATABASE: harvest
+#      MYSQL_USER: user
+#      MYSQL_PASSWORD: pass
+#      MYSQL_ROOT_PASSWORD: root
+#    networks:
+#      - spring-mysql
+
+  mysqldb:
+    image: "mysql:8.0"
+    restart: no
     ports:
-      - "3304:3306"
+      - 3303:3306
     networks:
       - spring-mysql
-#    volumes:
-#      - db:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: harvestdb
+      MYSQL_USER: userHarvest
+      MYSQL_PASSWORD: harvestland
+      MYSQL_ROOT_PASSWORD: root
 
   harvest:
-    depends_on:
-      - mysqldb
     build:
+
       context: ./
       dockerfile: Dockerfile-harvest-backend
     container_name: harvest_backend
-    restart: no
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/basics?allowPublicKeyRetrieval=true
-#      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/harvestdb?allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: userHarvest
-      SPRING_DATASOURCE_PASSWORD: harvestland
-    volumes:
-      - .m2:/root/.m2
+    restart: unless-stopped
     ports:
       - "8080:8080"
     networks:
       - spring-mysql
-#    environment:
-#      SPRING_APPLICATION_JSON: '{
-#        "spring.datasource.url"  : "jdbc:mysql://localhost:3306?allowPublicKeyRetrieval=true",
-#        "spring.datasource.username" : "root",
-#        "spring.datasource.password" : "harvestland",
-#        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQLDialect",
-#        "spring.jpa.hibernate.ddl-auto" : "create-drop",
-#        "spring.sql.init.continue-on-error" : "true"
-#      }'
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/harvestdb?allowPublicKeyRetrieval=true
+      - spring.datasource.username=userHarvest
+      - spring.datasource.password=harvestland
+      - spring.sql.init.continue-on-error=true
+    depends_on:
+      - mysqldb
+    volumes:
+      - .m2:/root/.m2
     stdin_open: true
     tty: true
 
 
-
-
-#volumes:
-#  db:
 
 networks:
   spring-mysql:

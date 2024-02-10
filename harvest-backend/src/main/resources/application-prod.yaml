@@ -5,18 +5,16 @@ spring:
   sql:
     init:
       mode: ALWAYS     #  La primera vez que uso docker compose lo dejo con always luego lo dejo a never
-      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
+#      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
 
   datasource:
-#    url: jdbc:mysql://database:3306/harvest_db?useSSL=false+allowPublicKeyRetrieval=true   # bd localhost
-#    url: jdbc:mysql://database:3306/harvest_db?allowPublicKeyRetrieval=true   # bd localhost
-#    url: jdbc:mysql://localhost:3306/harvest_db?allowPublicKeyRetrieval=true    # bd docker
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: userHarvest
     password: harvestland
 
 
   jpa:
+#    generate-ddl: true
     hibernate:
       ddl-auto: create # Primera vez que se ejecuta
 #      ddl-auto: update # Despues dejar en update
