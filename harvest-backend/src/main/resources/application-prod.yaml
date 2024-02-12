@@ -8,16 +8,18 @@ spring:
 #      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
 
   datasource:
+
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: userHarvest
     password: harvestland
 
 
   jpa:
-#    generate-ddl: true
+#    defer-datasource-initialization: false
+    generate-ddl: true
     hibernate:
-      ddl-auto: create # Primera vez que se ejecuta
-#      ddl-auto: update # Despues dejar en update
+      ddl-auto: update # Despues dejar en update
+#      ddl-auto: create # Primera vez que se ejecuta
 
 
 

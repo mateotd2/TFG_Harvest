@@ -89,6 +89,13 @@
             </properties>
 
         </profile>
+        <profile>
+            <id>mysql</id>
+            <properties>
+                <activatedProperties>mysql</activatedProperties>
+            </properties>
+
+        </profile>
     </profiles>
 
 

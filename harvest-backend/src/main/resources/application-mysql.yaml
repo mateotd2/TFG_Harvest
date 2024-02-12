@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  sql:
+    init:
+#      mode: ALWAYS     #  La primera vez que uso docker compose lo dejo con always luego lo dejo a never
+  #      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: userHarvest
+    password: harvestland
+
+
+  jpa:
+    #    generate-ddl: true
+    hibernate:
+#      ddl-auto: update # Primera vez que se ejecuta
+#      ddl-auto: update # Despues dejar en update
+
+
