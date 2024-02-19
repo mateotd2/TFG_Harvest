@@ -47,6 +47,33 @@ WHERE NOT EXISTS(
 );
 
 
+insert into user_roles (role_id,user_id) SELECT 1,1
+WHERE NOT EXISTS(
+    SELECT 1 FROM user_roles WHERE role_id = 1 and user_id=1
+) UNION ALL
+
+SELECT 2,1
+WHERE NOT EXISTS(
+    SELECT 1 FROM user_roles WHERE role_id = 2 and user_id = 1
+)UNION ALL
+
+SELECT 3,1
+WHERE NOT EXISTS(
+    SELECT 1 FROM user_roles WHERE role_id = 3 and user_id=1
+);
+
+
+insert into tipo_vid (name, years_Maturity, description) SELECT 'Vitis vinifera', 15, 'La vid o parra, cuyo nombre científico es Vitis vinifera, es una planta semi...'
+WHERE NOT EXISTS(
+    SELECT 1 FROM tipo_vid WHERE name = 'Vitis vinifera'
+);
+insert into tipo_vid (name, years_Maturity, description) SELECT 'Vitis vinifera 2', 15, 'La vid o parra, cuyo nombre científico es Vitis vinifera, es una planta semileñosa o trepadora que cuando se deja crecer libremente puede alcanzar más de 30 m, pero que, por la acción humana, podándola anualmente, queda reducida a un pequeño arbusto...'
+WHERE NOT EXISTS(
+    SELECT 1 FROM tipo_vid WHERE name = 'Vitis vinifera 2'
+);
+
+
+
 --insert into Rol(name) values ('ROLE_ADMIN')
 --insert into Rol(name) values ('ROLE_CAPATAZ')
 --insert into Rol(name) values ('ROLE_TRACTORISTA')
