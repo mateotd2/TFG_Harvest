@@ -127,6 +127,7 @@ public class CustomExceptionHandler {
         return error;
 
     }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody

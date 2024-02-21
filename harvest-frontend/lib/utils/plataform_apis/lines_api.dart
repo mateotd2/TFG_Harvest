@@ -7,8 +7,8 @@ import '../../config/config.dart';
 LineasApi lineasApiPlataform([OAuth? oAuth]) {
   LineasApi lineasApi;
   if (PlatformDetector.platform.name == PlatformName.android) {
-    lineasApi = LineasApi(
-        ApiClient(basePath: Config.api, authentication: oAuth));
+    lineasApi =
+        LineasApi(ApiClient(basePath: Config.api, authentication: oAuth));
   } else {
     lineasApi = LineasApi(ApiClient(authentication: oAuth));
   }

@@ -7,8 +7,8 @@ import '../../config/config.dart';
 CapatazApi capatazApiPlataform([OAuth? oAuth]) {
   CapatazApi capatazApi;
   if (PlatformDetector.platform.name == PlatformName.android) {
-    capatazApi = CapatazApi(
-        ApiClient(basePath: Config.api, authentication: oAuth));
+    capatazApi =
+        CapatazApi(ApiClient(basePath: Config.api, authentication: oAuth));
   } else {
     capatazApi = CapatazApi(ApiClient(authentication: oAuth));
   }

@@ -23,7 +23,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 final mediaStorePlugin = MediaStore();
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   List<Permission> permissions = [
@@ -104,7 +104,6 @@ class _MainViewState extends State<MainView> {
   }
 
   Future<void> _requestPermissions() async {
-
     // Permisos de notificaciones
 
     if (PlatformDetector.platform.name == PlatformName.macOs) {
@@ -131,8 +130,6 @@ class _MainViewState extends State<MainView> {
 
       // final bool? grantedNotificationPermission =
       await androidImplementation?.requestNotificationsPermission();
-
-
     }
   }
 
@@ -202,18 +199,18 @@ class _MainViewState extends State<MainView> {
         payload: 'item x');
   }
 
-  // static List<Permission> androidPermissions = <Permission>[
-  //   Permission.storage
-  // ];
-  //
-  // static List<Permission> iosPermissions = <Permission>[
-  //   Permission.storage
-  // ];
-  //
-  // static Future<Map<Permission, PermissionStatus>> requestAll() async {
-  //   if (PlatformDetector.platform.name == PlatformName.android) {
-  //     return await iosPermissions.request();
-  //   }
-  //   return await androidPermissions.request();
-  // }
+// static List<Permission> androidPermissions = <Permission>[
+//   Permission.storage
+// ];
+//
+// static List<Permission> iosPermissions = <Permission>[
+//   Permission.storage
+// ];
+//
+// static Future<Map<Permission, PermissionStatus>> requestAll() async {
+//   if (PlatformDetector.platform.name == PlatformName.android) {
+//     return await iosPermissions.request();
+//   }
+//   return await androidPermissions.request();
+// }
 }

@@ -1,12 +1,7 @@
 # https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.files
-
-
-
 server:
   port: 8080
 #  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-
-
 
 spring:
   profiles:
@@ -17,42 +12,22 @@ spring:
       platform: mysql
 #      mode: always     # Siempre inicializa la base de datos
 
-
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/harvest_db?useSSL=false
-#    url: jdbc:mysql://localhost:3306/harvest_db?allowPublicKeyRetrieval=true
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: userHarvest
-    password: harvestland
-
-
-
   jpa:
     defer-datasource-initialization: true
     hibernate:
-
-      show_sql: true
-      format_sql: true
 #      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
 #      ddl-auto: create # Crea tablas a partir de las entidades... USAR LA PRIMERA VEZ
       ddl-auto: update
-#      ddl-auto: none # MUCHOS FALLOS AQUI
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.MySQL8Dialect  # Selecciona el dialecto específico de la base de datos
+#      ddl-auto: none
 
-app:
-  jwtcookie: Bu:GW8bgPlEw
-  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
-  jwtExpirationMs: 86400
-  jwtRefreshExpirationMs: 86400000
 
+# https://springdoc.org/#properties
 springdoc:
   show-login-endpoint: true
-  #  api-docs:
-  #    version: openapi_3_0
+  api-docs:
+    version: openapi_3_0 # Default
 
+#  https://springdoc.org/#swagger-ui-properties
   swagger-ui:
     urlsPrimaryName: /v3/api-docs
     #    docExpansion: list
@@ -61,10 +36,9 @@ springdoc:
     disable-swagger-default-url: true
     tryItOutEnabled: true
 
-
-
-#logging:
-#  level:
-#    org.hibernate.SQL: debug   # Establece el nivel de registro para las sentencias SQL a "info"
-#    org.hibernate.type: debug  # Establece el nivel de registro para los tipos de datos de Hibernate a "info"
-
+# DATOS DE EJEMPLO: EN UN ENTORNO REAL CAMBIAR ESTOS VALORES POR VARIABLES DE ENTORNO
+app:
+  jwtcookie: Bu:GW8bgPlEw
+  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
+  jwtExpirationMs: 86400
+  jwtRefreshExpirationMs: 86400000

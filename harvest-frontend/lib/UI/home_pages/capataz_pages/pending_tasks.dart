@@ -6,13 +6,12 @@ import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/utils/plataform_apis/capataz_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
+import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
 import '../admin_pages/not_completed_tasks.dart';
 import 'task_details.dart';
-
-import 'package:qr_bar_code_scanner_dialog/qr_bar_code_scanner_dialog.dart';
 
 class PendingTasks extends StatefulWidget {
   final TypePhase typePhase;
@@ -108,7 +107,6 @@ class _TaskSelector extends State<TaskSelector> {
   final _qrBarCodeScannerDialogPlugin = QrBarCodeScannerDialog();
   String? code;
 
-
   void filtroPorZonaLinea() {
     logger.d(
         "Filtrar con zona: ${zonaController.text} y linea: ${lineaController.text}");
@@ -193,17 +191,15 @@ class _TaskSelector extends State<TaskSelector> {
                       _qrBarCodeScannerDialogPlugin.getScannedQrBarCode(
                           context: context,
                           onCode: (code) {
-
                             logger.d(code);
-                            final zonaLinea= code?.split(",");
+                            final zonaLinea = code?.split(",");
                             setState(() {
                               // this.code = code;
-                              zonaController.text=zonaLinea![0];
-                              lineaController.text=zonaLinea[1];
+                              zonaController.text = zonaLinea![0];
+                              lineaController.text = zonaLinea[1];
                               filtroPorZonaLinea();
                             });
                           });
-
                     },
                     icon: Center(
                         child:

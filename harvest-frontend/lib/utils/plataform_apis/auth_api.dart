@@ -6,8 +6,8 @@ import 'package:platform_detector/platform_detector.dart';
 AutenticadoApi autenticadoApiPlataform([OAuth? oAuth]) {
   AutenticadoApi autenticadoApi;
   if (PlatformDetector.platform.name == PlatformName.android) {
-    autenticadoApi = AutenticadoApi(
-        ApiClient(basePath: Config.api, authentication: oAuth));
+    autenticadoApi =
+        AutenticadoApi(ApiClient(basePath: Config.api, authentication: oAuth));
   } else {
     autenticadoApi = AutenticadoApi(ApiClient(authentication: oAuth));
   }

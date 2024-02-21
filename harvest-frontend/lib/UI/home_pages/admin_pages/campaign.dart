@@ -141,7 +141,6 @@ class _CampaignState extends State<Campaign> {
                           restart = !restart;
                         });
                       },
-
                       child: Text("Comenzar fase de poda")),
                 ),
                 SizedBox(height: 64.0),

@@ -7,8 +7,8 @@ import '../../config/config.dart';
 TrabajadoresApi trabajadoresApiPlataform([OAuth? oAuth]) {
   TrabajadoresApi workersApi;
   if (PlatformDetector.platform.name == PlatformName.android) {
-    workersApi = TrabajadoresApi(
-        ApiClient(basePath: Config.api, authentication: oAuth));
+    workersApi =
+        TrabajadoresApi(ApiClient(basePath: Config.api, authentication: oAuth));
   } else {
     workersApi = TrabajadoresApi(ApiClient(authentication: oAuth));
   }

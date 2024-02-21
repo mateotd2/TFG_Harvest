@@ -173,7 +173,7 @@ class _AddLineState extends State<AddLine> {
                               logger.d('Boton de añadir linea pulsado');
 
                               LineDTO nuevaLinea = LineDTO(
-                                harvestEnabled: habilitado,
+                                  harvestEnabled: habilitado,
                                   lineNumber:
                                       int.parse(_lineNumberController.text),
                                   distance: int.parse(_distanceController.text),

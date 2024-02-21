@@ -33,7 +33,6 @@ public class SecurityConfig {
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
 
-
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
@@ -68,8 +67,6 @@ public class SecurityConfig {
 
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .addFilter(jwtTokenFilter).authorizeRequests()
-//                .and()
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(antMatcher("/api/auth/**")).permitAll() // antMatcher para https://github.com/jzheaux/cve-2023-34035-mitigations
                                 .requestMatchers(antMatcher("/v3/api-docs**")).permitAll()
@@ -77,7 +74,7 @@ public class SecurityConfig {
                                 .requestMatchers(antMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui.html")).permitAll()
                                 .requestMatchers(antMatcher("/swagger-ui/index.html")).permitAll()
-//                                .requestMatchers(antMatcher(h2ConsolePath + "/**")).permitAll()
+                                .requestMatchers(antMatcher("/h2-console/**")).permitAll()
                                 .anyRequest().authenticated()
 
                 )

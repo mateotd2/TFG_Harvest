@@ -38,16 +38,12 @@ class _LineDetailsState extends State<LineDetails> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final api = lineasApiPlataform(auth);
     LineDetailsDTO? lineaObtenida;
-
-
 
     int? lineaId = widget.lineId;
 
@@ -57,7 +53,6 @@ class _LineDetailsState extends State<LineDetails> {
         harEnabled = widget.enabled;
       }
     });
-
 
     return Scaffold(
       appBar: AppBar(
@@ -155,10 +150,9 @@ class _LineDetailsState extends State<LineDetails> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>
-                                              UpdateLine(
-                                                  lineId: lineaId,
-                                                  line: lineaObtenida!)));
+                                          builder: (context) => UpdateLine(
+                                              lineId: lineaId,
+                                              line: lineaObtenida!)));
                                 },
                                 child: Text("Actualizar Datos")),
                             SizedBox(width: 96.0),
@@ -178,8 +172,8 @@ class _LineDetailsState extends State<LineDetails> {
                                               TextButton(
                                                 onPressed: () {
                                                   logger.d("Cancelado");
-                                                  Navigator.of(context2).pop(
-                                                      false);
+                                                  Navigator.of(context2)
+                                                      .pop(false);
                                                 },
                                                 child: Text('Cancelar'),
                                               ),
@@ -187,11 +181,12 @@ class _LineDetailsState extends State<LineDetails> {
                                                 onPressed: () async {
                                                   logger.d("Eliminar linea");
                                                   try {
-                                                    MessageResponseDTO? response =
-                                                    await api
-                                                        .deleteLine(lineaId!)
-                                                        .timeout(Duration(
-                                                        seconds: 10));
+                                                    MessageResponseDTO?
+                                                        response = await api
+                                                            .deleteLine(
+                                                                lineaId!)
+                                                            .timeout(Duration(
+                                                                seconds: 10));
                                                     logger.d(response);
                                                   } on TimeoutException {
                                                     snackTimeout(context);
@@ -199,8 +194,8 @@ class _LineDetailsState extends State<LineDetails> {
                                                     snackRed(context,
                                                         'Error al intentar eliminar la zona');
                                                   }
-                                                  Navigator.of(context2).pop(
-                                                      true);
+                                                  Navigator.of(context2)
+                                                      .pop(true);
                                                 },
                                                 child: Text('Eliminar'),
                                               ),
@@ -215,15 +210,17 @@ class _LineDetailsState extends State<LineDetails> {
                         ),
                       ],
                     ),
-                    Column( // AQUI MUESTRO UN QR Y CON LA OPCION DE DESCARGALO
+                    Column(
+                      // AQUI MUESTRO UN QR Y CON LA OPCION DE DESCARGALO
                       children: <Widget>[
                         RepaintBoundary(
                           key: globalKey,
                           child: Container(
-                            height: 200,width: 200,
+                            height: 200,
+                            width: 200,
                             color: Colors.white,
                             child: CustomPaint(
-                              size: Size(200,200),
+                              size: Size(200, 200),
                               painter: QrPainter(
                                 eyeStyle: const QrEyeStyle(
                                   eyeShape: QrEyeShape.square,
@@ -233,17 +230,16 @@ class _LineDetailsState extends State<LineDetails> {
                                   dataModuleShape: QrDataModuleShape.square,
                                   color: Colors.black,
                                 ),
-
-                                data: '${lineaObtenida!.zoneName},${lineaObtenida!.lineNumber}',
+                                data:
+                                    '${lineaObtenida!.zoneName},${lineaObtenida!.lineNumber}',
                                 version: QrVersions.auto,
-
-                            ),
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () async  {
+                          onPressed: () async {
                             // ui.Image image = await boundary.toImage(pixelRatio: 5.0);
                             _captureAndSavePng(lineaObtenida!.id.toString());
                           },
@@ -251,7 +247,6 @@ class _LineDetailsState extends State<LineDetails> {
                         ),
                       ],
                     )
-
                   ],
                 ),
               );
@@ -268,15 +263,15 @@ class _LineDetailsState extends State<LineDetails> {
     );
   }
 
-
-
   Future<void> _captureAndSavePng(String name) async {
     try {
-      RenderRepaintBoundary boundary = globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+      RenderRepaintBoundary boundary =
+          globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
       ui.Image image = await boundary.toImage(pixelRatio: 5);
-      final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
       final Uint8List pngBytes = byteData!.buffer.asUint8List();
-      
+
       final result = await ImageGallerySaver.saveImage(
         pngBytes,
         name: "QRCode$name",
@@ -285,12 +280,10 @@ class _LineDetailsState extends State<LineDetails> {
       );
 
       logger.d("Image saved: $result");
-        snackGreen(context, "Imagen descargada");
-
+      snackGreen(context, "Imagen descargada");
     } catch (e) {
       logger.d("Error al intentar guardar la imagen: $e");
-        snackRed(context, 'Error al guardar la imagen');
-
+      snackRed(context, 'Error al guardar la imagen');
     }
   }
 }

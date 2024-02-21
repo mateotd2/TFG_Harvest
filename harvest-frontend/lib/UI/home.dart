@@ -56,7 +56,11 @@ class _HomeState extends State<Home> {
     var pagina = 0;
 
     // Primera pagina( pagina principa,)
-    paginas.add(Text('PAGINA PRINCIPAL'));
+    paginas.add(Center(
+        child: Text(
+      'Bienvenido ${estado.lastResponse!.username} 👋',
+      style: TextStyle(fontSize: 20),
+    )));
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.home),

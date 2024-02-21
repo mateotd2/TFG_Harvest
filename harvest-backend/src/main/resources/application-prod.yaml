@@ -1,14 +1,16 @@
-server:
-  port: 8080
-
+# Configuracion para un entorno "simulado" de produccion (Docker compose)
 spring:
+  h2:
+    console:
+      enabled: false;
   sql:
     init:
       mode: ALWAYS     #  La primera vez que uso docker compose lo dejo con always luego lo dejo a never
+#      mode: NEVER     # Esta seria la configuracion en un entorno de PRODUCCION REAL! Uso Always para poblar de datos en el docker compose
 #      continue-on-error: true  # Continua sin acabar la ejecucion de spring-boot aun habiendo errores sql
 
   datasource:
-
+    url: jdbc:mysql://localhost:3306/harvest_db?useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: userHarvest
     password: harvestland
@@ -16,9 +18,11 @@ spring:
 
   jpa:
 #    defer-datasource-initialization: false
-    generate-ddl: true
+#    generate-ddl: true # Crea automaticamente el esquema de la base de datos al inicial la aplicacion NO USAR EN PRODUCCION REAL!
+    generate-ddl: false # Esta seria la configuracion buena en un entorno de PRODUCCION REAL!
     hibernate:
-      ddl-auto: update # Despues dejar en update
+      ddl-auto: update # Despues dejar en update,
+#      ddl-auto: validate # Comprueba que las definiciones del modelo son coherentes con la base de datos.Utilizar este en un entorno de PRODUCCION REAL!
 #      ddl-auto: create # Primera vez que se ejecuta
 
 
