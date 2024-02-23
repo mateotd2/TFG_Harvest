@@ -1,0 +1,21 @@
+spring:
+  sql:
+    init:
+      data-locations: classpath:data-dev.sql # Fichero que puebla la base de datos para los test
+      platform: h2
+      mode: always
+
+  datasource:
+    url: jdbc:h2:mem:mydbTest
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+
+
+

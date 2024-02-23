@@ -23,23 +23,33 @@ import java.util.Optional;
 public class CampanhaServiceImpl implements CampanhaService {
 
     private static final String NO_COMENTS = "Sin comentarios";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CampanhaServiceImpl.class);
-    @Autowired
     CampanhaRepository campanhaRepository;
-    @Autowired
     ZonasRepository zonasRepository;
-    @Autowired
     TareasRepository tareasRepository;
-    @Autowired
     TrabajadorRepository trabajadorRepository;
-    @Autowired
     EmpleadoRepository empleadoRepository;
+    TractorRepository tractorRepository;
+    // Valor boolean para notificar de la existencia de nuevas tareas de Carga
+    private boolean notificacionMasTareas = false;
+    private final PermissionChecker permissionChecker;
+
+    // Cantidade de tractoristas
+    private final int cantidadTractoristas;
+    private int notificacionesEnviadas = 0;
 
     @Autowired
-    TractorRepository tractorRepository;
-    @Autowired
-    private PermissionChecker permissionChecker;
+    public CampanhaServiceImpl(CampanhaRepository campanhaRepository, ZonasRepository zonasRepository, TareasRepository tareasRepository,
+                               TrabajadorRepository trabajadorRepository, EmpleadoRepository empleadoRepository, TractorRepository tractorRepository, PermissionChecker permissionChecker) {
+        this.campanhaRepository = campanhaRepository;
+        this.zonasRepository = zonasRepository;
+        this.tareasRepository = tareasRepository;
+        this.trabajadorRepository = trabajadorRepository;
+        this.tractorRepository = tractorRepository;
+        this.empleadoRepository = empleadoRepository;
+        this.cantidadTractoristas = empleadoRepository.countByRoleTractorista();
+        this.permissionChecker = permissionChecker;
+    }
 
     private void inicializarTaresPorFase(TipoTrabajo tipoTrabajo, List<ZonaCampanha> zonaCampanhas) {
         zonaCampanhas.forEach(z -> {
@@ -97,6 +107,7 @@ public class CampanhaServiceImpl implements CampanhaService {
         return zonaCampanha;
     }
 
+    // Restaura las lineas habilitadas con estado Pausado y sin trabajar para pasar a la siguiente fase
     private void restaurarLineasCampanha(Campanha campanha) {
         List<ZonaCampanha> zonaCampanhas = campanha.getZonaCampanhas();
 
@@ -116,6 +127,21 @@ public class CampanhaServiceImpl implements CampanhaService {
         List<Tarea> tareasALimpiar = tareasRepository.tareasSinIniciar();
 
         tareasRepository.deleteAllInBatch(tareasALimpiar);
+    }
+
+    @Override
+    public boolean notificacionTareasCarga() {
+        boolean nuevaNotificaciones;
+        if (notificacionesEnviadas < cantidadTractoristas) {
+            this.notificacionesEnviadas++;
+            nuevaNotificaciones = this.notificacionMasTareas;
+        } else {
+            this.notificacionMasTareas = false;
+            nuevaNotificaciones = this.notificacionMasTareas;
+        }
+
+
+        return nuevaNotificaciones;
     }
 
     @Override
@@ -163,6 +189,15 @@ public class CampanhaServiceImpl implements CampanhaService {
 
             restaurarLineasCampanha(campanha);
 
+            // Aqui me encargo de que si se pasa de fase sin acabar las tareas anteriores, les indico el momento de finalizacion de fase
+            campanha.getZonaCampanhas().forEach(zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(lineaCampanha -> {
+                        if (lineaCampanha.getFinPoda() == null) {
+                            lineaCampanha.setFinPoda(LocalDateTime.now());
+                        }
+                    })
+
+            );
+
             campanha.setFaseCamp(Fase.PODA);
             limpiarTareasPendientes();
             inicializarTaresPorFase(TipoTrabajo.PODA, campanha.getZonaCampanhas());
@@ -190,6 +225,16 @@ public class CampanhaServiceImpl implements CampanhaService {
             campanha.setFaseCamp(Fase.RECOLECCION_CARGA);
 
             restaurarLineasCampanha(campanha);
+
+            // Aqui me encargo de que si se pasa de fase sin acabar las tareas anteriores, les indico el momento de finalizacion de fase
+            campanha.getZonaCampanhas().forEach(zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(lineaCampanha -> {
+                        if (lineaCampanha.getFinRecoleccion() == null) {
+                            lineaCampanha.setFinRecoleccion(LocalDateTime.now());
+                        }
+                    })
+            );
+
+
             limpiarTareasPendientes();
             inicializarTaresPorFase(TipoTrabajo.RECOLECCION, campanha.getZonaCampanhas());
 
@@ -215,6 +260,19 @@ public class CampanhaServiceImpl implements CampanhaService {
             }
             campanha.setFinalizacion(LocalDate.now());
             campanha.setFaseCamp(Fase.FINALIZADA);
+
+            // Aqui me encargo de que si se pasa de fase sin acabar las tareas anteriores, les indico el momento de finalizacion de fase
+            campanha.getZonaCampanhas().forEach(zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(lineaCampanha -> {
+                        if (lineaCampanha.getFinRecoleccion() == null) {
+                            lineaCampanha.setFinRecoleccion(LocalDateTime.now());
+                        }
+                        if (lineaCampanha.getFinCarga() == null) {
+                            lineaCampanha.setFinCarga(LocalDateTime.now());
+                        }
+                    })
+            );
+
+
             limpiarTareasPendientes();
             campanhaRepository.save(campanha);
 
@@ -308,6 +366,16 @@ public class CampanhaServiceImpl implements CampanhaService {
         // Validacion deun porcentaje valido
         if (porcentaje < tarea.getLineaCampanha().getPorcentajeTrabajado()) throw new InvalidChecksException();
 
+        // En caso de finalizar añado las horas de finalizacion de la fase en cada linea
+        if (porcentaje == 100) {
+            switch (tarea.getTipoTrabajo()) {
+                case LIMPIEZA -> tarea.getLineaCampanha().setFinLimpieza(LocalDateTime.now());
+                case PODA -> tarea.getLineaCampanha().setFinPoda(LocalDateTime.now());
+                case RECOLECCION -> tarea.getLineaCampanha().setFinRecoleccion(LocalDateTime.now());
+                case CARGA -> tarea.getLineaCampanha().setFinCarga(LocalDateTime.now());
+            }
+        }
+
         // Tareas de recoleccion
         if (tarea.getTipoTrabajo() == TipoTrabajo.RECOLECCION && (solicitudCarga || porcentaje == 100)) {
             // Carga solicitada o porcentaje 100 para crear la tarea de carga de la linea
@@ -316,6 +384,8 @@ public class CampanhaServiceImpl implements CampanhaService {
             tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
             tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
             tareasRepository.save(tareaNueva);
+            this.notificacionesEnviadas = 0;
+            this.notificacionMasTareas = true;
         }
         // Para cualquier tipo de tarea si no lleva al 100% se crea otra tarea
         if (porcentaje < 100) {
@@ -377,7 +447,9 @@ public class CampanhaServiceImpl implements CampanhaService {
             throw new InstanceNotFoundException();
 
         // Trabajadores disponibles
-        if (!trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores)) throw new InstanceNotFoundException();
+        if (!idsTrabajadores.isEmpty() && (!trabajadorRepository.existsByIdInAndInTaskFalse(idsTrabajadores))) {
+            throw new InstanceNotFoundException();
+        }
         List<Trabajador> trabajadores = trabajadorRepository.findAllById(idsTrabajadores);
 
         //Tractor existe
@@ -400,27 +472,34 @@ public class CampanhaServiceImpl implements CampanhaService {
     }
 
     @Override
-    public void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException {
+    public void pararTareasCarga(List<Long> idTareas, String comentario) throws InstanceNotFoundException, InvalidChecksException {
+
 
         // Las tares de ids forman parte de las tareas en progreso
         List<Tarea> tareas = tareasRepository.findAllById(idTareas);
-        List<Tarea> tareasEnProgresoDeCarga = tareasRepository.tareasEnProgresoDeCarga();
-        if (!new HashSet<>(tareasEnProgresoDeCarga).containsAll(tareas)) throw new InstanceNotFoundException();
+        Tractor tractor = tareas.get(0).getTractor();
+
+        // Todas las tareas son del mismo tractor
+        for (Tarea tarea : tareas) {
+            if (tarea.getTractor() != tractor) throw new InvalidChecksException();
+        }
+
+        List<Tarea> tareasDeTractor = tareasRepository.findByTractorAndEnProgreso(tractor.getId());
+
+        if (!new HashSet<>(tareasDeTractor).containsAll(tareas)) throw new InstanceNotFoundException();
 
         // Tractor y tareas en tarea
-        Tractor tractor = tareas.get(0).getTractor();
-        if (tareas.size() == tareasEnProgresoDeCarga.size()) {
+        if (tareas.size() == tareasDeTractor.size()) {
             tractor.setEnTarea(false);
             List<Trabajador> trabajadores = tareas.get(0).getTrabajadores();
             trabajadores.forEach(trabajador -> trabajador.setInTask(false));
         }
 
-        // Asigno el tractor y los trabajadores a las tareas
         tareas.forEach(tarea -> {
-            tarea.setTractor(tractor);
             tarea.setHoraSalida(LocalDateTime.now());
             tarea.setComentarios(comentario);
         });
+
 
         tareasRepository.saveAll(tareas);
         tractorRepository.save(tractor);

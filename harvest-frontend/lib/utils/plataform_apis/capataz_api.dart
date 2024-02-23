@@ -4,14 +4,14 @@ import 'package:platform_detector/platform_detector.dart';
 
 import '../../config/config.dart';
 
-LineasApi lineasApiPlataform([OAuth? oAuth]) {
-  LineasApi lineasApi;
+CapatazApi capatazApiPlataform([OAuth? oAuth]) {
+  CapatazApi capatazApi;
   if (PlatformDetector.platform.name == PlatformName.android) {
-    lineasApi =
-        LineasApi(ApiClient(basePath: Config.api, authentication: oAuth));
+    capatazApi =
+        CapatazApi(ApiClient(basePath: Config.api, authentication: oAuth));
   } else {
-    lineasApi = LineasApi(ApiClient(authentication: oAuth));
+    capatazApi = CapatazApi(ApiClient(authentication: oAuth));
   }
 
-  return lineasApi;
+  return capatazApi;
 }

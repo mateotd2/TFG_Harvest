@@ -1,0 +1,13 @@
+# Utilizada con una base de datos en mi maquina local
+spring:
+  h2:
+    console:
+      enabled: false;
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/harvest_db?useSSL=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: userHarvest
+    password: harvestland
+
+

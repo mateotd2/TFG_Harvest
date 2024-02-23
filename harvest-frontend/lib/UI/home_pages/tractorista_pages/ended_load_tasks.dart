@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/utils/plataform_apis/capataz_api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/tractor_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -10,12 +10,12 @@ import '../../../utils/provider/sign_in_model.dart';
 import '../../../utils/snack_bars.dart';
 import '../capataz_pages/task_details.dart';
 
-class EndedTasks extends StatefulWidget {
+class EndedLoadTasks extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _EndedTasks();
+  State<StatefulWidget> createState() => _EndedLoadTasks();
 }
 
-class _EndedTasks extends State<EndedTasks> {
+class _EndedLoadTasks extends State<EndedLoadTasks> {
   var logger = Logger();
   late Future<List<ListedTaskDTO>?> tasks;
 
@@ -23,17 +23,17 @@ class _EndedTasks extends State<EndedTasks> {
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = capatazApiPlataform(auth);
+    final api = tractorApiPlataform(auth);
 
     setState(() {
-      tasks = api.endedTasks().timeout(Duration(seconds: 10));
+      tasks = api.endedLoadTasks().timeout(Duration(seconds: 10));
     });
 
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            tasks = api.endedTasks().timeout(Duration(seconds: 10));
+            tasks = api.endedLoadTasks().timeout(Duration(seconds: 10));
           });
         },
         child: FutureBuilder(

@@ -1,0 +1,25 @@
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydbTest
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+
+  sql:
+    init:
+      data-locations: classpath:data-test.sql # Fichero que puebla la base de datos para los test
+      platform: h2
+      mode: always     # Siempre inicializa la base de datos
+
+
+  jpa:
+#    defer-datasource-initialization: true  # Inserta los elementos usados en data.sql despues de crear la tabla
+    hibernate:
+      show_sql: true
+      format_sql: true
+      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
+
+      properties:
+        hibernate:
+      dialect: org.hibernate.dialect.H2Dialect  # Selecciona el dialecto específico de la base de datos

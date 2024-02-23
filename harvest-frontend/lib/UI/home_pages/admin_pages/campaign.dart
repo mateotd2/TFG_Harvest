@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:harvest_api/api.dart';
-import 'package:harvest_frontend/UI/home_pages/capataz_pages/pending_tasks.dart';
+import 'package:harvest_frontend/UI/home_pages/admin_pages/not_completed_tasks.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -33,10 +33,10 @@ class _CampaignState extends State<Campaign> {
     return FutureBuilder(
         future: fase,
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          PhaseCampaign faseObtenida = snapshot.data;
           String textoFase = "";
-
+          PhaseCampaign? faseObtenida = PhaseCampaign.CAMPAIGN_NOT_STARTED;
           if (snapshot.connectionState == ConnectionState.done) {
+            faseObtenida = snapshot.data;
             snapshot.connectionState == ConnectionState.done;
             switch (faseObtenida) {
               case PhaseCampaign.LIMPIEZA:
@@ -135,25 +135,12 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.cleaning)));
                         setState(() {
                           restart = !restart;
                         });
                       },
-
-                      // onPressed: () async {
-                      //   try {
-                      //     // PendingTasks(TypePhase.cleaning);
-                      //     await api.startPruning().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Pasando a fase de poda.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(
-                      //         context, 'Error al intentar pasar a la fase de poda.');
-                      //   }
-                      // },
                       child: Text("Comenzar fase de poda")),
                 ),
                 SizedBox(height: 64.0),
@@ -169,23 +156,12 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.pruning)));
                         setState(() {
                           restart = !restart;
                         });
                       },
-                      // onPressed: () async {
-                      //   try {
-                      //     await api.startHarvesting().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Pasando a fase de recolección.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(context,
-                      //         'Error al intentar pasar a la fase de recolección');
-                      //   }
-                      // },
                       child: Text("Comenzar fase de recoleccion")),
                 ),
                 SizedBox(height: 64.0),
@@ -201,23 +177,12 @@ class _CampaignState extends State<Campaign> {
                         await Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => PendingTasks(
+                                builder: (context) => NotCompletedTasks(
                                     typePhase: TypePhase.harvest)));
                         setState(() {
                           restart = !restart;
                         });
                       },
-
-                      // onPressed: () async {
-                      //   try {
-                      //     await api.endCampaign().timeout(Duration(seconds: 10));
-                      //     snackGreen(context, 'Finalizando la campaña.');
-                      //   } on TimeoutException {
-                      //     snackTimeout(context);
-                      //   } catch (e) {
-                      //     snackRed(context, 'Error al intentar finalizar la campaña.');
-                      //   }
-                      // },
                       child: Text("Finalizar campaña")),
                 ),
               ],

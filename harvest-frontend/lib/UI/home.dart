@@ -5,6 +5,7 @@ import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/admin.dart';
 import 'package:harvest_frontend/UI/home_pages/admin_pages/campaign.dart';
 import 'package:harvest_frontend/UI/home_pages/capataz_pages/capataz.dart';
+import 'package:harvest_frontend/UI/home_pages/tractorista_pages/tractorista.dart';
 import 'package:harvest_frontend/utils/check_empelado.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +56,11 @@ class _HomeState extends State<Home> {
     var pagina = 0;
 
     // Primera pagina( pagina principa,)
-    paginas.add(Text('PAGINA PRINCIPAL'));
+    paginas.add(Center(
+        child: Text(
+      'Bienvenido ${estado.lastResponse!.username} 👋',
+      style: TextStyle(fontSize: 20),
+    )));
 
     elementosDrawer.add(ListTile(
       leading: Icon(Icons.home),
@@ -129,7 +134,7 @@ class _HomeState extends State<Home> {
     // Pagina Tractoristas
 
     if (esTractorista(estado.lastResponse)) {
-      paginas.add(Text('PAGINA TRACTORISTAS'));
+      paginas.add(Tractorista());
       pagina++;
       final paginaTractoristas = pagina;
       elementosDrawer.add(ListTile(

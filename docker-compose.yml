@@ -1,0 +1,46 @@
+version: '3.7'
+
+services:
+
+  mysqldb:
+    image: "mysql:8.0"
+    restart: no
+    ports:
+      - 3303:3306
+    networks:
+      - spring-mysql
+    environment:
+      MYSQL_DATABASE: harvestdb
+      MYSQL_USER: userHarvest
+      MYSQL_PASSWORD: harvestland
+      MYSQL_ROOT_PASSWORD: root
+
+  harvest:
+    build:
+
+      context: ./
+      dockerfile: Dockerfile-harvest-backend
+    container_name: harvest_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-mysql
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/harvestdb?allowPublicKeyRetrieval=true
+      - spring.datasource.username=userHarvest
+      - spring.datasource.password=harvestland
+      - spring.sql.init.continue-on-error=true
+    depends_on:
+      - mysqldb
+    volumes:
+      - .m2:/root/.m2
+    stdin_open: true
+    tty: true
+
+
+
+networks:
+  spring-mysql:
+
+

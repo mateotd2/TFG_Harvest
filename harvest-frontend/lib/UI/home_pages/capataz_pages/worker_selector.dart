@@ -54,7 +54,9 @@ class _WorkersSelectorState extends State<WorkersSelector> {
                   onChanged: (nombre) {
                     filtroPorNombre(nombre);
                   },
-                  decoration: InputDecoration(label: Text("Nombre")),
+                  decoration: InputDecoration(
+                      label: Text("Nombre y/o apellidos"),
+                      prefixIcon: Icon(Icons.search)),
                 )),
             Expanded(
               child: ListView.builder(
@@ -62,23 +64,21 @@ class _WorkersSelectorState extends State<WorkersSelector> {
                 itemBuilder: (context, index) {
                   return Container(
                     color: index % 2 == 0 ? Colors.grey[200] : null,
-                    child: ListTile(
+                    child: CheckboxListTile(
+                      value: idsSeleccion.contains(filtrado[index].id!),
+                      onChanged: (value) {
+                        setState(() {
+                          if ((value!)) {
+                            idsSeleccion.add(filtrado[index].id!);
+                          } else {
+                            idsSeleccion.remove(filtrado[index].id);
+                          }
+                        });
+                      },
                       title: Text(
                           "${filtrado[index].name} ${filtrado[index].lastname}"),
                       subtitle: Text(
                           "Finaliza su jornada a las ${filtrado[index].horaFinJornada}"),
-                      trailing: Checkbox(
-                        value: idsSeleccion.contains(filtrado[index].id!),
-                        onChanged: (value) {
-                          setState(() {
-                            if ((value!)) {
-                              idsSeleccion.add(filtrado[index].id!);
-                            } else {
-                              idsSeleccion.remove(filtrado[index].id);
-                            }
-                          });
-                        },
-                      ),
                     ),
                   );
                 },

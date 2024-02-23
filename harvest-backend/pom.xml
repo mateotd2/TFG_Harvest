@@ -6,7 +6,6 @@
         <groupId>com.udc.fic</groupId>
         <artifactId>harvest-proyect</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
 
     <artifactId>harvest-backend</artifactId>
@@ -30,24 +29,13 @@
     <!-- ****************** PROFILES ****************** -->
     <!-- ********************************************** -->
     <profiles>
-        <!-- ============================================== -->
-        <!-- ============= DATABASE PROFILES ============== -->
-        <!-- ============================================== -->
         <profile>
-            <!-- H2 database profile -->
-            <!-- Prepares the project to make use of an H2 in-memory database -->
-            <id>h2</id>
-            <activation>
-                <!-- Active by default so it can be installed by CI -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>dev</id>
+
             <properties>
-                <!--  Data source properties -->
-                <dataSource.url>jdbc:h2:mem:mydb</dataSource.url>
-                <testDataSource.url>jdbc:h2:mem:mydbTest</testDataSource.url>
-                <dataSource.user>sa</dataSource.user>
-                <dataSource.password></dataSource.password>
+                <activatedProperties>dev</activatedProperties>
             </properties>
+
             <dependencies>
                 <dependency>
                     <!-- H2 database -->
@@ -56,12 +44,35 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+
+        </profile>
+        <profile>
+            <id>mysql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <activatedProperties>mysql</activatedProperties>
+            </properties>
+
+        </profile>
     </profiles>
 
 
     <description>Harvest wine project</description>
 
     <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.31</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -104,14 +115,9 @@
         </dependency>
 
         <dependency>
-
             <groupId>org.yaml</groupId>
-
             <artifactId>snakeyaml</artifactId>
-
             <version>2.0</version>
-
-
         </dependency>
 
         <dependency>
@@ -121,83 +127,52 @@
         </dependency>
 
         <dependency>
-
             <groupId>org.springframework.boot</groupId>
-
             <artifactId>spring-boot-starter-validation</artifactId>
 
-
         </dependency>
 
-
         <dependency>
-
             <groupId>io.jsonwebtoken</groupId>
-
             <artifactId>jjwt-api</artifactId>
-
             <version>0.11.5</version>
 
         </dependency>
 
-
         <dependency>
-
             <groupId>io.jsonwebtoken</groupId>
-
             <artifactId>jjwt-impl</artifactId>
-
             <version>0.11.5</version>
-
             <scope>runtime</scope>
 
         </dependency>
 
         <dependency>
-
             <groupId>io.jsonwebtoken</groupId>
-
             <artifactId>jjwt-jackson</artifactId>
-
             <version>0.11.5</version>
-
             <scope>runtime</scope>
 
         </dependency>
 
         <dependency>
-
             <groupId>org.slf4j</groupId>
-
             <artifactId>slf4j-api</artifactId>
-
             <version>2.0.7</version>
-
         </dependency>
 
         <dependency>
-
             <groupId>com.h2database</groupId>
-
             <artifactId>h2</artifactId>
-
             <version>2.2.220</version>
-
-            <scope>runtime</scope>
-
+            <scope>test</scope>
         </dependency>
-
 
         <dependency>
-
             <groupId>org.springframework.security</groupId>
-
             <artifactId>spring-security-test</artifactId>
-
             <scope>test</scope>
-
         </dependency>
-
 
         <dependency>
             <groupId>com.udc.fic</groupId>
@@ -231,18 +206,18 @@
             <version>${org.projectlombok.version}</version>
             <scope>provided</scope>
 
-
         </dependency>
 
-
-
     </dependencies>
-
 
     <build>
         <!-- ============================================== -->
         <!-- =============== TEST RESOURCES =============== -->
         <!-- ============================================== -->
+
+
+
+
         <testResources>
             <testResource>
                 <directory>src/test/resources</directory>
@@ -251,6 +226,15 @@
         </testResources>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>-Dspring.profiles.active=test</argLine>
+                </configuration>
+            </plugin>
+
+
             <!--            CONFIGURACION RECOMENDADA PARA LOMBOK + MAPSTRUCT-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -286,22 +270,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-
                     <excludes>
-
                         <exclude>
-
                             <groupId>org.projectlombok</groupId>
-
                             <artifactId>lombok</artifactId>
-
                         </exclude>
-
                     </excludes>
-
                 </configuration>
             </plugin>
-
 
             <!-- Jacoco setup -->
             <plugin>
@@ -343,7 +319,7 @@
                 </dependencies>
                 <executions>
                     <execution>
-                        <phase>test</phase>
+                        <phase>none</phase>  <!-- Para usarlo manualmente-->
                         <goals>
                             <goal>
                                 mutationCoverage
@@ -353,17 +329,17 @@
                 </executions>
 <!--            OPTIMIZACION DE PITEST: https://blog.frankel.ch/faster-mutation-testing/-->
                 <configuration>
-
                     <historyInputFile>${project.basedir}/.historyMutation</historyInputFile>
                     <historyOutputFile>${project.basedir}/.historyMutation</historyOutputFile>
                     <features>
                         <feature>-frecord</feature>
                         <feature>+auto_threads</feature>
                     </features>
-
                     <excludedClasses>
                         <param>com.udc.fic.security.*</param>
                         <param>com.udc.fic.mapper.*</param>
+                        <param>com.udc.fic.controller.CampanhaController</param>
+                        <param>com.udc.fic.controller.TrabajadoresControllerTest</param>
                     </excludedClasses>
                 </configuration>
             </plugin>
@@ -375,9 +351,7 @@
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Low</threshold>
-                    <spotbugsXmlOutput>true</spotbugsXmlOutput>
                 </configuration>
-
                 <executions>
                     <execution>
                         <phase>verify</phase>

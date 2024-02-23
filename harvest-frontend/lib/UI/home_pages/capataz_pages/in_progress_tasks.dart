@@ -43,7 +43,6 @@ class _InProgressTasks extends State<InProgressTasks> {
                 snapshot.connectionState == ConnectionState.done;
                 List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
                 logger.d(tasksObtenidas);
-
                 List<Widget> pantalla = [];
                 List<Widget> filaBotones = [];
                 if (!(tasksObtenidas != null && tasksObtenidas.isNotEmpty)) {

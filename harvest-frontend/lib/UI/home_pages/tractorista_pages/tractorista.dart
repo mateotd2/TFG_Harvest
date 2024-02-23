@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:harvest_frontend/UI/home_pages/capataz_pages/ended_tasks.dart';
-import 'package:harvest_frontend/UI/home_pages/capataz_pages/in_progress_tasks.dart';
-import 'package:harvest_frontend/UI/home_pages/capataz_pages/pending_tasks.dart';
+import 'package:harvest_frontend/UI/home_pages/tractorista_pages/pending_load_tasks.dart';
 import 'package:logger/logger.dart';
 
-import '../admin_pages/not_completed_tasks.dart';
+import 'ended_load_tasks.dart';
+import 'in_progress_load_tasks.dart';
 
-class Capataz extends StatefulWidget {
+class Tractorista extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _CapatazState();
+  State<StatefulWidget> createState() => _TractoristaState();
 }
 
-class _CapatazState extends State<Capataz> {
+class _TractoristaState extends State<Tractorista> {
   int _navIndice = 0;
   var logger = Logger();
 
@@ -21,17 +20,17 @@ class _CapatazState extends State<Capataz> {
     });
   }
 
-  final List _paginasCap = [
-    PendingTasks(typePhase: TypePhase.none),
-    InProgressTasks(),
-    EndedTasks()
+  final List _paginasTract = [
+    PendingLoadTasks(typePhase: TypePhase.none),
+    InProgressLoadTasks(),
+    EndedLoadTasks()
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: Key('CapatazKey'),
-      body: _paginasCap[_navIndice],
+      key: Key('TractorKey'),
+      body: _paginasTract[_navIndice],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [

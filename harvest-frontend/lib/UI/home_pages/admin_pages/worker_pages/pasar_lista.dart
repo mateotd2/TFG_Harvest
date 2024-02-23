@@ -102,7 +102,7 @@ class _PasarLista extends State<PasarLista> {
                                         onPressed: () async {
                                           logger.d("Reloj CHECKIN Pulsado");
                                           final String initTime =
-                                              "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkin}.000000";
+                                              "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${listaAsistencias[index].checkin}.000000";
                                           await _showTimePickerDialog(context,
                                               initTime, "entrada", index);
                                           logger.d(
@@ -120,7 +120,7 @@ class _PasarLista extends State<PasarLista> {
                                         onPressed: () async {
                                           logger.d("Reloj CHECKIN Pulsado");
                                           final String initTime =
-                                              "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkout}.000000";
+                                              "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${listaAsistencias[index].checkout}.000000";
                                           await _showTimePickerDialog(context,
                                               initTime, "salida", index);
                                           logger.d(
@@ -133,17 +133,11 @@ class _PasarLista extends State<PasarLista> {
                                         ))
                                   ],
                                 ),
-                                trailing: Column(
-                                  children: [
-                                    Checkbox(
-                                        value:
-                                            listaAsistencias[index].attendance,
-                                        onChanged: (bool? value) async {
-                                          await _cambiarCheckBox(
-                                              context, index);
-                                        }),
-                                  ],
-                                ),
+                                trailing: Checkbox(
+                                    value: listaAsistencias[index].attendance,
+                                    onChanged: (bool? value) async {
+                                      await _cambiarCheckBox(context, index);
+                                    }),
                               );
                             }),
                       ),
@@ -232,7 +226,7 @@ class _PasarLista extends State<PasarLista> {
                     switch (tipoEntrada) {
                       case "entrada":
                         DateTime salida = DateTime.parse(
-                            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkout}.000000");
+                            "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${listaAsistencias[index].checkout}.000000");
                         logger.d("Salida: $salida");
                         if (nuevaHora!.isBefore(salida)) {
                           listaAsistencias[index] = CallDTO(
@@ -248,7 +242,7 @@ class _PasarLista extends State<PasarLista> {
 
                       case "salida":
                         DateTime? entrada = DateTime.tryParse(
-                            "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day} ${listaAsistencias[index].checkin}.000000");
+                            "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')} ${listaAsistencias[index].checkin}.000000");
                         logger.d("Entrada: $entrada");
                         if (!nuevaHora!.isBefore(entrada!)) {
                           listaAsistencias[index] = CallDTO(

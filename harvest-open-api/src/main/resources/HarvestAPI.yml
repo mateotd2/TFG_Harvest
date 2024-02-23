@@ -419,7 +419,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-
   /api/workers:
     get:
       tags:
@@ -2195,7 +2194,7 @@ paths:
   /api/pendingTasks:
     get:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas pendientes
@@ -2251,7 +2250,7 @@ paths:
   /api/pendingLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener tareas pendientes de carga
@@ -2366,7 +2365,7 @@ paths:
   /api/inProgressLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas de carga en progreso
@@ -2425,7 +2424,7 @@ paths:
   /api/endedTasks:
     get:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas finalizadas de la campaña actual
@@ -2481,7 +2480,7 @@ paths:
   /api/endedLoadTasks:
     get:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Obtener las tareas de carga finalizadas
@@ -2538,7 +2537,7 @@ paths:
   /api/pendingTasks/{id}/startTask:
     post:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Comenzar una tarea pendiente
@@ -2614,7 +2613,7 @@ paths:
   /api/startLoadTasks:
     post:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Comenzar tareas pendientes de carga
@@ -2674,10 +2673,65 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /api/notificationLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Comprueba si hay nuevas tareas de carga
+      operationId: checkNewLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Boolean indicando que hay nuevas tareas
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
   /api/endLoadTasks:
     post:
       tags:
-        - Campanha
+        - Tractorista
       security:
         - bearerAuth: [ ]
       summary: Finalizar tareas de carga
@@ -2809,7 +2863,7 @@ paths:
   /api/pendingTasks/{id}/stopTask:
     post:
       tags:
-        - Campanha
+        - Capataz
       security:
         - bearerAuth: [ ]
       summary: Parar una tarea iniciada
@@ -2882,6 +2936,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /api/availableTractors:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener Tractores disponibles en el momento actual
+      operationId: getAvailableTractors
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Listado de trabajadores disponibles en el momento actual
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TractorDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/availableTractors
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/availableTractors
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
 
 
 
@@ -3339,6 +3445,8 @@ components:
           type: integer
           format: int32
           minimum: 1
+        zoneName:
+          type: string
         distance:
           type: integer
           format: int32
@@ -3465,9 +3573,6 @@ components:
             $ref: '#/components/schemas/WorkerDTO'
 
 
-
-
-
     ListedTaskDTO:
       type: object
       properties:
@@ -3492,6 +3597,11 @@ components:
           description: tipo de trabajo de tarea
           type: string
           example: LIMPIEZA
+        idTractor:
+          description: id del tractor asociado a la tarea
+          type: integer
+          format: int64
+
     WorkersDTO:
       type: object
       required:
@@ -3559,6 +3669,36 @@ components:
           description: Decision para la realizacion de la carga
           type: boolean
           default: false
+    TractorDTO:
+      type: object
+      required:
+        - licensePlate
+        - brand
+        - model
+        - maxLoad
+        - boxCapacity
+      properties:
+        id:
+          description: id de la tractor pendiente
+          type: integer
+          format: int64
+          example: 1
+        licensePlate:
+          description: matricula
+          type: string
+        brand:
+          description: Marca de tractor
+          type: string
+        model:
+          description: Modelo del tractor
+          type: string
+        maxLoad:
+          description: Carga maxima
+          type: integer
+        boxCapacity:
+          description: Capacidad maxima de cajas
+          type: integer
+
 
   securitySchemes:
     bearerAuth: # arbitrary name for the security scheme

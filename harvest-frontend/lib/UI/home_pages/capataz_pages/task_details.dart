@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:harvest_api/api.dart';
+import 'package:harvest_frontend/utils/plataform_apis/capataz_api.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
@@ -34,6 +35,8 @@ class _TaskDetailsState extends State<TaskDetails> {
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
     final apiCampanha = campanhaApiPlataform(auth);
     final apiTrabajadores = trabajadoresApiPlataform(auth);
+    final apiCapataz = capatazApiPlataform(auth);
+
     TaskDTO? tareaObtenida;
 
     setState(() {
@@ -77,11 +80,11 @@ class _TaskDetailsState extends State<TaskDetails> {
                             MaterialPageRoute(
                                 builder: (context) => WorkersSelector(
                                     workers: trabajadoresDisponibles)));
-                        WorkersDTO trabajadores = WorkersDTO(
-                            idsWorkers: idsTrabajadores);
+                        WorkersDTO trabajadores =
+                            WorkersDTO(idsWorkers: idsTrabajadores);
 
                         try {
-                          await apiCampanha
+                          await apiCapataz
                               .startTask(tareaObtenida!.idTarea!, trabajadores)
                               .timeout(Duration(seconds: 10));
 
@@ -103,10 +106,15 @@ class _TaskDetailsState extends State<TaskDetails> {
                   case Estado.enProgreso:
                     boton = ElevatedButton(
                       onPressed: () async {
+                        PhaseCampaign? fase = await apiCampanha
+                            .getPhaseCampaign()
+                            .timeout(Duration(seconds: 10));
+
                         await showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return FinalizarTareaForm(
+                                  phase: fase!,
                                   taskId: tareaObtenida!.idTarea!);
                             });
                       },
@@ -192,105 +200,131 @@ class _TaskDetailsState extends State<TaskDetails> {
   }
 }
 
-class FinalizarTareaForm extends AlertDialog {
+class FinalizarTareaForm extends StatefulWidget {
   final int taskId;
+  final PhaseCampaign? phase;
 
-  FinalizarTareaForm({required this.taskId});
+  FinalizarTareaForm({required this.taskId, this.phase});
+
+  @override
+  State<StatefulWidget> createState() => _FinalizarTareaForm();
+}
+
+class _FinalizarTareaForm extends State<FinalizarTareaForm> {
+  final GlobalKey<FormState> _form = GlobalKey<FormState>();
+  bool solicitarCarga = false;
+
+  TextEditingController comentarioController = TextEditingController();
+  TextEditingController porcentajeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final estado = Provider.of<SignInResponseModel>(context);
     OAuth auth = OAuth(accessToken: estado.lastResponse!.accessToken);
-    final api = campanhaApiPlataform(auth);
+    final apiCapataz = capatazApiPlataform(auth);
+
     var logger = Logger();
 
-    final form = GlobalKey<FormState>();
-    final TextEditingController comentarioController = TextEditingController();
-    final TextEditingController porcentajeController = TextEditingController();
+    // porcentajeController.text="0";
 
-    return AlertDialog(
-      title: Text("Finalizar Tarea"),
-      actions: [
-        ElevatedButton(
-            onPressed: () {
-              logger.d('Finalizacion tarea cancelada');
-              Navigator.of(context).pop();
-            },
-            child: Text('Cancelar')),
-        ElevatedButton(
-            onPressed: () async {
-              if (form.currentState!.validate()) {
-                form.currentState?.save();
-                logger.d('Finalizacion de tarea');
-                StopTaskDTO stopTaskDto = StopTaskDTO(
-                    comment: comentarioController.text,
-                    percentaje: int.parse(porcentajeController.text));
-                logger.d(stopTaskDto);
-                try {
-                  await api
-                      .stopTask(taskId, stopTaskDto)
-                      .timeout(Duration(seconds: 10));
-                  snackGreen(context, "Tarea finalizada");
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop(true);
-                } on TimeoutException {
-                  snackTimeout(context);
-                  Navigator.of(context).pop();
-                } catch (e) {
-                  snackRed(context, "No se pudo finalizar la tarea");
-                  Navigator.of(context).pop();
-
-                }
-
-              }
-            },
-            child: Text("Aceptar"))
-      ],
-      content: Form(
-        key: form,
-        child: Column(
-          children: [
-            TextField(
-              scrollPadding: EdgeInsets.all(100),
-              showCursor: true,
-              maxLines: 7,
-              minLines: 7,
-              controller: comentarioController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                ),
-                label: Text('Comentarios de trabajo:'),
-              ),
-              autofocus: true,
-              key: Key('commentarios'),
-              keyboardType: TextInputType.multiline,
-              maxLength: 2096,
-            ),
-            TextFormField(
-              controller: porcentajeController,
-              decoration: InputDecoration(
-                  label: Text('Porcentaje de trabajo realizado:')),
-              key: Key('porcentaje'),
-              maxLength: 3,
-              keyboardType: TextInputType.number,
-              inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.digitsOnly
-              ],
-              validator: (valor) {
-                if (valor!.isEmpty) {
-                  return 'Ingresar porcentaje completado en la linea ';
-                }
-                valor = valor.trim();
-                if (valor.length > 6 ||
-                    (int.tryParse(porcentajeController.text)! <= 0) ||
-                    (int.tryParse(porcentajeController.text)! > 100)) {
-                  return 'Ingresar porcentaje valido';
-                }
-                return null;
+    return SingleChildScrollView(
+      child: AlertDialog(
+        title: Text("Finalizar Tarea"),
+        actions: [
+          ElevatedButton(
+              onPressed: () {
+                logger.d('Finalizacion tarea cancelada');
+                Navigator.of(context).pop();
               },
-            )
-          ],
+              child: Text('Cancelar')),
+          ElevatedButton(
+              onPressed: () async {
+                if (_form.currentState!.validate()) {
+                  _form.currentState?.save();
+                  logger.d('Finalizacion de tarea');
+                  StopTaskDTO stopTaskDto = StopTaskDTO(
+                      load: solicitarCarga,
+                      comment: comentarioController.text,
+                      percentaje: int.parse(
+                        porcentajeController.text,
+                      ));
+                  logger.d(stopTaskDto);
+                  try {
+                    await apiCapataz
+                        .stopTask(widget.taskId, stopTaskDto)
+                        .timeout(Duration(seconds: 10));
+                    snackGreen(context, "Tarea finalizada");
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(true);
+                  } on TimeoutException {
+                    snackTimeout(context);
+                    Navigator.of(context).pop();
+                  } catch (e) {
+                    snackRed(context, "No se pudo finalizar la tarea");
+                    Navigator.of(context).pop();
+                  }
+                }
+              },
+              child: Text("Aceptar"))
+        ],
+        content: Form(
+          key: _form,
+          child: Column(
+            children: [
+              TextField(
+                scrollPadding: EdgeInsets.all(100),
+                showCursor: true,
+                maxLines: 7,
+                minLines: 7,
+                controller: comentarioController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                  ),
+                  label: Text('Comentarios de trabajo:'),
+                ),
+                autofocus: true,
+                key: Key('commentarios'),
+                keyboardType: TextInputType.multiline,
+                maxLength: 2096,
+              ),
+              TextFormField(
+                controller: porcentajeController,
+                decoration: InputDecoration(
+                    label: Text('Porcentaje de trabajo realizado:')),
+                key: Key('porcentaje'),
+                maxLength: 3,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
+                validator: (valor) {
+                  if (valor!.isEmpty) {
+                    return 'Ingresar porcentaje completado en la linea ';
+                  }
+                  valor = valor.trim();
+                  if (valor.length > 6 ||
+                      (int.tryParse(porcentajeController.text)! <= 0) ||
+                      (int.tryParse(porcentajeController.text)! > 100)) {
+                    return 'Ingresar porcentaje valido';
+                  }
+                  return null;
+                },
+              ),
+              Visibility(
+                visible: widget.phase == PhaseCampaign.RECOLECCION_CARGA,
+                child: CheckboxListTile(
+                  title: Text("¿Solicitar Carga?"),
+                  value: solicitarCarga,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      solicitarCarga = value!;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
