@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //@CrossOrigin(origins = "http://localhost:8080", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class CampanhaController implements CampanhaApi {
 
@@ -35,8 +36,6 @@ public class CampanhaController implements CampanhaApi {
     }
 
 
-
-
     @Override
     public ResponseEntity<List<ListedTaskDTO>> _inProgressTasks() {
         List<Tarea> tareasEnProgreso = campanhaService.mostrarTareasSinFinalizar();
@@ -52,8 +51,6 @@ public class CampanhaController implements CampanhaApi {
         );
         return ResponseEntity.ok().body(tareasInProgress);
     }
-
-
 
 
     @Override

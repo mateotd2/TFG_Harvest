@@ -11,11 +11,16 @@ import '../../../../utils/plataform_apis/workers_api.dart';
 import '../../../../utils/provider/sign_in_model.dart';
 
 class DayOfWorkForm extends StatefulWidget {
+  final int workerId;
+
+  DayOfWorkForm({required this.workerId});
+
   @override
   State<StatefulWidget> createState() => DayOfWorkState();
 }
 
 class DayOfWorkState extends State<DayOfWorkForm> {
+
   var logger = Logger();
   DateTime _fechaTrabajo = DateTime.now();
   late String _horaCheckIn = '08:00';
@@ -118,7 +123,7 @@ class DayOfWorkState extends State<DayOfWorkForm> {
                 logger.d("Se registra $nuevaFecha");
 
                 await apiInstance
-                    .addDayOfWork(estado.lastResponse!.id, nuevaFecha)
+                    .addDayOfWork(widget.workerId, nuevaFecha)
                     .timeout(Duration(seconds: 10));
 
                 snackGreen(context, 'Calendario Actualizadas');

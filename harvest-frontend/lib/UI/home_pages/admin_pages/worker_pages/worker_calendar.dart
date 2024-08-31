@@ -57,7 +57,7 @@ class WorkerCalendarState extends State<WorkerCalendar> {
               await showDialog(
                 context: context,
                 builder: (BuildContext context) {
-                  return DayOfWorkForm();
+                  return DayOfWorkForm(workerId: workerId!,);
                 },
               );
 

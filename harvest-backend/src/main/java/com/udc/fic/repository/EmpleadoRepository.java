@@ -16,8 +16,8 @@ public interface EmpleadoRepository extends JpaRepository<Empleado, Long> {
 
     Optional<Empleado> findByUsername(String username);
 
-    //    @Query("SELECT COUNT(*) FROM Empleado e JOIN e.roles r WHERE r.name = 'ROLE_TRACTORISTA'")
-    @Query("SELECT COUNT(*) FROM Empleado e JOIN e.roles r WHERE r.id = 3")
+//        @Query("SELECT COUNT(*) FROM Empleado e JOIN e.roles r WHERE r.id = 3")
+    @Query("SELECT COUNT(*) FROM Empleado e JOIN e.roles r WHERE r.name = ROLE_TRACTORISTA")
     int countByRoleTractorista();
 
 }

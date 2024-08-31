@@ -55,6 +55,10 @@ class _NotCompletedTasks extends State<NotCompletedTasks> {
         child: FutureBuilder(
             future: tasks,
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                snapshot.connectionState == ConnectionState.done;
+                List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
+                logger.d(tasksObtenidas);
               switch (widget.typePhase) {
                 case TypePhase.none:
                   break;
@@ -112,10 +116,7 @@ class _NotCompletedTasks extends State<NotCompletedTasks> {
                       child: Text("Finalizar")));
               }
 
-              if (snapshot.connectionState == ConnectionState.done) {
-                snapshot.connectionState == ConnectionState.done;
-                List<ListedTaskDTO>? tasksObtenidas = snapshot.data;
-                logger.d(tasksObtenidas);
+
 
                 if (!(tasksObtenidas != null && tasksObtenidas.isNotEmpty)) {
                   if (widget.typePhase != TypePhase.none) {
@@ -142,6 +143,10 @@ class _NotCompletedTasks extends State<NotCompletedTasks> {
                     children: pantalla,
                   );
                 } else {
+                  pantalla.add(AppBar(
+                    backgroundColor: Colors.green,
+                    title: const Text('Tareas Pendientes'),
+                  ),);
                   pantalla.add(Expanded(
                     child: ListView.builder(
                       itemCount: tasksObtenidas.length,
@@ -150,23 +155,23 @@ class _NotCompletedTasks extends State<NotCompletedTasks> {
                         return Container(
                           color: index % 2 == 0 ? Colors.grey[200] : null,
                           child: ListTile(
-                            onTap: () async {
-                              bool actualizar = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => TaskDetails(
-                                            taskId: task.idTarea,
-                                            estado: Estado.sinEmpezar,
-                                          )));
-                              if (actualizar) {
-                                setState(() {
-                                  tasks = capatazApi
-                                      .pendingTasks()
-                                      .timeout(Duration(seconds: 10));
-                                });
-                              }
-                            },
-                            trailing: Icon(Icons.arrow_forward_ios_sharp),
+                            // onTap: () async {
+                            //     bool actualizar = await Navigator.push(
+                            //         context,
+                            //         MaterialPageRoute(
+                            //             builder: (context) => TaskDetails(
+                            //                   taskId: task.idTarea,
+                            //                   estado: Estado.sinEmpezar,
+                            //                 )));
+                            //     if (actualizar) {
+                            //       setState(() {
+                            //         tasks = capatazApi
+                            //             .pendingTasks()
+                            //             .timeout(Duration(seconds: 10));
+                            //       });
+                            //     }
+                            // },
+                            //trailing: Icon(Icons.arrow_forward_ios_sharp),
                             title: Text("Zona: ${task.zoneName}"),
                             subtitle: Text(
                                 "Linea: ${task.numeroLinea}  Tipo de Tarea: ${task.tipoTrabajo}"),

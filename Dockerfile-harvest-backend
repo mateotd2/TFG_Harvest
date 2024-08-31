@@ -15,7 +15,10 @@ COPY --from=MAVEN_TOOL_CHAIN /tmp/harvest-backend/target/harvest-backend-1.0-SNA
 RUN sh -c 'touch /app.jar'
 
 #EXPOSE 8080
-
+# EN PROD CON DATOS INICIALES BASICOS, administrador dos operarios etc...
 ENTRYPOINT ["java","-jar","/app.jar","--spring.profiles.active=prod"]
+
+# DEV CON MAS DATOS, No funciona aun
+# ENTRYPOINT ["java","-jar","/app.jar","--spring.profiles.active=dev"]
 #ENTRYPOINT ["java","-jar","/app.jar","--spring.profiles.active=prod", "--debug"]
 

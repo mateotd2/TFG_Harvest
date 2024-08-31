@@ -157,29 +157,29 @@ class _MainViewState extends State<MainView> {
           iniciarHiloPolling(api);
         }
       });
-      // LocalNotificationService.display();
-      // mostrarNotificacion();
       return Home();
     }
   }
 
   void iniciarHiloPolling(TractoristaApi api) {
     Timer.periodic(Duration(seconds: 90), (timer) async {
-      try {
-        bool? masTareas =
-            await api.checkNewLoadTasks().timeout(Duration(seconds: 5));
-        if (masTareas!) {
-          logger.d("Tareas nuevas de CARGA");
-          // Notificacion
-          await _showNotification();
-        } else {
-          // logger.d("Aun no hay nuevas tareas");
+      if (mounted) {
+        try {
+          bool? masTareas =
+              await api.checkNewLoadTasks().timeout(Duration(seconds: 5));
+          if (masTareas!) {
+            logger.d("Tareas nuevas de CARGA");
+            // Notificacion
+            await _showNotification();
+          } else {
+            logger.d("Aun no hay nuevas tareas");
+          }
+        } on TimeoutException {
+          snackTimeout(context);
+        } catch (e) {
+          snackRed(context, "Error comunicandose con el servidor");
+          logger.d("Error comunicandose con el servidor");
         }
-      } on TimeoutException {
-        snackTimeout(context);
-      } catch (e) {
-        snackRed(context, "Error comunicandose con el servidor");
-        logger.d("Error comunicandose con el servidor");
       }
     });
   }

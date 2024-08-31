@@ -27,14 +27,6 @@ class _HomeState extends State<Home> {
 
   final PageController _controladorPaginas = PageController();
 
-  // Paginas de cada uno de los roles
-  // final List<Widget> paginas = [
-  //   Text('PAGINA PRINCIPAL'),
-  //   Text('PAGINA ADMINISTRACION'),
-  //   Text('PAGINA CAPATACES'),
-  //   Text('PAGINA TRACTORISTAS'),
-  //   Config(),
-  // ];
 
   List<Widget> paginas = [];
 
@@ -98,9 +90,9 @@ class _HomeState extends State<Home> {
         onTap: () async {
           logger.d('Gestión de campaña');
           try {
-            phaseCampaign =
-                await api.getPhaseCampaign().timeout(Duration(seconds: 10));
-            logger.d("FASE : $phaseCampaign");
+            // phaseCampaign =
+            //     await api.getPhaseCampaign().timeout(Duration(seconds: 10));
+            // logger.d("FASE : $phaseCampaign");
             // snackGreen(context, 'Comenzando recolección');
           } on TimeoutException {
             snackTimeout(context);
@@ -172,9 +164,11 @@ class _HomeState extends State<Home> {
 
     return Scaffold(
       body: PageView(
+        physics: NeverScrollableScrollPhysics(),
         allowImplicitScrolling: false,
         children: paginas,
         controller: _controladorPaginas,
+
       ),
       drawer: Drawer(
         child: ListView(
