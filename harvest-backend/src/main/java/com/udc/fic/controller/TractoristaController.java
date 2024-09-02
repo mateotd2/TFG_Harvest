@@ -106,7 +106,15 @@ public class TractoristaController implements TractoristaApi {
 
     @Override
     public ResponseEntity<Boolean> _checkNewLoadTasks() throws Exception {
-        ResponseEntity<Boolean> ok = ResponseEntity.ok(campanhaService.notificacionTareasCarga());
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        if (requestAttributes == null) {
+            throw new PermissionException();
+        }
+        HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        Long userId = (Long) request.getAttribute("userId");
+
+
+        ResponseEntity<Boolean> ok = ResponseEntity.ok(campanhaService.notificacionTareasCarga(userId));
         return ok;
     }
 

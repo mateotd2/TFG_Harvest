@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CampanhaService {
 
-    boolean notificacionTareasCarga();
+    boolean notificacionTareasCarga(Long id);
 
     void comenzarCampanha() throws DuplicateInstanceException;
 
