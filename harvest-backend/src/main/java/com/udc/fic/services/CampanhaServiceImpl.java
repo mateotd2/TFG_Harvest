@@ -31,12 +31,15 @@ public class CampanhaServiceImpl implements CampanhaService {
     EmpleadoRepository empleadoRepository;
     TractorRepository tractorRepository;
     // Valor boolean para notificar de la existencia de nuevas tareas de Carga
-    private boolean notificacionMasTareas = false;
+//    private boolean notificacionMasTareas = false;
+
+    // Lista de ids de tractoristas que pueden ser notificados
+    private List<Long> tractoristasIdANotificar = new ArrayList();
     private final PermissionChecker permissionChecker;
 
-    // Cantidade de tractoristas
+    // Cantidade de tractoristas, usado para enviar notificaciones  a los tractoristas
     private final int cantidadTractoristas;
-    private int notificacionesEnviadas = 0;
+//    private int notificacionesEnviadas = 0;
 
     @Autowired
     public CampanhaServiceImpl(CampanhaRepository campanhaRepository, ZonasRepository zonasRepository, TareasRepository tareasRepository,
@@ -114,7 +117,7 @@ public class CampanhaServiceImpl implements CampanhaService {
         zonaCampanhas.forEach(
                 zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(
                         lineaCampanha -> {
-                            lineaCampanha.setEstado(Estado.PAUSADO);
+                            //lineaCampanha.setEstado(Estado.PAUSADO);
                             lineaCampanha.setPorcentajeTrabajado(0);
                         }
                 )
@@ -130,18 +133,27 @@ public class CampanhaServiceImpl implements CampanhaService {
     }
 
     @Override
-    public boolean notificacionTareasCarga() {
-        boolean nuevaNotificaciones;
-        if (notificacionesEnviadas < cantidadTractoristas) {
-            this.notificacionesEnviadas++;
-            nuevaNotificaciones = this.notificacionMasTareas;
-        } else {
-            this.notificacionMasTareas = false;
-            nuevaNotificaciones = this.notificacionMasTareas;
+    public boolean notificacionTareasCarga(Long id) {
+
+        if(tractoristasIdANotificar.contains(id)) {
+            tractoristasIdANotificar.remove(id);
+            return true;
+        }else {
+            return false;
         }
 
 
-        return nuevaNotificaciones;
+
+
+//        boolean nuevaNotificaciones;
+//        if (notificacionesEnviadas < cantidadTractoristas) {
+//            this.notificacionesEnviadas++;
+//            nuevaNotificaciones = this.notificacionMasTareas;
+//        } else {
+//            this.notificacionMasTareas = false;
+//            nuevaNotificaciones = this.notificacionMasTareas;
+//        }
+//        return nuevaNotificaciones;
     }
 
     @Override
@@ -222,19 +234,19 @@ public class CampanhaServiceImpl implements CampanhaService {
             if (!campanha.getFaseCamp().equals(Fase.PODA)) {
                 throw new InstanceNotFoundException();
             }
-            campanha.setFaseCamp(Fase.RECOLECCION_CARGA);
 
             restaurarLineasCampanha(campanha);
 
             // Aqui me encargo de que si se pasa de fase sin acabar las tareas anteriores, les indico el momento de finalizacion de fase
             campanha.getZonaCampanhas().forEach(zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(lineaCampanha -> {
-                        if (lineaCampanha.getFinRecoleccion() == null) {
-                            lineaCampanha.setFinRecoleccion(LocalDateTime.now());
-                        }
+                if (lineaCampanha.getFinRecoleccion() == null) {
+                    lineaCampanha.setFinRecoleccion(LocalDateTime.now());
+                }
                     })
             );
 
 
+            campanha.setFaseCamp(Fase.RECOLECCION_CARGA);
             limpiarTareasPendientes();
             inicializarTaresPorFase(TipoTrabajo.RECOLECCION, campanha.getZonaCampanhas());
 
@@ -259,20 +271,20 @@ public class CampanhaServiceImpl implements CampanhaService {
                 throw new InstanceNotFoundException();
             }
             campanha.setFinalizacion(LocalDate.now());
-            campanha.setFaseCamp(Fase.FINALIZADA);
 
             // Aqui me encargo de que si se pasa de fase sin acabar las tareas anteriores, les indico el momento de finalizacion de fase
             campanha.getZonaCampanhas().forEach(zonaCampanha -> zonaCampanha.getLineaCampanhas().forEach(lineaCampanha -> {
-                        if (lineaCampanha.getFinRecoleccion() == null) {
-                            lineaCampanha.setFinRecoleccion(LocalDateTime.now());
-                        }
-                        if (lineaCampanha.getFinCarga() == null) {
-                            lineaCampanha.setFinCarga(LocalDateTime.now());
-                        }
+                if (lineaCampanha.getFinRecoleccion() == null) {
+                    lineaCampanha.setFinRecoleccion(LocalDateTime.now());
+                }
+                if (lineaCampanha.getFinCarga() == null) {
+                    lineaCampanha.setFinCarga(LocalDateTime.now());
+                }
                     })
             );
 
 
+            campanha.setFaseCamp(Fase.FINALIZADA);
             limpiarTareasPendientes();
             campanhaRepository.save(campanha);
 
@@ -384,8 +396,10 @@ public class CampanhaServiceImpl implements CampanhaService {
             tareaNueva.setLineaCampanha(tarea.getLineaCampanha());
             tareaNueva.setTipoTrabajo(TipoTrabajo.CARGA);
             tareasRepository.save(tareaNueva);
-            this.notificacionesEnviadas = 0;
-            this.notificacionMasTareas = true;
+
+            this.tractoristasIdANotificar = empleadoRepository.findLongByTractoristas();
+//            this.notificacionesEnviadas = 0;
+//            this.notificacionMasTareas = true;
         }
         // Para cualquier tipo de tarea si no lleva al 100% se crea otra tarea
         if (porcentaje < 100) {
