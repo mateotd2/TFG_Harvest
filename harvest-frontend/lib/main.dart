@@ -1,45 +1,41 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:harvest_api/api.dart';
 import 'package:harvest_frontend/utils/plataform_apis/tractor_api.dart';
 import 'package:harvest_frontend/utils/provider/sign_in_model.dart';
 import 'package:harvest_frontend/utils/snack_bars.dart';
 import 'package:logger/logger.dart';
-import 'package:media_store_plus/media_store_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_detector/enums.dart';
 import 'package:platform_detector/platform_detector.dart';
 import 'package:provider/provider.dart';
+import 'dart:html' as html; // Solo para Flutter Web
 
 import 'UI/home.dart';
 import 'UI/sign_in.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-final mediaStorePlugin = MediaStore();
+FlutterLocalNotificationsPlugin();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  List<Permission> permissions = [
-    Permission.storage,
-  ];
-
-  if ((await mediaStorePlugin.getPlatformSDKInt()) >= 33) {
-    permissions.add(Permission.photos);
+  // Manejo de permisos en plataformas nativas
+  if (!kIsWeb) {
+    List<Permission> permissions = [
+      Permission.storage,
+    ];
+    await permissions.request();
   }
 
-  MediaStore.appFolder = "MediaStorePlugin";
-
-  await permissions.request();
-
   runApp(ChangeNotifierProvider(
-      create: (context) => SignInResponseModel(), // ESTADO
+      create: (context) => SignInResponseModel(), // Estado global
       child: const MyApp()));
 }
 
@@ -67,16 +63,24 @@ class _MainViewState extends State<MainView> {
   var signin = true;
 
   Future<void> _cargarStorage() async {
-    final valor = await flutterSecureStorage.read(key: 'jwt');
+    String? valor;
+    if (kIsWeb) {
+      // Usar SharedPreferences en la web
+      final prefs = await SharedPreferences.getInstance();
+      valor = prefs.getString('jwt');
+    } else {
+      // Usar flutter_secure_storage en plataformas nativas
+      valor = await flutterSecureStorage.read(key: 'jwt');
+    }
+
     if (!context.mounted) return;
+
     final estado = Provider.of<SignInResponseModel>(context, listen: false);
 
-    logger.d("Se intenta carga el dto con el jwt en el estado global");
     if (valor != null) {
       SignInResponseDTO? response =
-          SignInResponseDTO.fromJson(jsonDecode(valor));
-      estado.addResponse(response!); // Añado al estado la el dto con el jwt
-      logger.d("Se carga el dto con el jwt en el estado global");
+      SignInResponseDTO.fromJson(jsonDecode(valor));
+      estado.addResponse(response!); // Actualizar el estado global
       signin = false;
     }
   }
@@ -84,52 +88,51 @@ class _MainViewState extends State<MainView> {
   @override
   void initState() {
     super.initState();
-    // LocalNotificationService.initialize();
     _isAndroidPermissionGranted();
     _requestPermissions();
-    // PermissionUtil.requestAll();
-
     _cargarStorage();
   }
 
   Future<void> _isAndroidPermissionGranted() async {
-    if (PlatformDetector.platform.name == PlatformName.android) {
-      // final bool granted =
-      await flutterLocalNotificationsPlugin
+    if (!kIsWeb && PlatformDetector.platform.name == PlatformName.android) {
+      final bool granted =
+          await flutterLocalNotificationsPlugin
               .resolvePlatformSpecificImplementation<
-                  AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin>()
               ?.areNotificationsEnabled() ??
-          false;
+              false;
+      if (!granted) {
+        logger.d("Permisos de notificaciones no concedidos en Android.");
+      }
     }
   }
 
   Future<void> _requestPermissions() async {
-    // Permisos de notificaciones
-
-    if (PlatformDetector.platform.name == PlatformName.macOs) {
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-      await flutterLocalNotificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              MacOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(
-            alert: true,
-            badge: true,
-            sound: true,
-          );
-    } else if (PlatformDetector.platform.name == PlatformName.android) {
-      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
-          flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
-
-      // final bool? grantedNotificationPermission =
-      await androidImplementation?.requestNotificationsPermission();
+    if (!kIsWeb) {
+      if (PlatformDetector.platform.name == PlatformName.macOs) {
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+        await flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin>()
+            ?.requestPermissions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+      } else if (PlatformDetector.platform.name == PlatformName.android) {
+        final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+        await androidImplementation?.requestNotificationsPermission();
+      }
     }
   }
 
@@ -153,64 +156,57 @@ class _MainViewState extends State<MainView> {
         if (appState.lastResponse!.roles.contains("ROLE_TRACTORISTA")) {
           OAuth auth = OAuth(accessToken: appState.lastResponse!.accessToken);
           final api = tractorApiPlataform(auth);
-          // LocalNotificationService.initialize();
           iniciarHiloPolling(api);
         }
       });
-      // LocalNotificationService.display();
-      // mostrarNotificacion();
       return Home();
     }
   }
 
   void iniciarHiloPolling(TractoristaApi api) {
-    Timer.periodic(Duration(seconds: 90), (timer) async {
-      try {
-        bool? masTareas =
-            await api.checkNewLoadTasks().timeout(Duration(seconds: 5));
-        if (masTareas!) {
-          logger.d("Tareas nuevas de CARGA");
-          // Notificacion
-          await _showNotification();
-        } else {
-          // logger.d("Aun no hay nuevas tareas");
+    Timer.periodic(const Duration(seconds: 90), (timer) async {
+      if (mounted) {
+        try {
+          bool? masTareas =
+          await api.checkNewLoadTasks().timeout(const Duration(seconds: 5));
+          if (masTareas!) {
+            logger.d("Tareas nuevas de CARGA");
+            await _showNotification();
+          } else {
+            logger.d("Aun no hay nuevas tareas");
+          }
+        } on TimeoutException {
+          snackTimeout(context);
+        } catch (e) {
+          snackRed(context, "Error comunicándose con el servidor");
+          logger.d("Error comunicándose con el servidor");
         }
-      } on TimeoutException {
-        snackTimeout(context);
-      } catch (e) {
-        snackRed(context, "Error comunicandose con el servidor");
-        logger.d("Error comunicandose con el servidor");
       }
     });
   }
 
   Future<void> _showNotification() async {
-    const AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('tractor', 'Tractorista',
-            channelDescription: 'Canal para notificaciones de tractorista',
-            importance: Importance.max,
-            priority: Priority.high,
-            ticker: 'ticker',
-            icon: '@mipmap/ic_launcher');
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        1, 'Nueva tarea ', 'Nueva tarea para la carga', notificationDetails,
-        payload: 'item x');
+    if (kIsWeb) {
+      // Notificaciones en la web
+      _showWebNotification();
+    } else {
+      // Notificaciones en plataformas nativas
+      const AndroidNotificationDetails androidNotificationDetails =
+      AndroidNotificationDetails('tractor', 'Tractorista',
+          channelDescription: 'Canal para notificaciones de tractorista',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+          icon: '@mipmap/ic_launcher');
+      const NotificationDetails notificationDetails =
+      NotificationDetails(android: androidNotificationDetails);
+      await flutterLocalNotificationsPlugin.show(
+          1, 'Nueva tarea', 'Nueva tarea para la carga', notificationDetails,
+          payload: 'item x');
+    }
   }
 
-// static List<Permission> androidPermissions = <Permission>[
-//   Permission.storage
-// ];
-//
-// static List<Permission> iosPermissions = <Permission>[
-//   Permission.storage
-// ];
-//
-// static Future<Map<Permission, PermissionStatus>> requestAll() async {
-//   if (PlatformDetector.platform.name == PlatformName.android) {
-//     return await iosPermissions.request();
-//   }
-//   return await androidPermissions.request();
-// }
+  void _showWebNotification() {
+
+  }
 }
