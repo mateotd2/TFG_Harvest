@@ -52,7 +52,8 @@ dependencies:
   qr_flutter: ^4.1.0
   image_gallery_saver: '^2.0.3'
   permission_handler: ^10.4.5
-  media_store_plus: ^0.0.7
+  shared_preferences: ^2.2.3
+  #media_store_plus: ^0.0.7
   qr_bar_code_scanner_dialog: ^0.0.5
 dev_dependencies:
   flutter_test:
