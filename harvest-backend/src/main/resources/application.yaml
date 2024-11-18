@@ -1,0 +1,44 @@
+# https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.external-config.files
+server:
+  port: 8080
+#  ;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+
+spring:
+  profiles:
+    active: @activatedProperties@
+  sql:
+    init:
+      data-locations: classpath:data.sql # Fichero que puebla la base de datos para los test
+      platform: mysql
+#      mode: always     # Siempre inicializa la base de datos
+
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+#      ddl-auto: create-drop # Crea y dropea las tablas, no utilizar en un entorno de produccion
+#      ddl-auto: create # Crea tablas a partir de las entidades... USAR LA PRIMERA VEZ
+      ddl-auto: update
+#      ddl-auto: none
+
+
+# https://springdoc.org/#properties
+springdoc:
+  show-login-endpoint: true
+  api-docs:
+    version: openapi_3_0 # Default
+
+#  https://springdoc.org/#swagger-ui-properties
+  swagger-ui:
+    urlsPrimaryName: /v3/api-docs
+    #    docExpansion: list
+    persistAuthorization: true
+    use-root-path: true
+    disable-swagger-default-url: true
+    tryItOutEnabled: true
+
+# DATOS DE EJEMPLO: EN UN ENTORNO REAL CAMBIAR ESTOS VALORES POR VARIABLES DE ENTORNO
+app:
+  jwtcookie: Bu:GW8bgPlEw
+  jwtSecret: harvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpringharvestSpring
+  jwtExpirationMs: 86400
+  jwtRefreshExpirationMs: 86400000

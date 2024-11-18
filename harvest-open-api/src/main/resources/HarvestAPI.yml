@@ -1,0 +1,3709 @@
+openapi: 3.0.3
+
+info:
+  title: Harvest APIs
+  description: Api para la gestion de recursos de una empresa viticultora
+  version: 1.0-SNAPSHOT
+
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: Autenticado
+    description: Funcionalidades relacionadas el autenticado y modificación de datos de usuario
+
+  - name: Usuario
+    description: Funcionalidades para todos los usuarios
+
+  - name: Administrador
+    description: Funcionalidades de Administrador
+
+  - name: Trabajadores
+    description: Funcionalidades para la gestion de Trabajadores
+
+  - name: Lineas
+    description: Funcionalidades para la gestion de Zonas y Lineas
+
+  - name: Capataz
+    description: Funcionalidades de Capataz
+
+  - name: Tractorista
+    description: Funcionalidades de Tractorista
+
+  - name: Campanha
+    description: Funcionalidades para la gestion de campaña
+
+
+paths:
+  # Funcionalidades
+  ###########################################################################################################
+  /api/auth/signin:
+    post:
+      tags:
+        - Autenticado
+      summary: Autenticacion con usuario y contraseña
+      operationId: signin
+      requestBody:
+        description: Credenciales para acceder a funcionalidades del sistema
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInRequestDTO'
+            example:
+              username: validUsername
+              password: ejemploPassword
+      responses:
+        200:
+          description: Usuario y JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInResponseDTO'
+              example:
+                id: 1
+                username: validUsername
+                tokenType: Bearer
+                accessToken: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtaWd1ZWxBZG1pbiIsImlhdCI6MTY5MjIzNDg3NiwiZXhwIjoxNjkyMjM0OTYyfQ.gfFLE9pE-HYLfG6_fgTj92CwsmkrTmUsQLz6D0s6IeB8KmqO0ue17ExUx3o7a-oebUr1BNnshtu-odZnANUu-A
+                roles: [ "ROLE_ADMIN" ]
+
+        400:
+          description: Payload de signIn no valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Datos no validos'
+                status: 400
+        401:
+          description: Datos para login erroneos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/auth/{id}/changePassword:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Cambio de contraseña
+      operationId: changePassword
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de usuario al que se realiza cambio de contraseña
+      requestBody:
+        description: Antigua contraseña y nueva contraseña
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordDTO'
+            example:
+              oldPassword: 12345678
+              newPassword: 87654321
+      responses:
+        200:
+          description: Mensaje de cambio de contraseña exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Contraseña cambiada'
+
+        400:
+          description: Payload de usuario no valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Datos no validos'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/{id}/changePassword
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/{id}/updateUser:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar datos de usuario
+      operationId: updateUser
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de usuario al que se realiza la actualizacion
+      requestBody:
+        description: Datos de usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserDTO'
+            example:
+              email: juan@filo.com
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+
+      responses:
+        200:
+          description: Exito en la actualizacion de datos de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'User updated successfully!'
+        400:
+          description: Payload de usuario no valido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Datos no validos'
+                status: 400
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/updateUser
+                error: Conflict
+                message: Conflict
+                status: 409
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/updateUser
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/auth/signup:
+    post:
+      tags:
+        - Autenticado
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar un usuario ( Solo puede el administrador)
+      operationId: signUp
+      x-custom-role:
+        - ADMIN
+
+      requestBody:
+        description: Datos de usuario
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUserDTO'
+            example:
+              username: Juan
+              password: 12345678
+              roles: [ "capataz",
+                       "tractorista" ]
+              email: juan@filo.com
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+
+      responses:
+        201:
+          description: Exito en el registro de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'User registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Usuario no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/availableWorkers:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener trabajadores disponibles en el momento actual
+      operationId: getAvailableWorkers
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de trabajadores disponibles en el momento actual
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkerDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/workers:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener resumen de trabajadores
+      operationId: getWorkers
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de trabajadores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkerDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+    post:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar un trabajador ( Solo puede el administrador)
+      operationId: signUpWorker
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de trabajador
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerDTO'
+            example:
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+              address: Ronda de Outeiro, nº 26 5ºA
+
+      responses:
+        201:
+          description: Exito en el registro de Trabajador
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Worker registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Trabajador no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/workers
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/workers/{id}:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener un trabajador ( Solo puede el administrador)
+      operationId: getWorker
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      responses:
+        200:
+          description: Detalles de un trabajador
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerDTO'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar un trabajador ( Solo puede el administrador)
+      operationId: updateWorker
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      requestBody:
+        description: Datos de trabajador
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkerDTO'
+            example:
+              name: juan
+              lastname: santiago
+              dni: 12345678Q
+              nss: 123456789012
+              phone: 123456789
+              birthdate: 1990-08-19
+              address: Ronda de Outeiro, nº 26 5ºA
+
+      responses:
+        201:
+          description: Exito en la actualizacion del Trabajador
+        400:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Trabajador no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Dar de baja un trabajador ( Solo puede el administrador)
+      operationId: deleteWorker
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+
+      responses:
+        200:
+          description: Trabajador dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Trabajador dado de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Trabajador no valido'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/workers/{id}/calendar:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Obtiene calendario de trabajador( Solo puede el administrador)
+      operationId: getCalendar
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      responses:
+        200:
+          description: Calendario del trabajador
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarDTO'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Modifica calendario de trabajador( Solo puede el administrador)
+      operationId: updateCalendar
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      requestBody:
+        description: Dias y horas de entrada y salida
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CalendarDTO'
+
+      responses:
+        200:
+          description: Mensaje de exito al actualizar el calendario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Añade un dia de trabajo al trabajador( Solo puede el administrador)
+      operationId: addDayOfWork
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+      requestBody:
+        description: Dia y horas de entrada y salida
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalendarDTO'
+
+      responses:
+        200:
+          description: Mensaje de exito al actualizar el calendario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+        404:
+          description: Trabajador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/workers/{id}/calendar/{calendarId}:
+    delete:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Elimina un dia de trabajo( Solo puede el administrador)
+      operationId: deleteDayOfWork
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id del trabajador
+        - in: path
+          name: calendarId
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la fecha
+      responses:
+        200:
+          description: Trabajador dado de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Dia dado de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Dia no valido'
+                status: 404
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/callroll:
+    get:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Muestra la lista de trabajadores disponibles( Solo puede el administrador)
+      operationId: getAttendances
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: Listado de trabajadores y horarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AttendanceDTO'
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Trabajadores
+      security:
+        - bearerAuth: [ ]
+      summary: Pasa lista de los empleados (Solo puede el administrador)
+      operationId: callRoll
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Ids de asistencias confirmadas y modificaciones de horas
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CallDTO'
+      responses:
+        200:
+          description: Mensaje de exito al pasar lista
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Asistencias actualizadas'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+################################################# Zonas-Lineas ###########################################################
+  /api/zones:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener zonas de lineas
+      operationId: getZones
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      responses:
+        200:
+          description: Listado de Zonas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ZoneDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+    post:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar una zona ( Solo puede el administrador)
+      operationId: addZone
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de La zona
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneDTO'
+      responses:
+        201:
+          description: Exito en el registro de la zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/workers
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/zones/{id}:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener zona de lineas
+      operationId: getZone
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+
+      responses:
+        200:
+          description: Detalles de zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ZoneDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar una zona ( Solo puede el administrador)
+      operationId: updateZone
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+      requestBody:
+        description: Datos de la zona
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ZoneDTO'
+      responses:
+        200:
+          description: Mensaje de exito al actualizar la zona
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zona actualizada'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/zones/{id}/lines:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener lineas de una zona
+      operationId: getLines
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+
+      responses:
+        200:
+          description: Listado de lineas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LineDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      tags:
+        - Lineas
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la zona
+      security:
+        - bearerAuth: [ ]
+      summary: Registrar una linea ( Solo puede el administrador)
+      operationId: addLine
+      x-custom-role:
+        - ADMIN
+      requestBody:
+        description: Datos de la linea
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineDTO'
+      responses:
+        201:
+          description: Exito en el registro de la linea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/zones/1/lines
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/lines/{id}:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener linea
+      operationId: getLineDetails
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        200:
+          description: Linea detallada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LineDetailsDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Actualizar linea
+      operationId: updateLineDetails
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+      requestBody:
+        description: Datos de la linea
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LineDTO'
+      responses:
+        201:
+          description: Exito en el registro de la linea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Zone registered successfully!'
+        400:
+          description: Payload de registro invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Zone not valid'
+                status: 400
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        409:
+          description: Error 409
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Conflict
+                message: Conflict
+                status: 409
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Eliminar linea
+      operationId: deleteLine
+      x-custom-role:
+        - ADMIN
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+      responses:
+        200:
+          description: Linea dada de baja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Linea dada de baja'
+        404:
+          description: Payload de actualizacion invalido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                message: 'Dia no valido'
+                status: 404
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/auth/signin
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/tipeVids:
+    get:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener los tipos de vids disponibles
+      operationId: getVids
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Vid detallada
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                 $ref: '#/components/schemas/TypeVidDTO'
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/tipeVids
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/tipeVids
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/lines/{id}/enable:
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Habilita la recolección de la linea
+      operationId: enableLine
+      x-custom-role:
+        - ADMIN
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        204:
+          description: No content
+
+        404:
+          description: Linea no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/lines/{id}/disable:
+    put:
+      tags:
+        - Lineas
+      security:
+        - bearerAuth: [ ]
+      summary: Deshabilita la recolección de la linea
+      operationId: disableLine
+      x-custom-role:
+        - ADMIN
+
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la linea
+
+      responses:
+        204:
+          description: No content
+
+        404:
+          description: Linea no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+################################################# Funcionalidades de campaña #######################################################
+
+  /api/startCampaign:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Da comienzo a la campaña
+      operationId: startCampaign
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: No content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Campaña iniciada!'
+
+        400:
+          description: Campaña anual inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/phaseCampaign:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Devuelve la fase actual de la campaña
+      operationId: getPhaseCampaign
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Fase de la campaña actual
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhaseCampaign'
+
+        400:
+          description: Fase de poda inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/pruning:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Da comienzo a la fase de poda
+      operationId: startPruning
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: No content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Fase de poda iniciada!'
+
+        400:
+          description: Fase de poda inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/startharvest:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Da comienzo a la fase de recoleccion-carga
+      operationId: startHarvesting
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: No content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Fase de recolecció iniciada!'
+
+        400:
+          description: Fase de recolección inicializada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/endCampaign:
+    post:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Finaliza la campaña
+      operationId: endCampaign
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: No content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Campaña finalizada!'
+
+        400:
+          description: Campaña actual finalizada actualmente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/pendingTasks:
+    get:
+      tags:
+        - Capataz
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas pendientes
+      operationId: pendingTasks
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: Tareas pendientes de la fase actual de la campaña
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/pendingLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener tareas pendientes de carga
+      operationId: loadTasks
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas pendientes de la fase actual de la campaña
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/inProgressTasks:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas en progreso
+      operationId: inProgressTasks
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas en progreso de la fase actual de la campaña
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/inProgressLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas de carga en progreso
+      operationId: inProgressLoadTasks
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas de carga progreso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/lines/1
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/endedTasks:
+    get:
+      tags:
+        - Capataz
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas finalizadas de la campaña actual
+      operationId: endedTasks
+      x-custom-role:
+        - ADMIN
+      responses:
+        200:
+          description: Tareas finalizadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/endedLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener las tareas de carga finalizadas
+      operationId: endedLoadTasks
+      x-custom-role:
+        - ADMIN
+        - TRACTORISTA
+      responses:
+        200:
+          description: Tareas de carga finalizadas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ListedTaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/endedTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/pendingTasks/{id}/startTask:
+    post:
+      tags:
+        - Capataz
+      security:
+        - bearerAuth: [ ]
+      summary: Comenzar una tarea pendiente
+      operationId: startTask
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+      requestBody:
+        description: Ids de los trabajadores y tractor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkersDTO'
+
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tarea iniciada!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/startLoadTasks:
+    post:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Comenzar tareas pendientes de carga
+      operationId: startLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      requestBody:
+        description: Ids de los trabajadores y tractor
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartLoadTasksDTO'
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tareas iniciadas!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/startLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/startLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/notificationLoadTasks:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Comprueba si hay nuevas tareas de carga
+      operationId: checkNewLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Boolean indicando que hay nuevas tareas
+          content:
+            application/json:
+              schema:
+                type: boolean
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/notificationLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+  /api/endLoadTasks:
+    post:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Finalizar tareas de carga
+      operationId: endLoadTasks
+      x-custom-role:
+        - TRACTORISTA
+      requestBody:
+        description: Ids de las tareas y comentario sobre las tareas
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndLoadTasksDTO'
+      responses:
+        200:
+          description: Tarea pendiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tareas finalizadas!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path:  /api/endLoadTasks
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path:  /api/endLoadTasks
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/task/{id}:
+    get:
+      tags:
+        - Campanha
+      security:
+        - bearerAuth: [ ]
+      summary: Detalles de tarea
+      operationId: taskDetails
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+
+      responses:
+        200:
+          description: Detalle de tarea
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/pendingTasks/{id}/stopTask:
+    post:
+      tags:
+        - Capataz
+      security:
+        - bearerAuth: [ ]
+      summary: Parar una tarea iniciada
+      operationId: stopTask
+      x-custom-role:
+        - ADMIN
+        - CAPATAZ
+        - TRACTORISTA
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+            maximum: 9223372036854775807
+            minimum: 0
+          required: true
+          description: Id de la tarea
+      requestBody:
+        description: Comentario de la linea y porcentaje realizado
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopTaskDTO'
+
+      responses:
+        200:
+          description: Tarea parada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponseDTO'
+              example:
+                message: 'Tarea iniciada!'
+
+        400:
+          description: Ninguna campaña
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/pendingTasks/{id}/startTask
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/availableTractors:
+    get:
+      tags:
+        - Tractorista
+      security:
+        - bearerAuth: [ ]
+      summary: Obtener Tractores disponibles en el momento actual
+      operationId: getAvailableTractors
+      x-custom-role:
+        - TRACTORISTA
+      responses:
+        200:
+          description: Listado de trabajadores disponibles en el momento actual
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TractorDTO'
+
+        401:
+          description: Error 401
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/availableTractors
+                error: Unauthorized
+                message: Bad credentials
+                status: 401
+
+        429:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                path: /api/availableTractors
+                error: Unauthorized
+                message: To many requests
+                status: 429
+        default:
+          description: Error 429
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+
+
+
+
+################################################# COMPONENTS #######################################################
+
+components:
+  schemas:
+    PhaseCampaign:
+      type: string
+      enum:
+        - CAMPAIGN_NOT_STARTED
+        - LIMPIEZA
+        - PODA
+        - RECOLECCION_CARGA
+        - CAMPAIGN_ENDED
+      example: "LIMPIEZA"
+
+    UpdateUserDTO:
+      type: object
+      required:
+        - email
+        - name
+        - lastname
+        - dni
+        - nss
+        - phone
+        - birthdate
+        - address
+
+      properties:
+
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          example: juan@santiago.com
+        name:
+          type: string
+          maxLength: 255
+          example: juan
+        lastname:
+          type: string
+          maxLength: 255
+          example: santiago
+        dni:
+          type: string
+          maxLength: 255
+          example: 12345678Q
+        nss:
+          type: string
+          maxLength: 255
+          example: 123456789012
+        phone:
+          type: string
+          maxLength: 255
+          example: 123456789
+        birthdate:
+          type: string
+          format: date
+          example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
+      #          maxLength: 20
+      additionalProperties: false
+
+
+
+    NewUserDTO:
+      type: object
+      required:
+        - username
+        - password
+        - roles
+        - email
+        - name
+        - lastname
+        - dni
+        - nss
+        - phone
+        - birthdate
+        - address
+
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          example: username
+        password:
+          type: string
+          maxLength: 255
+          example: passwordmorethan10digits
+        roles:
+          type: array
+          maxItems: 5
+          example: [ admin ]
+          items:
+            type: string
+            maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+          example: mateo@mateo.com
+        name:
+          type: string
+          maxLength: 255
+          example: mateo
+        lastname:
+          type: string
+          maxLength: 255
+          example: tilves
+        dni:
+          type: string
+          maxLength: 255
+          example: 12345678Q
+        nss:
+          type: string
+          maxLength: 255
+          example: 123456789012
+        phone:
+          type: string
+          maxLength: 255
+          example: 123456789
+        birthdate:
+          type: string
+          format: date
+          example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
+      #          maxLength: 20
+      additionalProperties: false
+
+    CalendarDTO:
+      type: object
+      required:
+        - checkin
+        - checkout
+        - day
+        - attendance
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        checkin:
+          type: string
+          format: time
+          example: 08:00
+        checkout:
+          type: string
+          format: time
+          example: 16:00
+        day:
+          type: string
+          format: date
+          example: 2023-11-08
+        attendance:
+          type: boolean
+          example: false
+
+    WorkerDTO:
+      type: object
+      required:
+        - name
+        - lastname
+        - dni
+        - nss
+        - phone
+        - birthdate
+        - address
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          example: mateo
+        lastname:
+          type: string
+          maxLength: 255
+          example: tilves
+        dni:
+          type: string
+          maxLength: 255
+          example: 87654321Q
+        nss:
+          type: string
+          maxLength: 255
+          example: 102938475610
+        phone:
+          type: string
+          maxLength: 255
+          example: 123456789
+        birthdate:
+          type: string
+          format: date
+          example: 1990-08-19
+        address:
+          type: string
+          maxLength: 1024
+          example: Ronda de Outeiro, nº 26 5ºA
+        horaFinJornada:
+          type: string
+          format: time
+
+      additionalProperties: false
+
+
+    MessageResponseDTO:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          maxLength: 4000
+          example: "Usuario registrado correctamente"
+      additionalProperties: false
+
+    ChangePasswordDTO:
+      type: object
+      required:
+        - newPassword
+        - oldPassword
+      properties:
+        oldPassword:
+          type: string
+          maxLength: 255
+          example: oldpassword
+        newPassword:
+          type: string
+          maxLength: 255
+          minLength: 12
+          example: newPasswordLong
+      additionalProperties: false
+
+    SignInRequestDTO:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          maxLength: 255
+          example: userexample
+        password:
+          type: string
+          maxLength: 255
+          example: passwordexample
+      additionalProperties: false
+
+    SignInResponseDTO:
+      type: object
+      required:
+        - id
+        - username
+        - tokenType
+        - accessToken
+        - roles
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        username:
+          type: string
+          maxLength: 255
+          example: username
+        tokenType:
+          type: string
+          maxLength: 255
+          example: Bearer
+        accessToken:
+          type: string
+          maxLength: 1000
+          example: BearerToken
+        roles:
+          type: array
+          maxItems: 5
+          example: [ capataz, tractorista ]
+          items:
+            type: string
+            maxLength: 255
+      additionalProperties: false
+
+    AttendanceDTO:
+      type: object
+      required:
+        - id
+        - name
+        - lastname
+        - daywork
+        - checkin
+        - checkout
+        - attendance
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          example: name
+        lastname:
+          type: string
+          maxLength: 255
+          example: lastname
+        daywork:
+          type: string
+          format: date
+          example: 2023-08-19
+        checkin:
+          type: string
+          format: time
+          example: "08:00"
+        checkout:
+          type: string
+          format: time
+          example: "16:00"
+        attendance:
+          type: boolean
+          example: false
+
+    CallDTO:
+      type: object
+      required:
+        - id
+        - checkin
+        - checkout
+        - attendance
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        checkin:
+          type: string
+          format: time
+          example: "08:00"
+        checkout:
+          type: string
+          format: time
+          example: "16:00"
+        attendance:
+          type: boolean
+          example: true
+    ZoneDTO:
+      type: object
+      required:
+        - name
+        - surface
+        - description
+        - formation
+        - reference
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          example: "Zona 1"
+          minimum: 1
+          maximum: 255
+        surface:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 100
+        description:
+          type: string
+          minimum: 0
+          maximum: 1048
+          example: "Zona con uva de mesa"
+        formation:
+          type: string
+          enum:
+            - ESPALDERA
+            - EMPARRADO
+          example: "ESPALDERA"
+        reference:
+          type: string
+          pattern: '^[a-zA-Z0-9]{20}$'
+          example: "1234567AB1234N0001CD"
+    LineDTO:
+      type: object
+      required:
+        - lineNumber
+        - plantingDate
+        - distance
+        - idTypeVid
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        lineNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
+        plantingDate:
+          type: string
+          format: date
+          example: 1995-08-19
+        harvestEnabled:
+          type: boolean
+          example: true
+        name:
+          type: string
+          example: Vitis vinifera
+        idTypeVid:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+
+    LineDetailsDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        lineNumber:
+          type: integer
+          format: int32
+          minimum: 1
+        zoneName:
+          type: string
+        distance:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 50
+        plantingDate:
+          type: string
+          format: date
+          example: 1995-08-19
+        harvestEnabled:
+          type: boolean
+          example: true
+        idTypeVid:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        vid:
+          $ref: '#/components/schemas/TypeVidDTO'
+
+    TypeVidDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          maximum: 9223372036854775807
+          minimum: 0
+          example: 1
+        name:
+          type: string
+          example: Vitis vinifera
+        yearsMaturity:
+          type: integer
+          format: int32
+          minimum: 0
+          example: 15
+        description:
+          type: string
+          minimum: 0
+          maximum: 2048
+          example: Es una planta semileñosa o trepadora que cuando se deja crecer libremente puede alcanzar más de 30 m, pero que, por la acción humana...
+
+    Error:
+      type: object
+      properties:
+        path:
+          description: Path al error
+          type: string
+          maxLength: 500
+          nullable: false
+          example: "/error"
+        error:
+          description: tipo de error
+          type: string
+          maxLength: 500
+          nullable: false
+          example: "Unauthorized"
+        message:
+          description: Mensaje de error explicativo
+          type: string
+          maxLength: 500
+          nullable: false
+          example: "Full authentication is required to access this resource"
+        status:
+          description: Codigo de error
+          type: integer
+          format: int32
+          nullable: false
+          example: 401
+      additionalProperties: false
+
+
+    TaskDTO:
+      type: object
+      properties:
+
+        idTarea:
+          description: id de la tarea pendiente
+          type: integer
+          format: int64
+          nullable: false
+          example: 1
+        estado:
+          description: Estado de la tarea
+          type: string
+          enum:
+            - NO_INICIADA
+            - INICIADA
+            - FINALIZADA
+        zoneName:
+          description: nombre de la zona
+          type: string
+          example: "Zona 1"
+          minimum: 1
+          maximum: 255
+        numeroLinea:
+          description: numero de linea
+          type: integer
+          nullable: false
+          example: 5
+        horaInicio:
+          description: hora de inicio de la tarea
+          type: string
+          format: time
+        horaFinalizacion:
+          description: hora de inicio de la tarea
+          type: string
+          format: time
+
+        commentarios:
+          description: Comentarios de una linea
+          type: string
+          example: "Sin comentarios"
+        tipoTarea:
+          description: tipo de trabajo de tarea
+          type: string
+          example: LIMPIEZA
+        workers:
+          description: array de trabajadores
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkerDTO'
+
+
+    ListedTaskDTO:
+      type: object
+      properties:
+        idTarea:
+          description: id de la tarea
+          type: integer
+          format: int64
+          nullable: false
+          example: 1
+        zoneName:
+          description: nombre de la zona
+          type: string
+          example: "Zona 1"
+          minimum: 1
+          maximum: 255
+        numeroLinea:
+          description: numero de linea
+          type: integer
+          nullable: false
+          example: 5
+        tipoTrabajo:
+          description: tipo de trabajo de tarea
+          type: string
+          example: LIMPIEZA
+        idTractor:
+          description: id del tractor asociado a la tarea
+          type: integer
+          format: int64
+
+    WorkersDTO:
+      type: object
+      required:
+        - idsWorkers
+      properties:
+        idsWorkers:
+          description: ids de los trabajadores asignados a la tarea
+          type: array
+          items:
+            type: integer
+            format: int64
+    StartLoadTasksDTO:
+      type: object
+      required:
+        - idLoadTasks
+        - idTractor
+      properties:
+        idsWorkers:
+          description: ids de los trabajadores asignados a la tarea
+          type: array
+          items:
+            type: integer
+            format: int64
+        idLoadTasks:
+          description: ids de trabajos de carga
+          type: array
+          items:
+            type: integer
+            format: int64
+        idTractor:
+          description: id de tractor
+          type: integer
+          format: int64
+    EndLoadTasksDTO:
+      type: object
+      required:
+        - idLoadTasks
+      properties:
+        idLoadTasks:
+          description: ids de trabajos de carga
+          type: array
+          items:
+            type: integer
+            format: int64
+        comment:
+          description: comentario
+          type: string
+
+    StopTaskDTO:
+      type: object
+      required:
+        - comment
+        - percentaje
+      properties:
+        comment:
+          description: Comentario sobre el trabajo realizado en la linea
+          type: string
+          maxLength: 2096
+        percentaje:
+          description: Porcentaje del trabajo realizado sobre la linea
+          type: integer
+          maximum: 100
+          minimum: 1
+        load:
+          description: Decision para la realizacion de la carga
+          type: boolean
+          default: false
+    TractorDTO:
+      type: object
+      required:
+        - licensePlate
+        - brand
+        - model
+        - maxLoad
+        - boxCapacity
+      properties:
+        id:
+          description: id de la tractor pendiente
+          type: integer
+          format: int64
+          example: 1
+        licensePlate:
+          description: matricula
+          type: string
+        brand:
+          description: Marca de tractor
+          type: string
+        model:
+          description: Modelo del tractor
+          type: string
+        maxLoad:
+          description: Carga maxima
+          type: integer
+        boxCapacity:
+          description: Capacidad maxima de cajas
+          type: integer
+
+
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      name: bearerAuth
+      in: header
+      type: http
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+      scheme: bearer
