@@ -1,33 +1,25 @@
 # HARVEST PROJECT
 
-### 1- Generate apis and DTOs:
-
+### 1- Iniciar el backend con docker:
 ```  
-    cd harvest-open-api
-    mvn install
+    docker-compose up -d
 ```
 
-### 2- Start app:
-
-```
-    cd harvest-backend
-    mvn install
-    mvn spring-boot:run
-```
-
-#### Check SWAGGER-UI
+#### 2- Comprueba los endpoints SWAGGER-UI
 
 http://localhost:8080/swagger-ui/index.html
 
-Explore /v3/api-docs
 
-#### Check OpenApi Definition
+
+##### OpenApi Definition
 
 http://localhost:8080/v3/api-docs
 
 
-### 3- Start frontend:
+### 3- Inicia frontend:
+
+Para probar la aplicación, uso este comando, desactivando CORS para realizar pruebas
 
 ```
-    flutter run -d chrome 
+    flutter run -d chrome --web-browser-flag "--disable-web-security"
 ```
